@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# BMAD personal/user-scoped configs (per BMAD installer convention)
+_bmad/config.user.toml
+_bmad/custom/config.user.toml
