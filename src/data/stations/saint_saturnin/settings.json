@@ -1,0 +1,4532 @@
+{
+    "name": "Saint Saturnin",
+    "id": "saint_saturnin",
+    "identification": "Poste type MU45",
+    "point": "Poste 2",
+    "author_name": "Carole PALAZOT",
+    "author_email": "",
+    "items": [
+        {
+            "xPos": 2375,
+            "yPos": 375,
+            "toolId": "voie",
+            "variationId": "default",
+            "name": " ",
+            "sens": "right",
+            "uid": "3r0yyxi4cck0yzicg6",
+            "type": "drawingVoie"
+        },
+        {
+            "xPos": 575,
+            "yPos": 200,
+            "toolId": "aiguille",
+            "variationId": "e-se",
+            "name": "11",
+            "uid": "aumq7esjkclxs74",
+            "type": "drawingAiguille"
+        },
+        {
+            "xPos": 750,
+            "yPos": 375,
+            "toolId": "aiguille",
+            "variationId": "e-ne",
+            "name": "12",
+            "uid": "aumq6wojkcir129",
+            "type": "drawingAiguille"
+        },
+        {
+            "xPos": 1100,
+            "yPos": 375,
+            "toolId": "aiguille",
+            "variationId": "e-se",
+            "name": "13",
+            "uid": "aumq7esjkcm74i6",
+            "type": "drawingAiguille"
+        },
+        {
+            "xPos": 1250,
+            "yPos": 525,
+            "toolId": "aiguille",
+            "variationId": "e-ne",
+            "name": "14",
+            "uid": "aumq7esjkcm7rzy",
+            "type": "drawingAiguille"
+        },
+        {
+            "xPos": 1475,
+            "yPos": 525,
+            "toolId": "aiguille",
+            "variationId": "e-se",
+            "name": "15a",
+            "uid": "aumq4aojki2bvap",
+            "type": "drawingAiguille"
+        },
+        {
+            "xPos": 1625,
+            "yPos": 675,
+            "toolId": "aiguille",
+            "variationId": "e-ne",
+            "name": "15b",
+            "uid": "aumq4aojki2fg9o",
+            "type": "drawingAiguille"
+        },
+        {
+            "xPos": 1750,
+            "yPos": 175,
+            "toolId": "signal",
+            "variationId": "w",
+            "name": "AM PN122",
+            "uid": "aumq168jkmhemk9",
+            "type": "drawingSignal"
+        },
+        {
+            "xPos": 25,
+            "yPos": 425,
+            "toolId": "signal",
+            "variationId": "w",
+            "name": "Annonce",
+            "uid": "aumq168jkmh7d9l",
+            "type": "drawingSignal"
+        },
+        {
+            "xPos": 2475,
+            "yPos": 400,
+            "toolId": "signal",
+            "variationId": "w",
+            "name": "Annonce",
+            "uid": "aumq168jkmh80nn",
+            "type": "drawingSignal"
+        },
+        {
+            "xPos": 2150,
+            "yPos": 700,
+            "toolId": "signal",
+            "variationId": "w",
+            "name": "Annonce",
+            "uid": "aumq168jkmh7sm6",
+            "type": "drawingSignal"
+        },
+        {
+            "xPos": 620.0625,
+            "yPos": 50.79999923706055,
+            "toolId": "controle",
+            "variationId": "hidden",
+            "name": "AU VA",
+            "rotation": "0",
+            "uid": "bi4rj9d4dokm3eb6ui",
+            "type": "drawingControle"
+        },
+        {
+            "xPos": 791.8125,
+            "yPos": 90.5999984741211,
+            "toolId": "signal",
+            "variationId": "w",
+            "name": "AUVA",
+            "uid": "bi4rj9d4dokm3eo6c1",
+            "type": "drawingSignal"
+        },
+        {
+            "xPos": 450,
+            "yPos": 525,
+            "toolId": "controle",
+            "variationId": "top",
+            "name": "C211",
+            "rotation": "0",
+            "uid": "aumq4aojki3faul",
+            "type": "drawingControle"
+        },
+        {
+            "xPos": 775,
+            "yPos": 775,
+            "toolId": "signal",
+            "variationId": "w",
+            "name": "C211 PN121",
+            "uid": "aumq168jkmhfg2j",
+            "type": "drawingSignal"
+        },
+        {
+            "xPos": 450,
+            "yPos": 375,
+            "toolId": "controle",
+            "variationId": "top",
+            "name": "C213",
+            "rotation": "0",
+            "uid": "aumq4aojki2ylil",
+            "type": "drawingControle"
+        },
+        {
+            "xPos": 875,
+            "yPos": 125,
+            "toolId": "signal",
+            "variationId": "w",
+            "name": "C213 C215 PN121",
+            "uid": "aumq168jkmhbni2",
+            "type": "drawingSignal"
+        },
+        {
+            "xPos": 2025,
+            "yPos": 675,
+            "toolId": "controle",
+            "variationId": "bottom",
+            "name": "C220",
+            "rotation": "0",
+            "uid": "aumq4aojki3jbub",
+            "type": "drawingControle"
+        },
+        {
+            "xPos": 2175,
+            "yPos": 375,
+            "toolId": "controle",
+            "variationId": "bottom",
+            "name": "C222",
+            "rotation": "0",
+            "uid": "aumq4aojki3efc5",
+            "type": "drawingControle"
+        },
+        {
+            "xPos": 1050,
+            "yPos": 375,
+            "toolId": "controle",
+            "variationId": "bottom",
+            "name": "Cv212",
+            "rotation": "0",
+            "uid": "aumq7usjki7t3u5",
+            "type": "drawingControle"
+        },
+        {
+            "xPos": 950,
+            "yPos": 175,
+            "toolId": "signal",
+            "variationId": "w",
+            "name": "Cv212 PN121",
+            "uid": "aumq168jkmhdd5c",
+            "type": "drawingSignal"
+        },
+        {
+            "xPos": 1400,
+            "yPos": 375,
+            "toolId": "controle",
+            "variationId": "bottom",
+            "name": "Cv214",
+            "rotation": "0",
+            "uid": "aumq7usjki7tq00",
+            "type": "drawingControle"
+        },
+        {
+            "xPos": 1200,
+            "yPos": 175,
+            "toolId": "signal",
+            "variationId": "w",
+            "name": "Cv214 PN121",
+            "uid": "aumq168jkmhdyhu",
+            "type": "drawingSignal"
+        },
+        {
+            "xPos": 475,
+            "yPos": 200,
+            "toolId": "controle",
+            "variationId": "top",
+            "name": "Cv215",
+            "rotation": "0",
+            "uid": "aumq4aojki2xl1k",
+            "type": "drawingControle"
+        },
+        {
+            "xPos": 2025,
+            "yPos": 525,
+            "toolId": "controle",
+            "variationId": "bottom",
+            "name": "Cv224",
+            "rotation": "0",
+            "uid": "aumq4aojki3ii4y",
+            "type": "drawingControle"
+        },
+        {
+            "xPos": 75,
+            "yPos": 100,
+            "toolId": "aiguille",
+            "variationId": "e-se",
+            "name": "L",
+            "uid": "aumq7rojkl5gcms",
+            "type": "drawingAiguille"
+        },
+        {
+            "xPos": 175,
+            "yPos": 200,
+            "toolId": "aiguille",
+            "variationId": "e-ne",
+            "name": "P",
+            "uid": "aumq7rojkl5fylw",
+            "type": "drawingAiguille"
+        },
+        {
+            "xPos": 1900,
+            "yPos": 375,
+            "toolId": "controle",
+            "variationId": "top",
+            "name": "S219",
+            "rotation": "0",
+            "uid": "bi4rj9d11gkmalb4a6",
+            "type": "drawingControle"
+        },
+        {
+            "xPos": 2500,
+            "yPos": 525,
+            "toolId": "voie",
+            "variationId": "default",
+            "name": "V1 LP",
+            "sens": "right",
+            "uid": "bqt55vp6rok0zgen4p",
+            "type": "drawingVoie"
+        },
+        {
+            "xPos": 2425,
+            "yPos": 675,
+            "toolId": "voie",
+            "variationId": "default",
+            "name": "V2 LP",
+            "sens": "left",
+            "uid": "bqt55vp6rok0zgf5to",
+            "type": "drawingVoie"
+        },
+        {
+            "xPos": 0,
+            "yPos": 525,
+            "toolId": "voie",
+            "variationId": "default",
+            "name": "Voie 1",
+            "sens": "right",
+            "uid": "aumq4aojki3llf1",
+            "type": "drawingVoie"
+        },
+        {
+            "xPos": 50,
+            "yPos": 675,
+            "toolId": "voie",
+            "variationId": "default",
+            "name": "Voie 2",
+            "sens": "left",
+            "uid": "aumq4aojki3l5cl",
+            "type": "drawingVoie"
+        },
+        {
+            "xPos": 25,
+            "yPos": 375,
+            "toolId": "voie",
+            "variationId": "default",
+            "name": "Voie A",
+            "sens": "both",
+            "uid": "aumq4aojki3mp68",
+            "type": "drawingVoie"
+        },
+        {
+            "xPos": 2325,
+            "yPos": 375,
+            "toolId": "voie",
+            "variationId": "default",
+            "name": "VU Nohans",
+            "sens": "left",
+            "uid": "3r0yyxi4cck0yzi5sp",
+            "type": "drawingVoie"
+        },
+        {
+            "xPos": 250,
+            "yPos": 525,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 105",
+            "uid": "aumq4aojki3fm4j",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 250,
+            "yPos": 375,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 111",
+            "uid": "aumq4aojki2y2b8",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 400,
+            "yPos": 200,
+            "toolId": "zone",
+            "variationId": "hidden",
+            "name": "z 201",
+            "rotate": "0",
+            "uid": "8fck0qa09jb",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 650,
+            "yPos": 675,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 208",
+            "uid": "aumq4aojki3k9md",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 1450,
+            "yPos": 675,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 210",
+            "uid": "aumq4aojki3jzki",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 1175,
+            "yPos": 525,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 213",
+            "uid": "aumq4aojki3g1jt",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 650,
+            "yPos": 375,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 215",
+            "uid": "aumq4aojki2yy4f",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 1100,
+            "yPos": 375,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 217",
+            "uid": "aumq4aojki3bm63",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 1475,
+            "yPos": 375,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 219",
+            "uid": "aumq4aojki3c60y",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 2350,
+            "yPos": 675,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 220",
+            "uid": "aumq4aojki3jnwx",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 1725,
+            "yPos": 525,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 221",
+            "uid": "aumq4aojki3grw7",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 1825,
+            "yPos": 375,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 223",
+            "uid": "aumq4aojki3cgpc",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 2275,
+            "yPos": 375,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 225",
+            "uid": "aumq4aojki3df6k",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 2400,
+            "yPos": 525,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 227",
+            "uid": "aumq4aojki3h7r9",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 2725,
+            "yPos": 675,
+            "toolId": "zone",
+            "variationId": "default",
+            "name": "z 232",
+            "rotate": "0",
+            "uid": "bi4rj9d2tkl9mlgord",
+            "type": "drawingZone"
+        },
+        {
+            "xPos": 525,
+            "yPos": 200,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "aumq5wcjqqdk9ma",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 0,
+            "yPos": 200,
+            "toolId": "rail",
+            "variationId": "dashed",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 175,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki2tukw",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 500,
+            "yPos": 375,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 250,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq7usjki7sgzx",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 1425,
+            "yPos": 525,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "aumq4aojki27iqz",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 25,
+            "yPos": 675,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 1225,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki33zsu",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 175,
+            "yPos": 100,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 100,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq5fgjkiemjae",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 500,
+            "yPos": 525,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 750,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki255df",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 1925,
+            "yPos": 525,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "aumq4aojki2ga77",
+            "type": "drawingJoint"
+        },
+        {
+            "x1": 869.21875,
+            "y1": 292,
+            "x2": 869.21875,
+            "y2": 707,
+            "toolId": "trace",
+            "ui": "dashed",
+            "uid": "9kgk17d9dcz",
+            "type": "traceLine"
+        },
+        {
+            "xPos": 1575,
+            "yPos": 375,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "aumq4aojki2e6ic",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 1975,
+            "yPos": 525,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 725,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki2o7yf",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 0,
+            "yPos": 525,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 450,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki26jh8",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 450,
+            "yPos": 525,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "aumq4aojki264c1",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 1925,
+            "yPos": 675,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "aumq4aojki2i8id",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 1025,
+            "yPos": 375,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 75,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq7esjkcm161e",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 1575,
+            "yPos": 525,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 150,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki2fvgu",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 450,
+            "yPos": 375,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "aumq6wojkciprd6",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 675,
+            "yPos": 200,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 75,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq7esjkcm0o22",
+            "type": "drawingRail"
+        },
+        {
+            "x1": 446.515625,
+            "y1": 97,
+            "x2": 446.515625,
+            "y2": 152,
+            "toolId": "trace",
+            "uid": "aumq4aojki2vr2k",
+            "type": "traceLine"
+        },
+        {
+            "xPos": 0,
+            "yPos": 375,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 450,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq6wojkcip16z",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 975,
+            "yPos": 375,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "aumq7esjkcm0wya",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 1225,
+            "yPos": 450,
+            "toolId": "joint",
+            "variationId": "nw",
+            "uid": "aumq7esjkcm7fk0",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 1250,
+            "yPos": 675,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "aumq4aojki2k9vf",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 1300,
+            "yPos": 675,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 325,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki2j3bt",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 1975,
+            "yPos": 675,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 750,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki2ig9l",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 1350,
+            "yPos": 525,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 75,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki27ryb",
+            "type": "drawingRail"
+        },
+        {
+            "x1": 864.21875,
+            "y1": 159,
+            "x2": 864.21875,
+            "y2": 589,
+            "toolId": "trace",
+            "ui": "square",
+            "uid": "9kgk17d90t3",
+            "type": "traceLine"
+        },
+        {
+            "xPos": 1325,
+            "yPos": 375,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "aumq4aojki24cew",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 275,
+            "yPos": 200,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 250,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki2ln74",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 1625,
+            "yPos": 375,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 425,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki2ee89",
+            "type": "drawingRail"
+        },
+        {
+            "x1": 796.515625,
+            "y1": 226,
+            "x2": 796.515625,
+            "y2": 273,
+            "toolId": "trace",
+            "uid": "aumq168jkmhcoa6",
+            "type": "traceLine"
+        },
+        {
+            "xPos": 1375,
+            "yPos": 375,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 200,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki24n1o",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 1600,
+            "yPos": 600,
+            "toolId": "joint",
+            "variationId": "nw",
+            "uid": "aumq4aojki2f4m8",
+            "type": "drawingJoint"
+        },
+        {
+            "xPos": 1200,
+            "yPos": 375,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 125,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki23us5",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 1725,
+            "yPos": 525,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 200,
+                    "y": 0
+                }
+            ],
+            "uid": "bi4rj9d11gkmalhhk3",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 1725,
+            "yPos": 675,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 200,
+                    "y": 0
+                }
+            ],
+            "uid": "bi4rj9d11gkmali40v",
+            "type": "drawingRail"
+        },
+        {
+            "x1": 1491.637451171875,
+            "y1": 108.80000305175781,
+            "x2": 1491.637451171875,
+            "y2": 270.79998779296875,
+            "toolId": "trace",
+            "ui": "square",
+            "uid": "bi4rj9d11gkmalpjcp",
+            "type": "traceLine"
+        },
+        {
+            "xPos": 2050,
+            "yPos": 375,
+            "toolId": "joint",
+            "variationId": "e",
+            "uid": "bi4rj9d11gkmalq6t6",
+            "type": "drawingJoint"
+        },
+        {
+            "x1": 1738.637451171875,
+            "y1": 329.20001220703125,
+            "x2": 1738.637451171875,
+            "y2": 689.2000122070312,
+            "toolId": "trace",
+            "ui": "square",
+            "uid": "bi4rj9d11gkmalsk7t",
+            "type": "traceLine"
+        },
+        {
+            "x1": 1064.237548828125,
+            "y1": 58.79999923706055,
+            "x2": 1064.237548828125,
+            "y2": 218.8000030517578,
+            "toolId": "trace",
+            "ui": "square",
+            "uid": "bi4rj9d11gkmalyk04",
+            "type": "traceLine"
+        },
+        {
+            "x1": 1785.8375244140625,
+            "y1": 269.20001220703125,
+            "x2": 1785.8375244140625,
+            "y2": 762.2000122070312,
+            "toolId": "trace",
+            "ui": "dashed",
+            "uid": "bi4rj9d11gkmalzs7c",
+            "type": "traceLine"
+        },
+        {
+            "xPos": 850,
+            "yPos": 375,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 125,
+                    "y": 0
+                }
+            ],
+            "uid": "bi4rj9d11gkmam2unj",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 0,
+            "yPos": 100,
+            "toolId": "rail",
+            "variationId": "dashed",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 75,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki2w3up",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 650,
+            "yPos": 225,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 100,
+                    "y": 100
+                }
+            ],
+            "uid": "bi4rj9d11gkmamhxdq",
+            "type": "drawingRail"
+        },
+        {
+            "xPos": 2100,
+            "yPos": 375,
+            "toolId": "rail",
+            "variationId": "default",
+            "nodesNumber": "1",
+            "nodes": [
+                {
+                    "x": 300,
+                    "y": 0
+                }
+            ],
+            "uid": "aumq4aojki2hiur",
+            "type": "drawingRail"
+        }
+    ],
+    "enclenchements": [
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki6xhg0",
+            "id": "1",
+            "affectation": "C211",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "13-, 15-, 24-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": true,
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "4dojwm9m3q5",
+            "id": "1",
+            "affectation": "C211 PN121",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "13-, 15-, 24-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki6ydn8",
+            "id": "2",
+            "affectation": "C213",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "11-, 13-, 16-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": true,
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "x5btu2v4jwltrnp9",
+            "id": "2",
+            "affectation": "C213 C215 PN121",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "11-, 13-, 16-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "x5btu2v4jwltsj7a",
+            "id": "3",
+            "affectation": "C213 C215 PN121",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "11-, 14+, 15-, 16-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki6zq6h",
+            "id": "3",
+            "affectation": "C213",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "11-, 14+, 15-, 16-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": true,
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "x5btu2v4jwltt2uo",
+            "id": "4",
+            "affectation": "C213 C215 PN121",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "12+, 13-, 17-, 18-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki70qu0",
+            "id": "4",
+            "affectation": "Cv215",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "12+, 13-, 17-, 18-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "uid": "aumq7usjki74cd5",
+            "id": "5",
+            "affectation": "Cv215",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "12+, 14+, 15-, 17-, 18-",
+            "movingIncompatibilities": "",
+            "controle_droite": false,
+            "controle_gauche": false,
+            "controle_entrebaillement": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "x5btu2v4jwltta6g",
+            "id": "5",
+            "affectation": "C213 C215 PN121",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "12+, 14+, 15-, 17-, 18-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": "X",
+            "controle_droite": "X",
+            "controle_entrebaillement": "",
+            "uid": "x5btu7xwjwlxogvj",
+            "id": "6",
+            "affectation": "AM PN122",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "2-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": "X",
+            "controle_droite": "X",
+            "controle_entrebaillement": "",
+            "uid": "bi4rj9d4dokm3ebal4",
+            "id": "7",
+            "affectation": "AU VA",
+            "correspondancePlus": "O",
+            "correspondanceMinus": "F",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "16-, 17-, 18-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "bi4rj9d4dokm3eoa5e",
+            "id": "7",
+            "affectation": "AUVA",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "16-, 17-, 18-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "uid": "aumq7usjki77ofy",
+            "id": "11",
+            "affectation": "Ag11",
+            "correspondancePlus": "G",
+            "correspondanceMinus": "D",
+            "plusIncompatibilities": "12-",
+            "minusIncompatibilities": "2-, 3-, 16-",
+            "movingIncompatibilities": "",
+            "controle_droite": true,
+            "controle_gauche": true,
+            "controle_entrebaillement": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "uid": "aumq7usjki79mpz",
+            "id": "12",
+            "affectation": "Ag12",
+            "correspondancePlus": "G",
+            "correspondanceMinus": "D",
+            "plusIncompatibilities": "4-, 5-, 17-, 18-",
+            "minusIncompatibilities": "11+",
+            "movingIncompatibilities": "",
+            "controle_droite": "X",
+            "controle_gauche": "X",
+            "controle_entrebaillement": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "uid": "aumq7usjki7bqxe",
+            "id": "13",
+            "affectation": "Ag13",
+            "correspondancePlus": "G",
+            "correspondanceMinus": "D",
+            "plusIncompatibilities": "14-",
+            "minusIncompatibilities": "1-, 2-, 4-, 19-, 24-",
+            "movingIncompatibilities": "",
+            "controle_droite": "X",
+            "controle_gauche": "X",
+            "controle_entrebaillement": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": "X",
+            "controle_droite": "X",
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki7cmy2",
+            "id": "14",
+            "affectation": "Ag14",
+            "correspondancePlus": "G",
+            "correspondanceMinus": "D",
+            "plusIncompatibilities": "3-, 5-, 22-, 25-",
+            "minusIncompatibilities": "13+",
+            "movingIncompatibilities": "",
+            "controle_ouverture": true,
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "uid": "aumq7usjki7gbq3",
+            "id": "15",
+            "affectation": "Ag15a_15b",
+            "correspondancePlus": "G",
+            "correspondanceMinus": "D",
+            "plusIncompatibilities": "22-",
+            "minusIncompatibilities": "1-, 3-, 5-, 21-, 24-, 25-",
+            "movingIncompatibilities": "",
+            "controle_droite": "X",
+            "controle_gauche": "X",
+            "controle_entrebaillement": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "x5btu8v0jwlue6lz",
+            "id": "16",
+            "affectation": "Cv212 PN121",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "(17+,18+,22-), (17+,18+,25-), (17+,18+,19-)",
+            "minusIncompatibilities": "2-, 3-, 11-, 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki7xs09",
+            "id": "16",
+            "affectation": "Cv212",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "(17+,18+,22-), (17+,18+,25-), (17+,18+,19-)",
+            "minusIncompatibilities": "2-, 3-, 11-, 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "x5btu8v0jwluf9ze",
+            "id": "17",
+            "affectation": "Cv212 PN121",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "(16+,18+,22-), (16+,18+,25-), (16+,18+,19-)",
+            "minusIncompatibilities": "4-, 5-, 12+, 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki8072m",
+            "id": "17",
+            "affectation": "Cv212",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "(16+,18+,22-), (16+,18+,25-), (16+,18+,19-)",
+            "minusIncompatibilities": "4-, 5-, 12+, 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki82e65",
+            "id": "18",
+            "affectation": "Cv212",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "(16+,17+,22-), (16+,17+,25-), (16+,17+,19-)",
+            "minusIncompatibilities": "4-, 5-, 12+, 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "x5btu8v0jwlukd6l",
+            "id": "18",
+            "affectation": "Cv212 PN121",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "(16+,17+,22-), (16+,17+,25-), (16+,17+,19-)",
+            "minusIncompatibilities": "4-, 5-, 12+, 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki8dt1z",
+            "id": "19",
+            "affectation": "Cv214",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "23-",
+            "minusIncompatibilities": "13-, (16+,17+,18+), 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "x5btu6skjwlwg4gr",
+            "id": "19",
+            "affectation": "Cv214 PN121",
+            "correspondancePlus": "I",
+            "correspondanceMinus": "A",
+            "plusIncompatibilities": "23-",
+            "minusIncompatibilities": "13-, (16+,17+,18+), 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki8f3qo",
+            "id": "21",
+            "affectation": "C220",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "15-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": true,
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki8fo9n",
+            "id": "22",
+            "affectation": "C220",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "14+, 15+, (16+,17+,18+), 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": true,
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki8hwnw",
+            "id": "23",
+            "affectation": "C222",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "19+, 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": false,
+            "observations": ""
+        },
+        {
+            "uid": "aumq7usjki8wt74",
+            "id": "24",
+            "affectation": "Cv224",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "1-, 13-, 15-",
+            "movingIncompatibilities": "",
+            "controle_droite": false,
+            "controle_gauche": false,
+            "controle_entrebaillement": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki8xpu3",
+            "id": "25",
+            "affectation": "Cv224",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "14+, 15-, (16+,17+,18+), 7-",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": "X",
+            "controle_droite": "X",
+            "controle_entrebaillement": "",
+            "uid": "x5btu2o0k1wm9oaz",
+            "id": "219",
+            "affectation": "S219",
+            "correspondancePlus": "F",
+            "correspondanceMinus": "O",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "controle_gauche": false,
+            "controle_droite": false,
+            "controle_entrebaillement": "",
+            "uid": "aumq7usjki970g6",
+            "id": "L",
+            "affectation": "AgL",
+            "correspondancePlus": "G",
+            "correspondanceMinus": "D",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "",
+            "movingIncompatibilities": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        },
+        {
+            "uid": "aumq7usjki97uz3",
+            "id": "P",
+            "affectation": "AgP",
+            "correspondancePlus": "G",
+            "correspondanceMinus": "D",
+            "plusIncompatibilities": "",
+            "minusIncompatibilities": "",
+            "movingIncompatibilities": "",
+            "controle_droite": false,
+            "controle_gauche": false,
+            "controle_entrebaillement": "",
+            "controle_ouverture": "",
+            "controle_double_zap_eap_epa": "",
+            "observations": ""
+        }
+    ],
+    "annexeI": [
+        {
+            "id": "17",
+            "cles": "N Cv212vs#"
+        },
+        {
+            "id": "18",
+            "cles": "N Cv212ep"
+        },
+        {
+            "id": "L",
+            "cles": "N Cv212vs, N AuEP, R PN#"
+        },
+        {
+            "id": "P",
+            "cles": "N PN, R Cv212ep#"
+        }
+    ],
+    "annexeILabels": [
+        {
+            "uid": "aumq7usjki98bjl",
+            "label": "Clé Embranché",
+            "cles": "N AuEP#"
+        },
+        {
+            "uid": "aumq7usjki9o85f",
+            "label": "clés cadenassées",
+            "cles": "Cv212vs, Cv212ep, PN"
+        }
+    ],
+    "annexeII": [
+        {
+            "uid": "aumq7usjki9p6hl",
+            "signalId": "C211",
+            "leverId": "1",
+            "id": "Voie 1 LP",
+            "levierMoins": "1",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "14",
+                "15a"
+            ],
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "Voie 1 ",
+            "sensContraireBanaliseTransitLibere": " 213 P",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 213",
+            "faPedale": "",
+            "faIsAnnulable": true,
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkia5lvs",
+            "signalId": "C213",
+            "leverId": "2",
+            "id": "VU Nohan",
+            "levierMoins": "2",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "12",
+                "13"
+            ],
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": [
+                "z 215"
+            ],
+            "controlePermanentZoneProtectionNonAnn": [
+                "z 217",
+                "z 219",
+                "z 223"
+            ],
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "Voie A",
+            "sensContraireBanaliseTransitLibere": " 215 P",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 215",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkia7ork",
+            "signalId": "C213",
+            "leverId": "3",
+            "id": "Voie 1 LP",
+            "levierMoins": "13, 14, 3",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "12",
+                "15a"
+            ],
+            "controlePermanentAiguilleDroite": [
+                "13",
+                "14"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "Voie A",
+            "sensContraireBanaliseTransitLibere": " 215 P",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 215",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkiae40s",
+            "signalId": "Cv215",
+            "leverId": "4",
+            "id": "VU Nohan",
+            "levierMoins": "11, 12, 4",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "13"
+            ],
+            "controlePermanentAiguilleDroite": [
+                "12"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": [
+                "z 215"
+            ],
+            "controlePermanentZoneProtectionNonAnn": [
+                "z 217",
+                "z 219",
+                "z 223"
+            ],
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "Voies 5 à 9 et EP",
+            "sensContraireBanaliseTransitLibere": " 215 P",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 215",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkiag2dx",
+            "signalId": "Cv215",
+            "leverId": "5",
+            "id": "Voie 1 LP",
+            "levierMoins": "11, 12, 13, 14, 5",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "15a"
+            ],
+            "controlePermanentAiguilleDroite": [
+                "12",
+                "13",
+                "14"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "Voies 5 à 9 et EP ",
+            "sensContraireBanaliseTransitLibere": " 215 P",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 215",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq5fgjkidvw7k",
+            "signalId": "Cv212",
+            "leverId": "16",
+            "id": "Voie A",
+            "levierMoins": "16",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "12"
+            ],
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "VU Nohan et Voie 1 LP",
+            "sensContraireBanaliseTransitLibere": " 215 I",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq5fgjkie4ato",
+            "signalId": "Cv212",
+            "leverId": "17",
+            "id": "Voies 5 à 9",
+            "levierMoins": "11, 12, 17",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": "",
+            "controlePermanentAiguilleDroite": [
+                "12"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "VU Nohan et Voie 1 LP",
+            "sensContraireBanaliseTransitLibere": " 215 I",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq5fgjkieitrg",
+            "signalId": "Cv212",
+            "leverId": "18",
+            "id": "EP La Motte",
+            "levierMoins": "11, 12, L, P, 18",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": "",
+            "controlePermanentAiguilleDroite": [
+                "12"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "VU Nohan et Voie 1 LP",
+            "sensContraireBanaliseTransitLibere": " 215 I",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq5fgjkid437z",
+            "signalId": "Cv214",
+            "leverId": "19",
+            "id": "Voies 5 à 9",
+            "levierMoins": "11, 12, 17, 19",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "13"
+            ],
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": [
+                "z 217"
+            ],
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "Cv212",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "VU Nohan",
+            "sensContraireBanaliseTransitLibere": " 217 I",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq5fgjkicqw66",
+            "signalId": "Cv214",
+            "leverId": "19",
+            "id": "Voie A",
+            "levierMoins": "16, 19",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "13"
+            ],
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": [
+                "z 217"
+            ],
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "Cv212",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "VU Nohan",
+            "sensContraireBanaliseTransitLibere": " 217 I",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq5fgjkid9o00",
+            "signalId": "Cv214",
+            "leverId": "19",
+            "id": "EP La Motte",
+            "levierMoins": "11, 12, L, P, 18, 19",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "13"
+            ],
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": [
+                "z 217"
+            ],
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "Cv212",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "VU Nohan",
+            "sensContraireBanaliseTransitLibere": " 217 I",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkiamed2",
+            "signalId": "C220",
+            "leverId": "21",
+            "id": "Voie 2",
+            "levierMoins": "21",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "15b"
+            ],
+            "controlePermanentAiguilleDroite": [],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": [],
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": [],
+            "controlePermanentAnnulationSubstitution": false,
+            "controlePermanentAnnulZoneOccupee": null,
+            "controlePermanentCvIntermediaire": null,
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "",
+            "sensContraireBanaliseTransitLibere": "",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 210",
+            "faPedale": "",
+            "faIsAnnulable": true,
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkian1fm",
+            "signalId": "C220",
+            "leverId": "22",
+            "id": "Voie A",
+            "levierMoins": "13, 14, 15, 16, 22",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": "",
+            "controlePermanentAiguilleDroite": [
+                "15a",
+                "15b",
+                "14",
+                "13"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": [
+                "z 210",
+                "z 221",
+                "z 213",
+                "z 217",
+                "z 215"
+            ],
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": [
+                "z 111"
+            ],
+            "controlePermanentAnnulationSubstitution": true,
+            "controlePermanentAnnulZoneOccupee": "z 220",
+            "controlePermanentCvIntermediaire": "Cv212",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "",
+            "sensContraireBanaliseTransitLibere": "",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 210",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkib1m43",
+            "signalId": "C220",
+            "leverId": "22",
+            "id": "Voies 5 à 9",
+            "levierMoins": "11, 12, 13, 14, 15, 17, 22",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": "",
+            "controlePermanentAiguilleDroite": [
+                "15a",
+                "15b",
+                "14",
+                "13"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": [
+                "z 210",
+                "z 221",
+                "z 213",
+                "z 217",
+                "z 215"
+            ],
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "Cv212",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "",
+            "sensContraireBanaliseTransitLibere": "",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 210",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkib2ttr",
+            "signalId": "C220",
+            "leverId": "22",
+            "id": "EP La Motte",
+            "levierMoins": "11, 12, 13, 14, 15, L, P, 18, 22",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": true,
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": "",
+            "controlePermanentAiguilleDroite": [
+                "15b",
+                "15a",
+                "14",
+                "13"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": [
+                "z 210",
+                "z 221",
+                "z 213",
+                "z 217",
+                "z 215"
+            ],
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "Cv212",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "",
+            "sensContraireBanaliseTransitLibere": "",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 210",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkicm8iv",
+            "signalId": "C222",
+            "leverId": "23",
+            "id": "Voies 5 à 9",
+            "levierMoins": "11, 12, 17, 19, 23",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "13"
+            ],
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": [
+                "z 219",
+                "z 217",
+                "z 215"
+            ],
+            "controlePermanentZoneProtectionNonAnn": [
+                "z 223"
+            ],
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "Cv214",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "",
+            "sensContraireBanaliseTransitLibere": "",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 223",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkicnf7x",
+            "signalId": "C222",
+            "leverId": "23",
+            "id": "EP La Motte",
+            "levierMoins": "11, 12, L, P, 18, 19, 23",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": true,
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "13"
+            ],
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": [
+                "z 219",
+                "z 217",
+                "z 215"
+            ],
+            "controlePermanentZoneProtectionNonAnn": [
+                "z 223"
+            ],
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "Cv214",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "",
+            "sensContraireBanaliseTransitLibere": "",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 223",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkibslve",
+            "signalId": "C222",
+            "leverId": "23",
+            "id": "Voie A",
+            "levierMoins": "16, 19, 23",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "13"
+            ],
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": [
+                "z 219",
+                "z 217",
+                "z 215"
+            ],
+            "controlePermanentZoneProtectionNonAnn": [
+                "z 223"
+            ],
+            "controlePermanentZoneProtection": [
+                "z 111"
+            ],
+            "controlePermanentAnnulationSubstitution": true,
+            "controlePermanentAnnulZoneOccupee": "z 225",
+            "controlePermanentCvIntermediaire": "Cv214",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "",
+            "sensContraireBanaliseTransitLibere": "",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 223",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": true,
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkib8s1m",
+            "signalId": "Cv224",
+            "leverId": "24",
+            "id": "Voie 1",
+            "levierMoins": "24",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "15a",
+                "15b",
+                "14"
+            ],
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "Voie 1 LP",
+            "sensContraireBanaliseTransitLibere": " 221 I",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkibfhly",
+            "signalId": "Cv224",
+            "leverId": "25",
+            "id": "Voie A",
+            "levierMoins": "13, 14, 16, 25",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "15a",
+                "15b"
+            ],
+            "controlePermanentAiguilleDroite": [
+                "14",
+                "13"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "Cv212",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "Voie 1 LP",
+            "sensContraireBanaliseTransitLibere": " 221 I",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkibielr",
+            "signalId": "Cv224",
+            "leverId": "25",
+            "id": "Voies 5 à 9",
+            "levierMoins": "11, 12, 13, 14, 17, 25",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "15a",
+                "15b"
+            ],
+            "controlePermanentAiguilleDroite": [
+                "14",
+                "13"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "Cv212",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "Voie 1 LP",
+            "sensContraireBanaliseTransitLibere": " 221 I",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        },
+        {
+            "uid": "aumq7usjkibq0y9",
+            "signalId": "Cv224",
+            "leverId": "25",
+            "id": "EP La Motte",
+            "levierMoins": "11, 12, 13, 14, L, P, 18, 25",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": [
+                "15a",
+                "15b"
+            ],
+            "controlePermanentAiguilleDroite": [
+                "14",
+                "13"
+            ],
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "Cv212",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "Voie 1 LP",
+            "sensContraireBanaliseTransitLibere": " 221 I",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "",
+            "faPedale": "",
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        },
+        {
+            "uid": "x5btu1pck1wmexc4",
+            "signalId": "S219",
+            "leverId": "219",
+            "id": "VU",
+            "levierMoins": "219",
+            "controleFugitifAiguilleGauche": "",
+            "controleFugitifAiguilleDroite": "",
+            "controleFugitifTaquetBas": "",
+            "controleFugitifSignalFerme": "",
+            "controleFugitifZoneProtection": "",
+            "controleFugitifZoneProximite": "",
+            "controleFugitifAutorisation": "",
+            "controlePermanentAiguilleGauche": "",
+            "controlePermanentAiguilleDroite": "",
+            "controlePermanentTaquetBas": "",
+            "controlePermanentZoneEspacementAuto": "",
+            "controlePermanentZoneProtectionNonAnn": "",
+            "controlePermanentZoneProtection": "",
+            "controlePermanentAnnulationSubstitution": "",
+            "controlePermanentAnnulZoneOccupee": "",
+            "controlePermanentCvIntermediaire": "",
+            "controlePermanentAutorisation": "",
+            "sensContraireDestination": "",
+            "sensContraireBanaliseTransitLibere": "",
+            "sensContraireBanaliseZoneLibere": "",
+            "sensContraireVoieUniqueTransitLibere": "",
+            "sensContraireVoieUniqueZoneLibere": "",
+            "sensContraireVoieStationnementTransitLibere": "",
+            "sensContraireVoieStationnementZoneLibere": "",
+            "sensContraireVoieStationnementAnulleOccupationZone": "",
+            "ipcsNonAnn": "",
+            "ipcsAnn": "",
+            "conditionsPN": "",
+            "faZone": "z 225",
+            "faPedale": false,
+            "faIsAnnulable": "",
+            "commutFC": "",
+            "catenaires": ""
+        }
+    ],
+    "annexeIII": [],
+    "annexeIV": {
+        "sensPairLines": [
+            {
+                "uniqid": "aumq4bkjkjqne7a",
+                "id": {
+                    "uid": "aumq5fgjkidvw7k",
+                    "label": "levier 16 vers Voie A",
+                    "leverId": "16"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [
+                            " 215 P"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "215",
+                "enclenchementContinuite": ""
+            },
+            {
+                "uniqid": "aumq4bkjkjqoew2",
+                "id": {
+                    "uid": "aumq5fgjkie4ato",
+                    "label": "levier 17 vers Voies 5 à 9",
+                    "leverId": "17"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": [
+                            " 215 P"
+                        ]
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": [
+                            " 215 P"
+                        ]
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "215",
+                "enclenchementContinuite": ""
+            },
+            {
+                "uniqid": "aumq4bkjkjqtdf5",
+                "id": {
+                    "uid": "aumq5fgjkieitrg",
+                    "label": "levier 18 vers EP La Motte",
+                    "leverId": "18"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": [
+                            " 215 P"
+                        ]
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": [
+                            " 215 P"
+                        ]
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "215",
+                "enclenchementContinuite": ""
+            },
+            {
+                "uniqid": "aumq4bkjkjqtyx8",
+                "id": {
+                    "uid": "aumq5fgjkid437z",
+                    "label": "levier 19 vers Voies 5 à 9",
+                    "leverId": "19"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [
+                            " 217 P"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "217",
+                "enclenchementContinuite": "Cv212"
+            },
+            {
+                "uniqid": "aumq4bkjkjquwsi",
+                "id": {
+                    "uid": "aumq5fgjkicqw66",
+                    "label": "levier 19 vers Voie A",
+                    "leverId": "19"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [
+                            " 217 P"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "217",
+                "enclenchementContinuite": "Cv212"
+            },
+            {
+                "uniqid": "aumq4bkjkjqwny4",
+                "id": {
+                    "uid": "aumq5fgjkid9o00",
+                    "label": "levier 19 vers EP La Motte",
+                    "leverId": "19"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [
+                            " 217 P"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "217",
+                "enclenchementContinuite": "Cv212"
+            },
+            {
+                "uniqid": "aumq4bkjkjqxxbp",
+                "id": {
+                    "uid": "aumq7usjkiamed2",
+                    "label": "levier 21 vers Voie 2",
+                    "leverId": "21"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [
+                            " 210 P"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "210",
+                "enclenchementContinuite": ""
+            },
+            {
+                "uniqid": "aumq4bkjkjqze1t",
+                "id": {
+                    "uid": "aumq7usjkian1fm",
+                    "label": "levier 22 vers Voie A",
+                    "leverId": "22"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": [
+                            " 217 P"
+                        ]
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": [
+                            " 217 P"
+                        ]
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "210, 221, 213, 217",
+                "enclenchementContinuite": "Cv212"
+            },
+            {
+                "uniqid": "aumq4bkjkjr1wxq",
+                "id": {
+                    "uid": "aumq7usjkib2ttr",
+                    "label": "levier 22 vers EP La Motte",
+                    "leverId": "22"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": [
+                            " 217 P"
+                        ]
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": [
+                            " 217 P"
+                        ]
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "210, 221, 213, 217",
+                "enclenchementContinuite": "Cv212"
+            },
+            {
+                "uniqid": "aumq4bkjkjr2t3c",
+                "id": {
+                    "uid": "aumq7usjkib1m43",
+                    "label": "levier 22 vers Voies 5 à 9",
+                    "leverId": "22"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": [
+                            " 217 P"
+                        ]
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": [
+                            " 217 P"
+                        ]
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "210, 221, 213, 217",
+                "enclenchementContinuite": "Cv212"
+            },
+            {
+                "uniqid": "aumq4bkjkjrfq4c",
+                "id": {
+                    "uid": "aumq7usjkib8s1m",
+                    "label": "levier 24 vers Voie 1",
+                    "leverId": "24"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [
+                            " 213 P"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [
+                            " 221 P"
+                        ],
+                        "minus": [
+                            " 221 P"
+                        ]
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "221, 213",
+                "enclenchementContinuite": ""
+            },
+            {
+                "uniqid": "aumq4bkjkjrwuot",
+                "id": {
+                    "uid": "aumq7usjkibfhly",
+                    "label": "levier 25 vers Voie A",
+                    "leverId": "25"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": [
+                            " 217 P"
+                        ]
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": [
+                            " 217 P"
+                        ]
+                    },
+                    {
+                        "id": "15",
+                        "plus": [
+                            " 221 P"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "221, 213, 217",
+                "enclenchementContinuite": "Cv212"
+            }
+        ],
+        "sensImpairLines": [
+            {
+                "uniqid": "aumq4bkjkjpwp7r",
+                "id": {
+                    "uid": "aumq7usjki9p6hl",
+                    "label": "levier 1 vers Voie 1 LP",
+                    "leverId": "1"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [
+                            " 213 I"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [
+                            " 221 I"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "213, 221",
+                "enclenchementContinuite": ""
+            },
+            {
+                "uniqid": "aumq4bkjkjpxgor",
+                "id": {
+                    "uid": "aumq7usjkia5lvs",
+                    "label": "levier 2 vers VU Nohan",
+                    "leverId": "2"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [
+                            " 215 I"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [
+                            " 217 I"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "215, 217",
+                "enclenchementContinuite": ""
+            },
+            {
+                "uniqid": "aumq4bkjkjpyp6h",
+                "id": {
+                    "uid": "aumq7usjkia7ork",
+                    "label": "levier 3 vers Voie 1 LP",
+                    "leverId": "3"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [
+                            " 215 I"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": [
+                            " 217 I"
+                        ]
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": [
+                            " 213 I"
+                        ]
+                    },
+                    {
+                        "id": "15",
+                        "plus": [
+                            " 221 I"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "215, 217, 213, 221",
+                "enclenchementContinuite": ""
+            },
+            {
+                "uniqid": "aumq4bkjkjq0cka",
+                "id": {
+                    "uid": "aumq7usjkiae40s",
+                    "label": "levier 4 vers VU Nohan",
+                    "leverId": "4"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": [
+                            " 215 I"
+                        ]
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": [
+                            " 215 I"
+                        ]
+                    },
+                    {
+                        "id": "13",
+                        "plus": [
+                            " 217 I"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "215, 217",
+                "enclenchementContinuite": ""
+            },
+            {
+                "uniqid": "aumq4bkjkjq1rrg",
+                "id": {
+                    "uid": "aumq7usjkiag2dx",
+                    "label": "levier 5 vers Voie 1 LP",
+                    "leverId": "5"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": [
+                            " 215 I"
+                        ]
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": [
+                            " 215 I"
+                        ]
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": [
+                            " 217 I"
+                        ]
+                    },
+                    {
+                        "id": "14",
+                        "plus": [],
+                        "minus": [
+                            " 213 I"
+                        ]
+                    },
+                    {
+                        "id": "15",
+                        "plus": [
+                            " 221 I"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "215, 217, 213, 221",
+                "enclenchementContinuite": ""
+            },
+            {
+                "uniqid": "aumq1hojkl64c9l",
+                "id": {
+                    "uid": "aumq7usjki9p6hl",
+                    "label": "levier 1 vers Voie 1 LP",
+                    "leverId": "1"
+                },
+                "destination": "",
+                "levers": [
+                    {
+                        "id": "11",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "12",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "13",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "14",
+                        "plus": [
+                            " 213 I"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "15",
+                        "plus": [
+                            " 221 I"
+                        ],
+                        "minus": []
+                    },
+                    {
+                        "id": "L",
+                        "plus": [],
+                        "minus": []
+                    },
+                    {
+                        "id": "P",
+                        "plus": [],
+                        "minus": []
+                    }
+                ],
+                "itineraire": "213, 221",
+                "enclenchementContinuite": ""
+            }
+        ],
+        "agLevers": [
+            {
+                "id": "11",
+                "plus": [
+                    "z 215"
+                ]
+            },
+            {
+                "id": "12",
+                "plus": [
+                    "z 215"
+                ]
+            },
+            {
+                "id": "13",
+                "plus": [
+                    "z 217"
+                ]
+            },
+            {
+                "id": "14",
+                "plus": [
+                    "z 213"
+                ]
+            },
+            {
+                "id": "15",
+                "plus": [
+                    "z 210",
+                    "z 221"
+                ]
+            },
+            {
+                "id": "L"
+            },
+            {
+                "id": "P"
+            }
+        ]
+    },
+    "annexeV": {
+        "enclenchementsApproche": [
+            {
+                "id": "aumq4bkjkjry7zh",
+                "provenance": "Voie A",
+                "origine_approche": "z 111",
+                "signal": "C213",
+                "leviers": [
+                    "2",
+                    "3"
+                ],
+                "condition_annulation_zone": "z 215",
+                "condition_annulation_pedale": true,
+                "condition_annulation_FA": true
+            },
+            {
+                "id": "aumq4bkjkjrzjmy",
+                "provenance": "Voie 1",
+                "origine_approche": "z 105",
+                "signal": "C211",
+                "leviers": [
+                    "1"
+                ],
+                "condition_annulation_zone": "z 213",
+                "condition_annulation_pedale": true,
+                "condition_annulation_FA": true
+            },
+            {
+                "id": "aumq4bkjkjs1bl2",
+                "provenance": "Voie 2 ",
+                "origine_approche": "z 220",
+                "signal": "C220",
+                "leviers": [
+                    "21",
+                    "22"
+                ],
+                "condition_annulation_zone": "z 210",
+                "condition_annulation_pedale": true,
+                "condition_annulation_FA": true
+            }
+        ],
+        "enclenchementsParcours": [
+            {
+                "id": "aumq4bkjkjry842",
+                "origine_approche": "",
+                "signal": "Cv215",
+                "leviers": [
+                    "4",
+                    "5"
+                ],
+                "condition_annulation_zone": "z 215",
+                "condition_annulation_pedale": true,
+                "condition_annulation_FA": true,
+                "temps_avant_annulation": 1,
+                "provenance": "EP et Voies 5 à 9"
+            },
+            {
+                "id": 0,
+                "origine_approche": "",
+                "signal": "C222",
+                "leviers": [
+                    "23"
+                ],
+                "condition_annulation_zone": "z 217",
+                "condition_annulation_pedale": true,
+                "condition_annulation_FA": true,
+                "temps_avant_annulation": "1",
+                "provenance": "VU Nohan"
+            }
+        ]
+    },
+    "annexeVI": [
+        {
+            "uid": "aumq4bkjkjsf9b2",
+            "id": "T21",
+            "zones": [
+                "z 213",
+                "z 221"
+            ],
+            "leviers": [],
+            "terrain": ""
+        },
+        {
+            "uid": "aumq4bkjkjshtp8",
+            "id": "T22",
+            "zones": [
+                "z 215",
+                "z 217",
+                "z 219"
+            ],
+            "leviers": [],
+            "terrain": ""
+        },
+        {
+            "uid": "aumq4bkjkjsigjq",
+            "id": "T24",
+            "zones": [
+                "z 210"
+            ],
+            "leviers": [
+                "21 +",
+                "22 +"
+            ],
+            "terrain": true
+        }
+    ],
+    "parcours": {
+        "pair": [
+            {
+                "uid": "aumq6fgjqnvl33l",
+                "from": "z 220",
+                "duration": "2",
+                "to": "C220-pédale Proxi"
+            },
+            {
+                "uid": "aumq6fgjqnvow5x",
+                "from": "C220-pédale Proxi",
+                "duration": "11",
+                "to": "C220"
+            },
+            {
+                "uid": "aumq6fgjqnvqjrh",
+                "from": "C220",
+                "duration": "2",
+                "to": "z 210"
+            },
+            {
+                "uid": "aumq6fgjqnvs6ya",
+                "from": "z 210",
+                "duration": "2",
+                "to": "C220-pédale EAP"
+            },
+            {
+                "uid": "aumq6fgjqnvsqxx",
+                "from": "C220-pédale EAP",
+                "duration": "5",
+                "to": "Ag15b"
+            },
+            {
+                "uid": "aumq6fgjqnvtc67",
+                "from": "Ag15b-gauche",
+                "duration": "10",
+                "to": "z 208"
+            },
+            {
+                "uid": "aumq6fgjqnvv97u",
+                "from": "Ag15b-droite",
+                "duration": "5",
+                "to": "z 221"
+            },
+            {
+                "uid": "aumq6fgjqnvyjcw",
+                "from": "z 221",
+                "duration": "10",
+                "to": "z 213"
+            },
+            {
+                "uid": "aumq6fgjqnw0924",
+                "from": "z 213",
+                "duration": "5",
+                "to": "Ag14"
+            },
+            {
+                "uid": "aumq6fgjqnw0nx7",
+                "from": "Ag14-gauche",
+                "duration": "15",
+                "to": "C211-pédale EAP"
+            },
+            {
+                "uid": "aumq6fgjqnw3ajp",
+                "from": "C211-pédale EAP",
+                "duration": "2",
+                "to": "z 105"
+            },
+            {
+                "uid": "aumq6fgjqnw3ref",
+                "from": "Ag14-droite",
+                "duration": "3",
+                "to": "z 217"
+            },
+            {
+                "uid": "aumq6fgjqnw5oyv",
+                "from": "Cv212",
+                "duration": "2",
+                "to": "z 215"
+            },
+            {
+                "uid": "aumq6fgjqnw6jqq",
+                "from": "z 215",
+                "duration": "2",
+                "to": "Ag12"
+            },
+            {
+                "uid": "aumq6fgjqnw79s6",
+                "from": "Ag12-gauche",
+                "duration": "10",
+                "to": "z 111"
+            },
+            {
+                "uid": "aumq6fgjqnw8eh7",
+                "from": "Ag12-droite",
+                "duration": "10",
+                "to": "z 201"
+            },
+            {
+                "uid": "aumq6fgjqnwa9sx",
+                "from": "z 227",
+                "duration": "5",
+                "to": "Cv224"
+            },
+            {
+                "uid": "aumq6fgjqnwd0s6",
+                "from": "Cv224",
+                "duration": "2",
+                "to": "z 221"
+            },
+            {
+                "uid": "aumq6fgjqnwdy9p",
+                "from": "z 225",
+                "duration": "11",
+                "to": "C222-pédale Proxi"
+            },
+            {
+                "uid": "aumq6fgjqnwfci6",
+                "from": "C222-pédale Proxi",
+                "duration": "2",
+                "to": "C222"
+            },
+            {
+                "uid": "aumq6fgjqnwlz5g",
+                "from": "C222",
+                "duration": "2",
+                "to": "z 223"
+            },
+            {
+                "uid": "aumq6fgjqnxb6xm",
+                "from": "z 223",
+                "duration": "7",
+                "to": "z 219"
+            },
+            {
+                "uid": "aumq5wcjqqcmhq4",
+                "from": "z 219",
+                "duration": "5",
+                "to": "Cv214"
+            },
+            {
+                "uid": "aumq6vsjqqo32d2",
+                "from": "Cv214",
+                "duration": "5",
+                "to": "z 217"
+            },
+            {
+                "uid": "aumq6vsjqqoul55",
+                "from": "z 217",
+                "duration": "2",
+                "to": "C222-pédale EPA"
+            },
+            {
+                "uid": "aumq6vsjqqp41c0",
+                "from": "C222-pédale EPA",
+                "duration": "1",
+                "to": "Cv212"
+            },
+            {
+                "uid": "bi4rj9d2tkl9mkt9ml",
+                "from": "z 232",
+                "duration": "1",
+                "to": "z 220"
+            }
+        ],
+        "impair": [
+            {
+                "uid": "aumq5h8jqovzisj",
+                "from": "z 111",
+                "duration": "15",
+                "to": "C213"
+            },
+            {
+                "uid": "aumq5h8jqow8ab3",
+                "from": "C213",
+                "duration": "2",
+                "to": "z 215"
+            },
+            {
+                "uid": "aumq5h8jqow90qi",
+                "from": "z 215",
+                "duration": "1",
+                "to": "C213-pédale EAP"
+            },
+            {
+                "uid": "aumq5h8jqow9drx",
+                "from": "C213-pédale EAP",
+                "duration": "12",
+                "to": "Cv215-pédale EPA"
+            },
+            {
+                "uid": "aumq5h8jqowb2an",
+                "from": "z 217",
+                "duration": "5",
+                "to": "Ag13"
+            },
+            {
+                "uid": "aumq5h8jqowbvwn",
+                "from": "Ag13-gauche",
+                "duration": "2",
+                "to": "z 219"
+            },
+            {
+                "uid": "aumq5h8jqowgr6a",
+                "from": "z 219",
+                "duration": "15",
+                "to": "z 223"
+            },
+            {
+                "uid": "aumq5h8jqowhrsq",
+                "from": "z 223",
+                "duration": "15",
+                "to": "S219"
+            },
+            {
+                "uid": "aumq5h8jqox0za3",
+                "from": "S219",
+                "duration": "2",
+                "to": "z 225"
+            },
+            {
+                "uid": "aumq5h8jqoxysud",
+                "from": "Ag13-droite",
+                "duration": "15",
+                "to": "z 213"
+            },
+            {
+                "uid": "aumq5h8jqoy0p9e",
+                "from": "z 213",
+                "duration": "15",
+                "to": "z 221"
+            },
+            {
+                "uid": "aumq5h8jqoyfgfv",
+                "from": "z 221",
+                "duration": "10",
+                "to": "Ag15a"
+            },
+            {
+                "uid": "aumq5h8jqoyfx6d",
+                "from": "Ag15a-gauche",
+                "duration": "5",
+                "to": "z 227"
+            },
+            {
+                "uid": "aumq5h8jqoygjth",
+                "from": "Ag15a-droite",
+                "duration": "3",
+                "to": "z 210"
+            },
+            {
+                "uid": "aumq5h8jqoyhl0u",
+                "from": "z 210",
+                "duration": "2",
+                "to": "C220-pédale EAP"
+            },
+            {
+                "uid": "aumq5h8jqoyi4na",
+                "from": "C220-pédale EAP",
+                "duration": "2",
+                "to": "z 220"
+            },
+            {
+                "uid": "aumq5h8jqoypclk",
+                "from": "z 105",
+                "duration": "15",
+                "to": "C211"
+            },
+            {
+                "uid": "aumq5h8jqoyqm9i",
+                "from": "C211",
+                "duration": "2",
+                "to": "z 213"
+            },
+            {
+                "uid": "aumq5h8jqoyrd80",
+                "from": "z 213",
+                "duration": "2",
+                "to": "C211-pédale EAP"
+            },
+            {
+                "uid": "aumq5h8jqoysy4o",
+                "from": "C211-pédale EAP",
+                "duration": "10",
+                "to": "z 221"
+            },
+            {
+                "uid": "aumq5h8jqoyt4rw",
+                "from": "z 221",
+                "duration": "2",
+                "to": "Ag15a"
+            },
+            {
+                "uid": "aumq5h8jqoytgqz",
+                "from": "Ag15a-gauche",
+                "duration": "10",
+                "to": "z 227"
+            },
+            {
+                "uid": "aumq5h8jqpd2r7s",
+                "from": "Cv215",
+                "duration": "2",
+                "to": "z 215"
+            },
+            {
+                "uid": "aumq5h8jqpd4f5e",
+                "from": "Cv215-pédale EPA",
+                "duration": "5",
+                "to": "z 217"
+            },
+            {
+                "uid": "x5btu36ojzhdt657",
+                "from": "z 201",
+                "duration": "3",
+                "to": "Cv215"
+            },
+            {
+                "uid": "bi4rj9d4dokm3ef8jl",
+                "from": "AU VA",
+                "duration": "1",
+                "to": "Ag12"
+            }
+        ]
+    },
+    "objectsStyle": [
+        {
+            "id": "lever-1",
+            "name": "1 - C211",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "20px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-2",
+            "name": "2 - C213/VU",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "160px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-3",
+            "name": "3 - C213/V1",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "260px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-4",
+            "name": "4 - Cv215/VU",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "380px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-5",
+            "name": "5 - Cv215/V1",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "480px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-6",
+            "name": "6 - AM PN122",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "660px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-7",
+            "name": "7 - AU VA",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "760px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-11",
+            "name": "11 - Ag11",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "840px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-12",
+            "name": "12 - Ag12",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "920px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-13",
+            "name": "13 - Ag13",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "980px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-14",
+            "name": "14 - Ag14",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "1040px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-15",
+            "name": "15 - Ag15a/b",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "1120px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-16",
+            "name": "16 - Cv212/VA",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "20px",
+                "top": "200px"
+            }
+        },
+        {
+            "id": "lever-17",
+            "name": "17 - Cv212/V5 à 9",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "120px",
+                "top": "200px"
+            }
+        },
+        {
+            "id": "lever-18",
+            "name": "18 - Cv212/EP",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "240px",
+                "top": "200px"
+            }
+        },
+        {
+            "id": "lever-19",
+            "name": "19 - Cv214",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "360px",
+                "top": "200px"
+            }
+        },
+        {
+            "id": "lever-21",
+            "name": "21 - C220/V2",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "480px",
+                "top": "200px"
+            }
+        },
+        {
+            "id": "lever-22",
+            "name": "22 - C220/VA à EP",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "580px",
+                "top": "200px"
+            }
+        },
+        {
+            "id": "lever-23",
+            "name": "23 - C222",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "800px",
+                "top": "200px"
+            }
+        },
+        {
+            "id": "lever-24",
+            "name": "24 - Cv224/V1",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "920px",
+                "top": "200px"
+            }
+        },
+        {
+            "id": "lever-25",
+            "name": "25 - Cv224/VA à EP",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "1120px",
+                "top": "200px"
+            }
+        },
+        {
+            "id": "lever-219",
+            "name": "219 ",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "580px",
+                "top": "80px"
+            }
+        },
+        {
+            "id": "lever-L",
+            "name": "L",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "540px",
+                "top": "560px"
+            },
+            "keyholes": {
+                "Cv212vs": {
+                    "keyId": "Cv212vs",
+                    "presence": true,
+                    "position": "plus"
+                },
+                "PN": {
+                    "keyId": "PN",
+                    "presence": false,
+                    "position": "minus"
+                }
+            }
+        },
+        {
+            "id": "lever-P",
+            "name": "P",
+            "type": "lever",
+            "parentType": "lever",
+            "position": {
+                "position": "absolute",
+                "left": "640px",
+                "top": "560px"
+            },
+            "keyholes": {
+                "PN": {
+                    "keyId": "PN",
+                    "presence": false,
+                    "position": "plus"
+                },
+                "Cv212ep": {
+                    "keyId": "Cv212ep",
+                    "presence": true,
+                    "position": "minus"
+                }
+            }
+        },
+        {
+            "id": "group-aumq7usjki98bjl",
+            "name": "Clé Embranché",
+            "type": "group",
+            "parentType": "group",
+            "position": {
+                "position": "absolute",
+                "left": "760px",
+                "top": "560px"
+            },
+            "keyholes": {
+                "Au EP": {
+                    "keyId": "Au EP",
+                    "presence": true,
+                    "position": "plus"
+                }
+            }
+        },
+        {
+            "id": "epa-C222",
+            "name": "C222",
+            "type": "button",
+            "parentType": "epa",
+            "position": {
+                "position": "absolute",
+                "left": "260px",
+                "top": "400px"
+            }
+        },
+        {
+            "id": "epa-Cv215",
+            "name": "Cv215",
+            "type": "button",
+            "parentType": "epa",
+            "position": {
+                "position": "absolute",
+                "left": "120px",
+                "top": "400px"
+            }
+        },
+        {
+            "id": "fc-C211",
+            "name": "C211",
+            "type": "button",
+            "parentType": "fc",
+            "position": {
+                "position": "absolute",
+                "left": "120px",
+                "top": "0px"
+            }
+        },
+        {
+            "id": "fc-C213",
+            "name": "C213",
+            "type": "button",
+            "parentType": "fc",
+            "position": {
+                "position": "absolute",
+                "left": "220px",
+                "top": "0px"
+            }
+        },
+        {
+            "id": "fc-C220",
+            "name": "C220",
+            "type": "button",
+            "parentType": "fc",
+            "position": {
+                "position": "absolute",
+                "left": "460px",
+                "top": "340px"
+            }
+        },
+        {
+            "id": "fc-C222",
+            "name": "C222",
+            "type": "button",
+            "parentType": "fc",
+            "position": {
+                "position": "absolute",
+                "left": "760px",
+                "top": "340px"
+            }
+        },
+        {
+            "id": "fc-Cv215",
+            "name": "Cv215",
+            "type": "button",
+            "parentType": "fc",
+            "position": {
+                "position": "absolute",
+                "left": "440px",
+                "top": "0px"
+            }
+        },
+        {
+            "id": "fa-C211",
+            "name": "C211",
+            "type": "button",
+            "parentType": "fa",
+            "position": {
+                "position": "absolute",
+                "left": "20px",
+                "top": "0px"
+            }
+        },
+        {
+            "id": "fa-C220",
+            "name": "C220",
+            "type": "button",
+            "parentType": "fa",
+            "position": {
+                "position": "absolute",
+                "left": "500px",
+                "top": "420px"
+            }
+        },
+        {
+            "id": "annSub-C220",
+            "name": "C220",
+            "type": "button",
+            "parentType": "annulSub",
+            "position": {
+                "position": "absolute",
+                "left": "540px",
+                "top": "340px"
+            }
+        },
+        {
+            "id": "annSub-C222",
+            "name": "C222",
+            "type": "button",
+            "parentType": "annulSub",
+            "position": {
+                "position": "absolute",
+                "left": "720px",
+                "top": "420px"
+            }
+        },
+        {
+            "id": "locksGroup",
+            "parentType": "locksGroup",
+            "position": {
+                "position": "absolute",
+                "left": "1080px",
+                "top": "500px"
+            }
+        },
+        {
+            "id": "centralLocks",
+            "parentType": "centralLocks",
+            "position": {
+                "position": "absolute",
+                "left": "760px",
+                "top": "640px"
+            }
+        },
+        {
+            "id": "atrGroup",
+            "parentType": "atrGroup",
+            "position": {
+                "position": "absolute",
+                "left": "60px",
+                "top": "540px"
+            }
+        },
+        {
+            "id": "atr-T24",
+            "type": "button",
+            "parentType": "atr",
+            "position": {
+                "position": "absolute",
+                "left": "900px",
+                "top": "520px"
+            }
+        }
+    ],
+    "cantonnement": []
+}

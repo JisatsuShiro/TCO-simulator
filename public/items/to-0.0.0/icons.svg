@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="nw-se" viewBox="0 0 20 20">
+    <path d="M0,10l20,0M20,20L0,0" fill="transparent" stroke="inherit" stroke-width="3" />
+  </symbol>
+  <symbol id="ne-sw" viewBox="0 0 20 20">
+    <path d="M0,10l20,0M0,20L20,0" fill="transparent" stroke="inherit" stroke-width="3" />
+  </symbol>
+</svg>

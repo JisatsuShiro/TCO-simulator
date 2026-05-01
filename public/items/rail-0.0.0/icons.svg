@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="solid" viewBox="0 0 512 512">
+    <path fill="inherit" d="M0,256L512,256z" stroke-width="64" />
+  </symbol>
+  <symbol id="dashed" viewBox="0 0 512 512">
+    <path fill="inherit" d="M0,256l128,0m128,0l128,0m128,0l128,0" stroke-width="64" />
+  </symbol>
+</svg>

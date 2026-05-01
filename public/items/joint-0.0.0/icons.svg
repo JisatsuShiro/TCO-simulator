@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="nw" viewBox="0 0 512 512">
+    <path fill="inherit" d="M0,0L512,512z" stroke-width="64" />
+  </symbol>
+  <symbol id="ne" viewBox="0 0 512 512">
+    <path fill="inherit" d="M0,512L512,0z" stroke-width="64" />
+  </symbol>
+  <symbol id="e" viewBox="0 0 512 512">
+    <path fill="inherit" d="M0,256L512,256z" stroke-width="64" />
+  </symbol>
+</svg>

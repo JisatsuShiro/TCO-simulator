@@ -1,0 +1,24 @@
+{
+  "id": "arrow",
+  "label": "Fleche de direction",
+  "icon": "./ui.svg#w",
+  "variations": {
+    "w": {
+      "label": "gauche",
+      "icon": "./ui.svg#w",
+      "ui": "./ui.svg#w"
+    },
+    "e": {
+      "label": "droite",
+      "icon": "./ui.svg#e",
+      "ui": "./ui.svg#e"
+    }
+  },
+  "template": "<use :href='ui' width='20' height='20' :x='x' :y='y' />",
+  "version": "0.0.0",
+  "category": "drawing",
+  "depts": {
+      "gessie": "0.0.0",
+      "items": []
+    }
+}

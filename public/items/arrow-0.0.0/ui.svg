@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="w" viewBox="0 0 512 512">
+    <path fill="inherit" d="M128,256L384,0L256,256l128,256L128,256z"/>
+  </symbol>
+  <symbol id="nw" viewBox="0 0 512 512">
+    <path fill="inherit" d="M128,256L384,0L256,256l128,256L128,256z" transform="rotate(45 256 256)"/>
+  </symbol>
+  <symbol id="n" viewBox="0 0 512 512">
+    <path fill="inherit" d="M128,256L384,0L256,256l128,256L128,256z" transform="rotate(90 256 256)"/>
+  </symbol>
+  <symbol id="ne" viewBox="0 0 512 512">
+    <path fill="inherit" d="M128,256L384,0L256,256l128,256L128,256z" transform="rotate(135 256 256)"/>
+  </symbol>
+  <symbol id="e" viewBox="0 0 512 512">
+    <path fill="inherit" d="M128,256L384,0L256,256l128,256L128,256z" transform="rotate(180 256 256)"/>
+  </symbol>
+  <symbol id="se" viewBox="0 0 512 512">
+    <path fill="inherit" d="M128,256L384,0L256,256l128,256L128,256z" transform="rotate(225 256 256)"/>
+  </symbol>
+  <symbol id="s" viewBox="0 0 512 512">
+    <path fill="inherit" d="M128,256L384,0L256,256l128,256L128,256z" transform="rotate(270 256 256)"/>
+  </symbol>
+  <symbol id="sw" viewBox="0 0 512 512">
+    <path fill="inherit" d="M128,256L384,0L256,256l128,256L128,256z" transform="rotate(315 256 256)"/>
+  </symbol>
+</svg>

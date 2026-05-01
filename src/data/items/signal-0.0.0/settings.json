@@ -1,0 +1,1 @@
+{"label":"Signal","id":"signal","version":"0.0.0","icon":"fa-lightbulb-o ","variations":{},"options":[{"label":"Nom","id":"name","type":"textfield","placeholder":""}],"template":"<tco-signal :x=\"x\" :y=\"y\" :name=\"item.name\"></tco-signal>","dir":"items/signal-0.0.0/","files":[],"category":"drawing"}

@@ -1,0 +1,73 @@
+{
+    "label": "Aiguille",
+    "id": "aiguille",
+    "version": "0.0.0",
+    "icon": "./icons.svg#ne-se",
+    "variations": {
+        "e-se": {
+            "label": "e-se",
+            "id": "e-se",
+            "icon": "./icons.svg#e-se",
+            "ui": "e-se"
+        },
+        "e-sw": {
+            "label": "e-sw",
+            "id": "e-sw",
+            "icon": "./icons.svg#e-sw",
+            "ui": "e-sw"
+        },
+        "e-ne": {
+            "label": "e-ne",
+            "id": "e-ne",
+            "icon": "./icons.svg#e-ne",
+            "ui": "e-ne"
+        },
+        "e-nw": {
+            "label": "e-nw",
+            "id": "e-nw",
+            "icon": "./icons.svg#e-nw",
+            "ui": "e-nw"
+        },
+        "ne-nw": {
+            "label": "ne-nw",
+            "id": "ne-nw",
+            "icon": "./icons.svg#ne-nw",
+            "ui": "ne-w"
+        },
+        "ne-se": {
+            "label": "ne-se",
+            "id": "ne-se",
+            "icon": "./icons.svg#ne-se",
+            "ui": "ne-e"
+        },
+        "nw-sw": {
+            "label": "nw-sw",
+            "id": "nw-sw",
+            "icon": "./icons.svg#nw-sw",
+            "ui": "nw-w"
+        },
+        "nw-ne": {
+            "label": "nw-ne",
+            "id": "nw-ne",
+            "icon": "./icons.svg#nw-ne",
+            "ui": "nw-e"
+        }
+    },
+    "options": [
+        {
+            "label": "Nom",
+            "id": "name",
+            "type": "textfield",
+            "placeholder": ""
+        }
+    ],
+    "template": "<tco-aiguille :x=\"x\" :y=\"y\" :shape=\"ui\" :name=\"item.name\" />",
+    "dir": "/home/bsanchez/.config/gessie/items/aiguille-0.0.0/",
+    "files": [
+        {
+            "name": "icons.svg",
+            "type": "svg"
+        }
+    ],
+    "category": "drawing"
+}
