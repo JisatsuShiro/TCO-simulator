@@ -10,7 +10,33 @@
 // on lit les listes d'IDs via une string CSV puis split (pattern compatible
 // avec les sélecteurs scalaires Zustand).
 
+import { useState } from 'react';
 import { useGessieStore } from '../../store/useGessieStore';
+import { Panel } from '../../design/primitives/Panel';
+import { KeyHole } from '../../design/primitives/KeyHole';
+import type { KeyHoleState } from '../../design/primitives/KeyHole';
+import { KeyTag } from '../../design/primitives/KeyTag';
+import { colors, spacing, typography } from '../../design/tokens';
+
+/**
+ * Helper d'animation refus : exécute `action`, puis vérifie via
+ * `readPresence()` si la présence a changé. Si non, déclenche le refus
+ * pendant 600 ms (durée d'animation).
+ */
+function useRefusalDetection(): { refused: boolean; trigger: (run: () => void, readPresence: () => boolean, before: boolean) => void } {
+  const [refused, setRefused] = useState(false);
+  const trigger = (run: () => void, readPresence: () => boolean, before: boolean) => {
+    run();
+    setTimeout(() => {
+      const after = readPresence();
+      if (after === before) {
+        setRefused(true);
+        setTimeout(() => setRefused(false), 600);
+      }
+    }, 0);
+  };
+  return { refused, trigger };
+}
 
 // ===== Helpers : sélecteurs scalaires (string CSV) =====
 
@@ -49,6 +75,18 @@ function useLeverIdsWithKeyholes(): string[] {
   return csv === '' ? [] : csv.split('\n');
 }
 
+/**
+ * Mappe `presence` boolean + `holdedKey` vers les 3 états du KeyHole.
+ *   - presence true                → 'closed-with-key' (cliquable: take)
+ *   - presence false + clé en main → 'open-no-key' (cliquable: put)
+ *   - presence false + rien en main → 'closed-no-key' (non cliquable)
+ */
+function deriveState(presence: boolean, holdedKey: string | undefined): KeyHoleState {
+  if (presence) return 'closed-with-key';
+  if (holdedKey) return 'open-no-key';
+  return 'closed-no-key';
+}
+
 // ===== Composant principal =====
 
 export function KeysPanel() {
@@ -62,43 +100,49 @@ export function KeysPanel() {
     lockIds.length + groupIds.length + centralLockUids.length + leverIds.length;
   if (total === 0) return null;
 
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        padding: 12,
-        background: '#1c2a36',
-        borderTop: '1px solid #34495e',
-        color: '#ecf0f1',
-        fontSize: 12,
-        fontFamily: 'system-ui',
-        maxHeight: 240,
-        overflowY: 'auto',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontWeight: 600 }}>Clés</span>
-        <span
-          style={{
-            padding: '2px 8px',
-            background: holdedKey ? '#e67e22' : '#34495e',
-            color: '#fff',
-            borderRadius: 3,
-            fontFamily: 'monospace',
-          }}
-        >
-          en main : {holdedKey ?? '—'}
-        </span>
-      </div>
+  const sectionTitleStyle: React.CSSProperties = {
+    fontSize: typography.size.xs,
+    color: colors.text.muted,
+    fontWeight: typography.weight.medium,
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    marginBottom: 4,
+  };
 
+  const sectionRowStyle: React.CSSProperties = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  };
+
+  const groupContainerStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: spacing.xs,
+    padding: `${spacing.xs}px ${spacing.sm}px`,
+    background: colors.surface.darkest,
+    border: `1px solid ${colors.border.subtle}`,
+    borderRadius: 4,
+  };
+
+  return (
+    <Panel
+      title="Clés"
+      meta={
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: spacing.xs }}>
+          <span>en main :</span>
+          {holdedKey ? <KeyTag label={holdedKey} held /> : <span>—</span>}
+        </span>
+      }
+      scroll
+      maxHeight={240}
+    >
       {leverIds.length > 0 && (
         <div>
-          <div style={{ fontSize: 11, color: '#95a5a6' }}>Leviers</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <div style={sectionTitleStyle}>Leviers</div>
+          <div style={sectionRowStyle}>
             {leverIds.map((id) => (
-              <LeverKeyholeBox key={id} leverId={id} />
+              <LeverKeyholeBox key={id} leverId={id} groupContainerStyle={groupContainerStyle} />
             ))}
           </div>
         </div>
@@ -106,10 +150,10 @@ export function KeysPanel() {
 
       {groupIds.length > 0 && (
         <div>
-          <div style={{ fontSize: 11, color: '#95a5a6' }}>Boîtes à clés</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <div style={sectionTitleStyle}>Boîtes à clés</div>
+          <div style={sectionRowStyle}>
             {groupIds.map((id) => (
-              <GroupBox key={id} groupId={id} />
+              <GroupBox key={id} groupId={id} groupContainerStyle={groupContainerStyle} />
             ))}
           </div>
         </div>
@@ -117,10 +161,8 @@ export function KeysPanel() {
 
       {lockIds.length > 0 && (
         <div>
-          <div style={{ fontSize: 11, color: '#95a5a6' }}>
-            Cadenas ({lockIds.length})
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+          <div style={sectionTitleStyle}>Cadenas ({lockIds.length})</div>
+          <div style={sectionRowStyle}>
             {lockIds.map((id) => (
               <LockBox key={id} keyId={id} />
             ))}
@@ -130,48 +172,27 @@ export function KeysPanel() {
 
       {centralLockUids.length > 0 && (
         <div>
-          <div style={{ fontSize: 11, color: '#95a5a6' }}>Verrous centraux</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+          <div style={sectionTitleStyle}>Verrous centraux</div>
+          <div style={sectionRowStyle}>
             {centralLockUids.map((uid) => (
               <CentralLockBox key={uid} uid={uid} />
             ))}
           </div>
         </div>
       )}
-    </div>
+    </Panel>
   );
 }
 
 // ===== Sous-composants =====
 
-function keyholeButton(
-  label: string,
-  presence: string | false,
-  onClick: () => void,
-  title?: string,
-): React.ReactNode {
-  const has = !!presence;
-  return (
-    <button
-      onClick={onClick}
-      title={title}
-      style={{
-        padding: '2px 8px',
-        fontSize: 11,
-        fontFamily: 'monospace',
-        borderRadius: 3,
-        border: `1px solid ${has ? '#27ae60' : '#7f8c8d'}`,
-        background: has ? '#1e8449' : '#2c3e50',
-        color: '#ecf0f1',
-        cursor: 'pointer',
-      }}
-    >
-      {label} {has ? '●' : '○'}
-    </button>
-  );
-}
-
-function LeverKeyholeBox({ leverId }: { leverId: string }) {
+function LeverKeyholeBox({
+  leverId,
+  groupContainerStyle,
+}: {
+  leverId: string;
+  groupContainerStyle: React.CSSProperties;
+}) {
   const keysCsv = useGessieStore((s) => {
     const lev = s.player.data?.levers[leverId];
     if (!lev?.keyholes) return '';
@@ -180,25 +201,16 @@ function LeverKeyholeBox({ leverId }: { leverId: string }) {
   const keys = keysCsv === '' ? [] : keysCsv.split('\n');
   if (keys.length === 0) return null;
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 4,
-        padding: '2px 6px',
-        background: '#0f1923',
-        borderRadius: 3,
-      }}
-    >
-      <strong style={{ fontSize: 10 }}>L{leverId}</strong>
+    <div style={groupContainerStyle}>
+      <strong style={{ fontSize: typography.size.xs, color: colors.text.secondary }}>L{leverId}</strong>
       {keys.map((k) => (
-        <LeverKeyholeButton key={k} leverId={leverId} keyId={k} />
+        <LeverKeyhole key={k} leverId={leverId} keyId={k} />
       ))}
     </div>
   );
 }
 
-function LeverKeyholeButton({ leverId, keyId }: { leverId: string; keyId: string }) {
+function LeverKeyhole({ leverId, keyId }: { leverId: string; keyId: string }) {
   const presence = useGessieStore(
     (s) => s.player.data?.levers[leverId]?.keyholes?.[keyId]?.presence ?? false,
   );
@@ -208,21 +220,38 @@ function LeverKeyholeButton({ leverId, keyId }: { leverId: string; keyId: string
   const holdedKey = useGessieStore((s) => s.player.data?.holdedKey);
   const takeKey = useGessieStore((s) => s.takeKey);
   const putKey = useGessieStore((s) => s.putKey);
+  const { refused, trigger } = useRefusalDetection();
 
   const handleClick = () => {
-    if (presence) takeKey({ leverId, keyId });
-    else if (holdedKey) putKey({ leverId, keyId });
+    const before = Boolean(presence);
+    trigger(
+      () => {
+        if (presence) takeKey({ leverId, keyId });
+        else if (holdedKey) putKey({ leverId, keyId });
+      },
+      () => Boolean(useGessieStore.getState().player.data?.levers[leverId]?.keyholes?.[keyId]?.presence),
+      before,
+    );
   };
 
-  return keyholeButton(
-    keyId,
-    presence,
-    handleClick,
-    `${keyId} (${position})`,
-  ) as React.ReactElement;
+  return (
+    <KeyHole
+      state={deriveState(Boolean(presence), holdedKey)}
+      label={keyId}
+      onClick={handleClick}
+      refused={refused}
+      title={`${keyId} (${position})`}
+    />
+  );
 }
 
-function GroupBox({ groupId }: { groupId: string }) {
+function GroupBox({
+  groupId,
+  groupContainerStyle,
+}: {
+  groupId: string;
+  groupContainerStyle: React.CSSProperties;
+}) {
   const label = useGessieStore((s) => s.player.data?.groups[groupId]?.label ?? groupId);
   const keysCsv = useGessieStore((s) => {
     const grp = s.player.data?.groups[groupId];
@@ -231,38 +260,44 @@ function GroupBox({ groupId }: { groupId: string }) {
   });
   const keys = keysCsv === '' ? [] : keysCsv.split('\n');
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 4,
-        padding: '2px 6px',
-        background: '#0f1923',
-        borderRadius: 3,
-      }}
-    >
-      <strong style={{ fontSize: 10 }}>{label}</strong>
+    <div style={groupContainerStyle}>
+      <strong style={{ fontSize: typography.size.xs, color: colors.text.secondary }}>{label}</strong>
       {keys.map((k) => (
-        <GroupKeyholeButton key={k} groupId={groupId} keyId={k} />
+        <GroupKeyhole key={k} groupId={groupId} keyId={k} />
       ))}
     </div>
   );
 }
 
-function GroupKeyholeButton({ groupId, keyId }: { groupId: string; keyId: string }) {
+function GroupKeyhole({ groupId, keyId }: { groupId: string; keyId: string }) {
   const presence = useGessieStore(
     (s) => s.player.data?.groups[groupId]?.keyholes[keyId]?.presence ?? false,
   );
   const holdedKey = useGessieStore((s) => s.player.data?.holdedKey);
   const takeKey = useGessieStore((s) => s.takeKey);
   const putKey = useGessieStore((s) => s.putKey);
+  const { refused, trigger } = useRefusalDetection();
 
   const handleClick = () => {
-    if (presence) takeKey({ groupId, keyId });
-    else if (holdedKey) putKey({ groupId, keyId });
+    const before = Boolean(presence);
+    trigger(
+      () => {
+        if (presence) takeKey({ groupId, keyId });
+        else if (holdedKey) putKey({ groupId, keyId });
+      },
+      () => Boolean(useGessieStore.getState().player.data?.groups[groupId]?.keyholes[keyId]?.presence),
+      before,
+    );
   };
 
-  return keyholeButton(keyId, presence, handleClick) as React.ReactElement;
+  return (
+    <KeyHole
+      state={deriveState(Boolean(presence), holdedKey)}
+      label={keyId}
+      onClick={handleClick}
+      refused={refused}
+    />
+  );
 }
 
 function LockBox({ keyId }: { keyId: string }) {
@@ -270,13 +305,29 @@ function LockBox({ keyId }: { keyId: string }) {
   const holdedKey = useGessieStore((s) => s.player.data?.holdedKey);
   const takeKey = useGessieStore((s) => s.takeKey);
   const putKey = useGessieStore((s) => s.putKey);
+  const { refused, trigger } = useRefusalDetection();
 
   const handleClick = () => {
-    if (presence) takeKey({ lock: true, keyId });
-    else if (holdedKey) putKey({ lock: true, keyId });
+    const before = Boolean(presence);
+    trigger(
+      () => {
+        if (presence) takeKey({ lock: true, keyId });
+        else if (holdedKey) putKey({ lock: true, keyId });
+      },
+      () => Boolean(useGessieStore.getState().player.data?.locks[keyId]?.presence),
+      before,
+    );
   };
 
-  return keyholeButton(keyId, presence, handleClick) as React.ReactElement;
+  return (
+    <KeyHole
+      state={deriveState(Boolean(presence), holdedKey)}
+      label={keyId}
+      onClick={handleClick}
+      refused={refused}
+      variant="large"
+    />
+  );
 }
 
 function CentralLockBox({ uid }: { uid: string }) {
@@ -289,17 +340,32 @@ function CentralLockBox({ uid }: { uid: string }) {
   const holdedKey = useGessieStore((s) => s.player.data?.holdedKey);
   const takeCentralKey = useGessieStore((s) => s.takeCentralKey);
   const putCentralKey = useGessieStore((s) => s.putCentralKey);
+  const { refused, trigger } = useRefusalDetection();
 
   const has = presence !== false;
   const handleClick = () => {
-    if (has) takeCentralKey(uid);
-    else if (holdedKey) putCentralKey(uid);
+    trigger(
+      () => {
+        if (has) takeCentralKey(uid);
+        else if (holdedKey) putCentralKey(uid);
+      },
+      () => {
+        const cl = useGessieStore.getState().player.data?.centralLocks[uid];
+        if (!cl) return false;
+        return cl.presence !== false;
+      },
+      has,
+    );
   };
 
-  return keyholeButton(
-    keyId,
-    has ? keyId : false,
-    handleClick,
-    `central:${uid}`,
-  ) as React.ReactElement;
+  return (
+    <KeyHole
+      state={deriveState(has, holdedKey)}
+      label={keyId}
+      onClick={handleClick}
+      refused={refused}
+      variant="large"
+      title={`central:${uid}`}
+    />
+  );
 }

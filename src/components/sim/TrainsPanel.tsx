@@ -14,6 +14,9 @@
 import { useState, useMemo } from 'react';
 import { useGessieStore } from '../../store/useGessieStore';
 import type { Direction, TrainSize } from '../../sim/types';
+import { Panel } from '../../design/primitives/Panel';
+import { Button } from '../../design/primitives/Button';
+import { colors, radii, spacing, typography } from '../../design/tokens';
 
 const SIZES: TrainSize[] = ['Petit', 'Moyen', 'Grand'];
 const SPEEDS = [1, 2, 5, 10];
@@ -52,43 +55,22 @@ export function TrainsPanel() {
 
   if (!data) return null;
 
-  const wrapStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 8,
-    padding: 12,
-    background: '#0f1923',
-    color: '#ecf0f1',
-    fontSize: 12,
-    fontFamily: 'system-ui',
-    borderTop: '1px solid #34495e',
-    maxHeight: 200,
-    overflowY: 'auto',
-  };
-  const rowStyle: React.CSSProperties = {
-    display: 'flex',
-    gap: 10,
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  };
   const selectStyle: React.CSSProperties = {
-    background: '#1a242f',
-    color: '#ecf0f1',
-    border: '1px solid #34495e',
-    borderRadius: 3,
-    padding: '2px 4px',
-    fontSize: 12,
-    fontFamily: 'inherit',
+    background: colors.surface.medium,
+    color: colors.text.primary,
+    border: `1px solid ${colors.border.default}`,
+    borderRadius: radii.sm,
+    padding: '3px 6px',
+    fontSize: typography.size.sm,
+    fontFamily: typography.ui.family,
   };
-  const btnStyle: React.CSSProperties = {
-    padding: '4px 14px',
-    fontSize: 12,
-    fontFamily: 'inherit',
-    borderRadius: 3,
-    border: '1px solid #2980b9',
-    background: '#2980b9',
-    color: 'white',
-    cursor: 'pointer',
+
+  const labelStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: spacing.xs,
+    color: colors.text.secondary,
+    fontSize: typography.size.sm,
   };
 
   const handleLaunch = (): void => {
@@ -104,73 +86,85 @@ export function TrainsPanel() {
   };
 
   return (
-    <div style={wrapStyle}>
-      <div style={rowStyle}>
-        <strong>Trains</strong>
-        <label>
-          Direction&nbsp;:
-          <select
-            value={direction}
-            onChange={(e) => setDirection(e.target.value as Direction)}
-            style={selectStyle}
-          >
-            {DIRECTIONS.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Taille&nbsp;:
-          <select
-            value={size}
-            onChange={(e) => setSize(e.target.value as TrainSize)}
-            style={selectStyle}
-          >
-            {SIZES.map((sz) => (
-              <option key={sz} value={sz}>
-                {sz}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Vitesse&nbsp;:
-          <select
-            value={speed}
-            onChange={(e) => setSpeed(Number(e.target.value))}
-            style={selectStyle}
-          >
-            {SPEEDS.map((sp) => (
-              <option key={sp} value={sp}>
-                ×{sp}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Départ&nbsp;:
-          <select
-            value={startingPoint}
-            onChange={(e) => setStartingPoint(e.target.value)}
-            style={selectStyle}
-          >
-            {startingPoints.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button style={btnStyle} onClick={handleLaunch}>
-          Lancer un train
-        </button>
-      </div>
+    <Panel
+      title="Trains"
+      meta={`${events.length} events · ${pausedEvents.length} paused`}
+      scroll
+      maxHeight={200}
+      bodyDirection="row"
+      bodyGap={spacing.sm}
+    >
+      <label style={labelStyle}>
+        Direction&nbsp;:
+        <select
+          value={direction}
+          onChange={(e) => setDirection(e.target.value as Direction)}
+          style={selectStyle}
+        >
+          {DIRECTIONS.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label style={labelStyle}>
+        Taille&nbsp;:
+        <select
+          value={size}
+          onChange={(e) => setSize(e.target.value as TrainSize)}
+          style={selectStyle}
+        >
+          {SIZES.map((sz) => (
+            <option key={sz} value={sz}>
+              {sz}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label style={labelStyle}>
+        Vitesse&nbsp;:
+        <select
+          value={speed}
+          onChange={(e) => setSpeed(Number(e.target.value))}
+          style={selectStyle}
+        >
+          {SPEEDS.map((sp) => (
+            <option key={sp} value={sp}>
+              ×{sp}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label style={labelStyle}>
+        Départ&nbsp;:
+        <select
+          value={startingPoint}
+          onChange={(e) => setStartingPoint(e.target.value)}
+          style={selectStyle}
+        >
+          {startingPoints.map((p) => (
+            <option key={p} value={p}>
+              {p}
+            </option>
+          ))}
+        </select>
+      </label>
+      <Button variant="primary" onClick={handleLaunch}>
+        + Lancer un train
+      </Button>
 
-      <div style={{ ...rowStyle, fontFamily: 'monospace', fontSize: 11, color: '#95a5a6' }}>
-        <span>events: {events.length}</span>
-        <span>paused: {pausedEvents.length}</span>
+      <div
+        style={{
+          flexBasis: '100%',
+          display: 'flex',
+          gap: spacing.xs,
+          flexWrap: 'wrap',
+          fontFamily: typography.mono.family,
+          fontSize: typography.size.xs,
+          color: colors.text.muted,
+        }}
+      >
         {events.slice(0, 8).map((e) => (
           <span key={e.uid}>
             [{e.type}
@@ -180,6 +174,6 @@ export function TrainsPanel() {
         ))}
         {events.length > 8 && <span>… +{events.length - 8}</span>}
       </div>
-    </div>
+    </Panel>
   );
 }

@@ -1,43 +1,35 @@
-// Panel des blocs sémaphores (cantonnement). Affiche les blocs (s'il y en a)
-// et fournit les boutons d'action : test, reddition, sémaphore, voie libre,
-// annonce. Les actions sont silencieuses en cas de garde refusée (cohérent
-// avec Gessie).
+// Panel des blocs sémaphores (cantonnement). Affiche chaque bloc sous forme
+// de carte avec ses indicateurs d'état (Pill) et les actions opérateur.
 //
-// Sélecteurs Zustand primitifs (count + accès indexé) pour éviter les boucles
-// de re-render.
+// Sélecteurs Zustand primitifs (count + accès indexé par champ) pour éviter
+// les boucles "getSnapshot should be cached".
 
 import { useGessieStore } from '../../store/useGessieStore';
+import { Panel } from '../../design/primitives/Panel';
+import { Button } from '../../design/primitives/Button';
+import { Pill } from '../../design/primitives/Pill';
+import { colors, radii, spacing, typography } from '../../design/tokens';
 
 export function BlocsPanel() {
   const blocsCount = useGessieStore((s) => s.player.data?.blocs.length ?? 0);
   if (blocsCount === 0) return null;
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 4,
-        padding: 12,
-        background: '#1c2a36',
-        borderTop: '1px solid #34495e',
-        color: '#ecf0f1',
-        fontSize: 12,
-        fontFamily: 'system-ui',
-        maxHeight: 220,
-        overflowY: 'auto',
-      }}
+    <Panel
+      title="Blocs cantonnement"
+      meta={`${blocsCount} bloc${blocsCount > 1 ? 's' : ''}`}
+      scroll
+      maxHeight={320}
+      bodyGap={spacing.sm}
     >
-      <div style={{ fontWeight: 600 }}>Blocs cantonnement ({blocsCount})</div>
       {Array.from({ length: blocsCount }, (_, i) => (
         <BlocRow key={i} index={i} />
       ))}
-    </div>
+    </Panel>
   );
 }
 
 function BlocRow({ index }: { index: number }) {
-  // Sélecteurs primitifs un par un
   const id = useGessieStore((s) => s.player.data?.blocs[index]?.id ?? '');
   const gareLabel = useGessieStore((s) => s.player.data?.blocs[index]?.gareLabel ?? '');
   const test = useGessieStore((s) => s.player.data?.blocs[index]?.test ?? '');
@@ -55,56 +47,107 @@ function BlocRow({ index }: { index: number }) {
   const switchVL = useGessieStore((s) => s.switchVoieLibreBouton);
   const pressAnnonce = useGessieStore((s) => s.pressAnnonceBouton);
 
-  const cellStyle: React.CSSProperties = {
-    padding: '1px 4px',
-    background: '#0f1923',
-    borderRadius: 2,
+  // Convention bloc : 'A' = active (allumé), 'E' = éteint, '' = repos.
+  const isActive = (v: string) => v === 'A';
+
+  const cardStyle: React.CSSProperties = {
+    background: colors.surface.medium,
+    border: `1px solid ${colors.border.subtle}`,
+    borderRadius: radii.md,
+    padding: spacing.sm,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: spacing.xs,
   };
-  const btnStyle: React.CSSProperties = {
-    padding: '2px 8px',
-    fontSize: 11,
-    fontFamily: 'inherit',
-    borderRadius: 3,
-    border: '1px solid #2980b9',
-    background: '#2980b9',
-    color: 'white',
-    cursor: 'pointer',
+
+  const headerStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: spacing.sm,
+  };
+
+  const stateRowStyle: React.CSSProperties = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: spacing.xxs,
+    alignItems: 'center',
+  };
+
+  const actionRowStyle: React.CSSProperties = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+    marginTop: spacing.xxs,
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: 6,
-        alignItems: 'center',
-        flexWrap: 'wrap',
-      }}
-    >
-      <strong style={{ minWidth: 80 }}>{gareLabel}</strong>
-      <span style={{ color: '#7f8c8d', fontSize: 10 }}>(sem: {semaphoreId || '—'})</span>
-      <span style={cellStyle}>test={test}</span>
-      <span style={cellStyle}>voieLibre={voieLibre}</span>
-      <span style={cellStyle}>reddition={reddition}</span>
-      <span style={cellStyle}>annonce={annonce}</span>
-      <span style={cellStyle}>
-        sem={commutSemaphore}/{commutSemaphoreLight}
-      </span>
-      <span style={cellStyle}>blocage={blocage}</span>
-      <button style={btnStyle} onClick={() => pressTest(id)}>
-        Test
-      </button>
-      <button style={btnStyle} onClick={() => pressReddition(id)}>
-        Réddition
-      </button>
-      <button style={btnStyle} onClick={() => switchSem(id)}>
-        Sémaph. {commutSemaphore === 'N' ? '→R' : '→N'}
-      </button>
-      <button style={btnStyle} onClick={() => switchVL(id)}>
-        VL {voieLibre === 'A' ? '→E' : '→A'}
-      </button>
-      <button style={btnStyle} onClick={() => pressAnnonce(id)}>
-        Annonce
-      </button>
+    <div style={cardStyle}>
+      <div style={headerStyle}>
+        <strong
+          style={{
+            color: colors.text.primary,
+            fontSize: typography.size.base,
+            fontWeight: typography.weight.semibold,
+          }}
+        >
+          {gareLabel || id}
+        </strong>
+        {semaphoreId && (
+          <span
+            style={{
+              color: colors.text.muted,
+              fontSize: typography.size.xs,
+              fontFamily: typography.mono.family,
+            }}
+          >
+            sémaphore {semaphoreId}
+          </span>
+        )}
+      </div>
+
+      <div style={stateRowStyle}>
+        <Pill variant="success" active={isActive(test)}>
+          Test
+        </Pill>
+        <Pill variant="success" active={isActive(voieLibre)}>
+          Voie libre
+        </Pill>
+        <Pill variant="info" active={isActive(reddition)}>
+          Réddition
+        </Pill>
+        <Pill variant="warning" active={isActive(annonce)}>
+          Annonce
+        </Pill>
+        {commutSemaphore && (
+          <Pill variant="neutral" active>
+            Sém. {commutSemaphore}
+            {commutSemaphoreLight ? ` · lampe ${commutSemaphoreLight}` : ''}
+          </Pill>
+        )}
+        {blocage && blocage !== 'E' && (
+          <Pill variant="danger" active>
+            Blocage {blocage}
+          </Pill>
+        )}
+      </div>
+
+      <div style={actionRowStyle}>
+        <Button size="sm" onClick={() => pressTest(id)}>
+          Test
+        </Button>
+        <Button size="sm" onClick={() => pressReddition(id)}>
+          Réddition
+        </Button>
+        <Button size="sm" onClick={() => switchSem(id)}>
+          Sémaph. {commutSemaphore === 'N' ? '→ R' : '→ N'}
+        </Button>
+        <Button size="sm" onClick={() => switchVL(id)}>
+          VL {voieLibre === 'A' ? '→ E' : '→ A'}
+        </Button>
+        <Button size="sm" onClick={() => pressAnnonce(id)}>
+          Annonce
+        </Button>
+      </div>
     </div>
   );
 }

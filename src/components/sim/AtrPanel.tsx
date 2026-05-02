@@ -1,36 +1,31 @@
-// Panel des ATR (annulateurs de transit). Affiche la liste avec leur état
-// (on/pressed/autorisation/terrain) et boutons press/release/autoriser.
+// Panel des ATR (annulateurs de transit). Carte par ATR avec ses indicateurs
+// d'état (Pill) et les actions opérateur.
 //
-// Sélecteurs primitifs uniquement (count + accès indexé par champ) pour
-// éviter les boucles de re-render Zustand.
+// Sélecteurs primitifs (count + accès indexé par champ) pour éviter les
+// boucles "getSnapshot should be cached".
 
 import { useGessieStore } from '../../store/useGessieStore';
+import { Panel } from '../../design/primitives/Panel';
+import { Button } from '../../design/primitives/Button';
+import { Pill } from '../../design/primitives/Pill';
+import { colors, radii, spacing, typography } from '../../design/tokens';
 
 export function AtrPanel() {
   const count = useGessieStore((s) => s.player.data?.transitAnnulateurs.length ?? 0);
   if (count === 0) return null;
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 4,
-        padding: 12,
-        background: '#1c2a36',
-        borderTop: '1px solid #34495e',
-        color: '#ecf0f1',
-        fontSize: 12,
-        fontFamily: 'system-ui',
-        maxHeight: 200,
-        overflowY: 'auto',
-      }}
+    <Panel
+      title="Annulateurs de transit"
+      meta={`${count} ATR`}
+      scroll
+      maxHeight={260}
+      bodyGap={spacing.sm}
     >
-      <div style={{ fontWeight: 600 }}>Annulateurs de transit ({count})</div>
       {Array.from({ length: count }, (_, i) => (
         <AtrRow key={i} index={i} />
       ))}
-    </div>
+    </Panel>
   );
 }
 
@@ -46,51 +41,71 @@ function AtrRow({ index }: { index: number }) {
   const giveAuth = useGessieStore((s) => s.giveATRAutorisation);
   const removeAuth = useGessieStore((s) => s.removeATRAutorisation);
 
-  const tag = (label: string, val: boolean): React.CSSProperties => ({
-    padding: '1px 6px',
-    fontSize: 11,
-    background: val ? '#27ae60' : '#34495e',
-    color: '#fff',
-    borderRadius: 2,
-  });
+  const cardStyle: React.CSSProperties = {
+    background: colors.surface.medium,
+    border: `1px solid ${colors.border.subtle}`,
+    borderRadius: radii.md,
+    padding: spacing.sm,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: spacing.xs,
+  };
 
-  const btnStyle: React.CSSProperties = {
-    padding: '2px 8px',
-    fontSize: 11,
-    fontFamily: 'inherit',
-    borderRadius: 3,
-    border: '1px solid #2980b9',
-    background: '#2980b9',
-    color: 'white',
-    cursor: 'pointer',
+  const headerStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: spacing.sm,
+    flexWrap: 'wrap',
+  };
+
+  const actionRowStyle: React.CSSProperties = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+    marginTop: spacing.xxs,
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: 6,
-        alignItems: 'center',
-        flexWrap: 'wrap',
-      }}
-    >
-      <strong style={{ minWidth: 60 }}>{id}</strong>
-      <span style={tag('on', on)}>on</span>
-      <span style={tag('pressed', pressed)}>pressed</span>
-      <span style={tag('auth', autorisation)}>auth</span>
-      <span style={tag('terrain', terrain)}>terrain</span>
-      <button style={btnStyle} onClick={() => pressATR(id)}>
-        Press
-      </button>
-      <button style={btnStyle} onClick={() => releaseATR(id)}>
-        Release
-      </button>
-      <button style={btnStyle} onClick={() => giveAuth(id)}>
-        Autoriser
-      </button>
-      <button style={btnStyle} onClick={() => removeAuth(id)}>
-        Retirer
-      </button>
+    <div style={cardStyle}>
+      <div style={headerStyle}>
+        <strong
+          style={{
+            color: colors.text.primary,
+            fontSize: typography.size.base,
+            fontWeight: typography.weight.semibold,
+            minWidth: 60,
+          }}
+        >
+          {id}
+        </strong>
+        <Pill variant="success" active={on}>
+          Allumé
+        </Pill>
+        <Pill variant="info" active={pressed}>
+          Pressé
+        </Pill>
+        <Pill variant="warning" active={autorisation}>
+          Autorisation
+        </Pill>
+        <Pill variant="neutral" active={terrain}>
+          Terrain
+        </Pill>
+      </div>
+
+      <div style={actionRowStyle}>
+        <Button size="sm" onClick={() => pressATR(id)}>
+          Presser
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => releaseATR(id)}>
+          Relâcher
+        </Button>
+        <Button size="sm" onClick={() => giveAuth(id)}>
+          Autoriser
+        </Button>
+        <Button size="sm" variant="ghost-danger" onClick={() => removeAuth(id)}>
+          Retirer
+        </Button>
+      </div>
     </div>
   );
 }

@@ -10,12 +10,15 @@
 //                                       TEST_IMPOSSIBLE, NON_RECEPTION_*,
 //                                       DERANGEMENT_BLOC
 //
-// UI : sélecteur de cible (dropdown) + boutons-toggle des disturbances
+// UI : sélecteur de cible (dropdown) + Pill-toggle des disturbances
 // applicables. Section "Actives" qui liste les disturbances en cours
 // (toutes cibles confondues) avec un clic = désactive.
 
 import { useMemo, useState } from 'react';
 import { useGessieStore } from '../../store/useGessieStore';
+import { Panel } from '../../design/primitives/Panel';
+import { Pill } from '../../design/primitives/Pill';
+import { colors, radii, spacing, typography } from '../../design/tokens';
 
 // ===== Catalogue =====
 
@@ -167,31 +170,49 @@ export function DisturbancesPanel() {
 
   const applicable = selected ? disturbancesFor(selected) : [];
 
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        padding: 12,
-        background: '#1c2a36',
-        borderTop: '1px solid #34495e',
-        color: '#ecf0f1',
-        fontSize: 12,
-        fontFamily: 'system-ui',
-        maxHeight: 240,
-        overflowY: 'auto',
-      }}
-    >
-      <div style={{ fontWeight: 600 }}>Avaries / disturbances</div>
+  const meta = active.length > 0 ? `${active.length} active${active.length > 1 ? 's' : ''}` : undefined;
 
+  const selectStyle: React.CSSProperties = {
+    flex: '0 1 280px',
+    padding: '4px 8px',
+    fontSize: typography.size.sm,
+    fontFamily: typography.ui.family,
+    background: colors.surface.medium,
+    color: colors.text.primary,
+    border: `1px solid ${colors.border.default}`,
+    borderRadius: radii.md,
+  };
+
+  return (
+    <Panel title="Avaries" meta={meta} scroll maxHeight={240}>
       {/* === Section : disturbances actives (toutes cibles) === */}
       {active.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, paddingBottom: 4 }}>
-          <span style={{ fontSize: 11, color: '#95a5a6', alignSelf: 'center' }}>Actives :</span>
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: spacing.xs,
+            paddingBottom: spacing.xs,
+          }}
+        >
+          <span
+            style={{
+              fontSize: typography.size.xs,
+              color: colors.text.muted,
+              alignSelf: 'center',
+              textTransform: 'uppercase',
+              letterSpacing: 0.6,
+              fontWeight: typography.weight.medium,
+            }}
+          >
+            Actives
+          </span>
           {active.map(({ kind, id, disturbance }) => (
-            <button
+            <Pill
               key={`${kind}:${id}:${disturbance}`}
+              variant="danger"
+              active
+              title="Cliquer pour désactiver"
               onClick={() =>
                 toggle(
                   kind === 'bloc'
@@ -199,40 +220,32 @@ export function DisturbancesPanel() {
                     : { affectationId: id, disturbance },
                 )
               }
-              title="Cliquer pour désactiver"
-              style={{
-                padding: '2px 8px',
-                fontSize: 11,
-                fontFamily: 'monospace',
-                borderRadius: 3,
-                border: '1px solid #c0392b',
-                background: '#7f1d1d',
-                color: '#ecf0f1',
-                cursor: 'pointer',
-              }}
             >
-              {id} · {DISTURBANCE_LABELS[disturbance] ?? disturbance}
-            </button>
+              <span style={{ fontFamily: typography.mono.family }}>{id}</span>
+              <span style={{ opacity: 0.7 }}>·</span>
+              <span>{DISTURBANCE_LABELS[disturbance] ?? disturbance}</span>
+            </Pill>
           ))}
         </div>
       )}
 
       {/* === Sélecteur de cible + disturbances applicables === */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <span style={{ fontSize: 11, color: '#95a5a6' }}>Cible :</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: spacing.xs }}>
+        <span
+          style={{
+            fontSize: typography.size.xs,
+            color: colors.text.muted,
+            textTransform: 'uppercase',
+            letterSpacing: 0.6,
+            fontWeight: typography.weight.medium,
+          }}
+        >
+          Cible
+        </span>
         <select
           value={selectedId}
           onChange={(e) => setSelectedId(e.target.value)}
-          style={{
-            flex: '0 1 240px',
-            padding: '2px 6px',
-            fontSize: 12,
-            fontFamily: 'inherit',
-            background: '#34495e',
-            color: '#ecf0f1',
-            border: '1px solid #7f8c8d',
-            borderRadius: 3,
-          }}
+          style={selectStyle}
         >
           <option value="">— choisir —</option>
           {targets.map((t) => (
@@ -244,12 +257,15 @@ export function DisturbancesPanel() {
       </div>
 
       {selected && applicable.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: spacing.xs }}>
           {applicable.map((d) => {
             const on = selectedDisturbances.indexOf(d) !== -1;
             return (
-              <button
+              <Pill
                 key={d}
+                size="md"
+                variant={on ? 'danger' : 'neutral'}
+                active={on}
                 onClick={() =>
                   toggle(
                     selected.kind === 'bloc'
@@ -257,23 +273,13 @@ export function DisturbancesPanel() {
                       : { affectationId: selected.id, disturbance: d },
                   )
                 }
-                style={{
-                  padding: '4px 10px',
-                  fontSize: 11,
-                  fontFamily: 'inherit',
-                  borderRadius: 3,
-                  border: `1px solid ${on ? '#c0392b' : '#7f8c8d'}`,
-                  background: on ? '#7f1d1d' : '#34495e',
-                  color: '#ecf0f1',
-                  cursor: 'pointer',
-                }}
               >
                 {DISTURBANCE_LABELS[d] ?? d}
-              </button>
+              </Pill>
             );
           })}
         </div>
       )}
-    </div>
+    </Panel>
   );
 }
