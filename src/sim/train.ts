@@ -231,7 +231,6 @@ export function startTrain(
   // correspond à la direction. Boucle Gessie d'origine :
   //   while (existing.includes(o) || o%2 == (direction==='pair' ? 1 : 0)) o++
   let o = 4000;
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const name = String(o);
     const wantedParity = incomingTrain.direction === 'pair' ? 1 : 0;
@@ -458,13 +457,20 @@ function pressPedale(
 //     - FORCAGE_OCCUPATION → enterZone direction:pair (bizarre mais Gessie)
 //     - ABSENCE_CONTROLE_* → updateAffectationPosition (re-applique pour
 //       provoquer le passage en lower-case via applyDisturbances)
+//     - NON_LIBERATION_ZAP/EAP/EPA → force le flag visible directement
+//       (eap.zap/eap.eap/epa.epa = true). Divergence volontaire avec Gessie
+//       qui n'allume rien à l'ajout — on rend l'avarie immédiatement visible
+//       pour l'opérateur en formation.
 //   - retrait :
 //     - FORCAGE_OCCUPATION / MAINTIEN_OCCUPATION : si pas de moveTrainOut
 //       en cours sur cette zone → leaveZone pair + leaveZone impair
-//     - NON_LIBERATION_ZAP → zapOff
-//     - NON_LIBERATION_EAP → annulationEap
-//     - NON_LIBERATION_EPA → annulationEpa
+//     - NON_LIBERATION_ZAP/EAP/EPA → éteint le flag directement (Gessie
+//       passe par zapOff/annulationEap/Epa qui ont des gardes train —
+//       inopérantes ici puisqu'on a forcé l'avarie hors passage).
 //     - ABSENCE_CONTROLE_* → updateAffectationPosition (idem)
+//     - RATE_OUVERTURE/FERMETURE → updateAffectationPosition avec
+//       requestedPosition (divergence : Gessie laisse le carré dans son
+//       état figé jusqu'au prochain mouvement de levier).
 //
 // Pour les blocs : add/remove uniquement (pas de side-effect dans Gessie).
 
@@ -491,6 +497,20 @@ export function toggleDisturbance(
           affectationId,
           position: (s0.position ?? '').toUpperCase(),
         });
+      } else if (disturbance === 'NON_LIBERATION_ZAP' && s0.eap) {
+        // Divergence Gessie volontaire : Gessie n'allume pas la ZAP à l'ajout,
+        // donc l'avarie reste invisible jusqu'au prochain passage train. Pour
+        // qu'un opérateur en formation voie immédiatement le symptôme on force
+        // `eap.zap = true` (= ZAP active visuellement). Le retrait passe par
+        // zapOff qui no-op si NON_LIBERATION_ZAP est encore présent ; ici on
+        // l'a déjà retiré, donc le retrait éteindra la ZAP normalement.
+        s = patchAffectation(s, affectationId, { eap: { ...s0.eap, zap: true } });
+      } else if (disturbance === 'NON_LIBERATION_EAP' && s0.eap) {
+        // Idem ZAP : on force `eap.eap = true` pour rendre l'avarie visible.
+        s = patchAffectation(s, affectationId, { eap: { ...s0.eap, eap: true } });
+      } else if (disturbance === 'NON_LIBERATION_EPA' && s0.epa) {
+        // Idem : on force `epa.epa = true` pour rendre l'avarie visible.
+        s = patchAffectation(s, affectationId, { epa: { ...s0.epa, epa: true } });
       }
       return s;
     }
@@ -505,16 +525,46 @@ export function toggleDisturbance(
         s = leaveZone(s, { zoneId: affectationId, direction: 'impair' });
       }
     } else if (disturbance === 'NON_LIBERATION_ZAP') {
-      s = zapOff(s, affectationId);
+      // Divergence Gessie : Gessie passe par zapOff qui bloque si aucune zone
+      // de la consistance n'est en circulation (= cas usuel hors passage train).
+      // Comme l'ajout forçait `eap.zap=true` sans train, on doit pouvoir le
+      // libérer dans les mêmes conditions. On éteint directement (la disturbance
+      // est déjà retirée donc setZapOffMutation passerait, mais le wrapper
+      // zapOff la bloque). On réplique aussi sa cascade EAP→false.
+      const cur = s.affectations[affectationId];
+      if (cur?.eap) {
+        const newEap = { ...cur.eap, zap: false };
+        if (cur.disturbances.indexOf('NON_LIBERATION_EAP') === -1) newEap.eap = false;
+        s = patchAffectation(s, affectationId, { eap: newEap });
+      }
     } else if (disturbance === 'NON_LIBERATION_EAP') {
-      s = annulationEap(s, affectationId);
+      // Idem : annulationEap a 4 gardes (levier minus, pédale pressée, zone
+      // occupée, FA…) qui bloquent hors passage train. On éteint directement.
+      const cur = s.affectations[affectationId];
+      if (cur?.eap) {
+        s = patchAffectation(s, affectationId, { eap: { ...cur.eap, eap: false } });
+      }
     } else if (disturbance === 'NON_LIBERATION_EPA') {
-      s = annulationEpa(s, affectationId);
+      // Idem annulationEpa.
+      const cur = s.affectations[affectationId];
+      if (cur?.epa) {
+        s = patchAffectation(s, affectationId, { epa: { ...cur.epa, epa: false } });
+      }
     } else if (disturbance.indexOf('ABSENCE_CONTROLE_') === 0) {
       s = updateAffectationPosition(s, {
         affectationId,
         position: (s0.position ?? '').toUpperCase(),
       });
+    } else if (disturbance === 'RATE_OUVERTURE' || disturbance === 'RATE_FERMETURE') {
+      // Divergence Gessie volontaire : Gessie ne re-évalue pas la position
+      // au retrait du raté, donc un carré ouvert via levier reste fermé tant
+      // qu'on ne rebascule pas le levier. On force la ré-application de
+      // `requestedPosition` (= ce que demandait le levier au moment du raté)
+      // pour que le signal reflète l'état réel des enclenchements.
+      const req = s0.requestedPosition;
+      if (req) {
+        s = updateAffectationPosition(s, { affectationId, position: req });
+      }
     }
     return s;
   }
@@ -706,7 +756,7 @@ export function moveTrainIn(
   }
 
   let r: { id: string; timeDistance: number } | undefined;
-  let blocked = false;
+  const blocked = false;
 
   // Re-lookup après enterZone (l'aff peut avoir changé via mutations).
   const aff2 = s.affectations[target] ?? aff;

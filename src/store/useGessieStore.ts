@@ -5,8 +5,6 @@ import {
   type ClockState,
   clockReducers,
   ensureUid,
-  processCheckEvents,
-  processTick,
 } from '../sim/clock';
 import { initialPlayerState, type AppMode, type PlayerState } from '../sim/player';
 import { stationToPlayerData } from '../sim/builder';
@@ -52,10 +50,6 @@ interface GessieState {
   // === Données station + tools (persistantes le temps de la session) ===
   station: Station | null;
   tools: Record<string, Tool>;
-
-  // === UI (debug / hover) ===
-  hoveredUid: string | null;
-  setHoveredUid: (uid: string | null) => void;
 
   // === Sim state ===
   clock: ClockState;
@@ -136,8 +130,9 @@ function dispatchPlayerEvent(
 ): DispatchResult | null {
   switch (event.type) {
     case 'setEPAOff': {
-      if (!event.signalId) return { state };
-      return { state: setEPAOffAction(state, event.signalId) };
+      const signalId = (event as { signalId?: string }).signalId;
+      if (!signalId) return { state };
+      return { state: setEPAOffAction(state, signalId) };
     }
     case 'moveTrainIn': {
       if (!event.train || !event.target) return { state };
@@ -246,15 +241,46 @@ function applyDispatchResult(
   return c;
 }
 
+/**
+ * Avance l'horloge jusqu'à `time` et dispatche les events échus dans l'ordre.
+ *
+ * IMPORTANT — fidélité Gessie : l'event reste dans `clock.events` PENDANT son
+ * dispatch (Gessie : `dispatch(); REMOVE_EVENT;`). On ne le retire qu'après.
+ * Sans ça, `moveTrainIn` ratait son propre event au moment de filtrer
+ * `events.filter(e => e.train.name === ...)` pour le lier à un carré fermé,
+ * et le train disparaissait à la réouverture du levier (cf. bug zones-overlap).
+ */
+function drainDueEvents(
+  clock: ClockState,
+  playerData: PlayerData | null,
+  time: number,
+): { nextClock: ClockState; nextPlayerData: PlayerData | null } {
+  let nextClock = clockReducers.UPDATE_CURRENT_TIME(clock, time);
+  let nextPlayerData = playerData;
+  while (nextClock.events[0] && (nextClock.events[0].time ?? Infinity) <= time) {
+    const ev = nextClock.events[0];
+    if (nextPlayerData) {
+      const out = dispatchPlayerEvent(nextPlayerData, nextClock, ev);
+      if (out !== null) {
+        nextPlayerData = out.state;
+        nextClock = applyDispatchResult(nextClock, out);
+      } else {
+        console.log('[sim] event due (no handler):', ev.type, ev);
+      }
+    }
+    // Retire l'event APRÈS dispatch (Gessie). Si l'event a été pause/resume
+    // pendant le dispatch (= déplacé), REMOVE_EVENT est un no-op silencieux.
+    nextClock = clockReducers.REMOVE_EVENT(nextClock, ev.uid);
+  }
+  return { nextClock, nextPlayerData };
+}
+
 export const useGessieStore = create<GessieState>((set, get) => ({
   station: null,
   tools: {},
-  hoveredUid: null,
 
   clock: initialClockState,
   player: initialPlayerState,
-
-  setHoveredUid: (uid) => set({ hoveredUid: uid }),
 
   loadStation: (station, toolList) =>
     set({
@@ -287,20 +313,7 @@ export const useGessieStore = create<GessieState>((set, get) => ({
 
   checkEvents: (time) => {
     const { clock, player } = get();
-    const { state: afterTick, toDispatch } = processCheckEvents(clock, time);
-    let nextClock = afterTick;
-    let nextPlayerData = player.data;
-    for (const ev of toDispatch) {
-      if (nextPlayerData) {
-        const out = dispatchPlayerEvent(nextPlayerData, nextClock, ev);
-        if (out !== null) {
-          nextPlayerData = out.state;
-          nextClock = applyDispatchResult(nextClock, out);
-          continue;
-        }
-      }
-      console.log('[sim] event due (no handler):', ev.type, ev);
-    }
+    const { nextClock, nextPlayerData } = drainDueEvents(clock, player.data, time);
     set({
       clock: nextClock,
       player: nextPlayerData === player.data ? player : { ...player, data: nextPlayerData },
@@ -310,20 +323,8 @@ export const useGessieStore = create<GessieState>((set, get) => ({
   tick: () => {
     const { clock, player } = get();
     if (clock.speed === 0) return;
-    const { state: afterTick, toDispatch } = processTick(clock);
-    let nextClock = afterTick;
-    let nextPlayerData = player.data;
-    for (const ev of toDispatch) {
-      if (nextPlayerData) {
-        const out = dispatchPlayerEvent(nextPlayerData, nextClock, ev);
-        if (out !== null) {
-          nextPlayerData = out.state;
-          nextClock = applyDispatchResult(nextClock, out);
-          continue;
-        }
-      }
-      console.log('[sim] event due (no handler):', ev.type, ev);
-    }
+    const newTime = clock.currentTime + 1000 * clock.speed;
+    const { nextClock, nextPlayerData } = drainDueEvents(clock, player.data, newTime);
     set({
       clock: nextClock,
       player: nextPlayerData === player.data ? player : { ...player, data: nextPlayerData },
