@@ -5,7 +5,9 @@ import { LeversPanel } from './components/sim/LeversPanel';
 // import { TrainsPanel } from './components/sim/TrainsPanel'; // masqué temporairement
 import { BlocsPanel } from './components/sim/BlocsPanel';
 import { AtrPanel } from './components/sim/AtrPanel';
-import { KeysPanel } from './components/sim/KeysPanel';
+// KeysPanel n'existe plus comme panel autonome : ses sous-composants sont
+// désormais rendus à l'intérieur du LeversPanel (serrures sous chaque levier
+// + colonne auxiliaire à droite pour boîtes à clés / cadenas / verrous).
 // DisturbancesPanel remplacé par un menu contextuel sur clic-droit d'item TCO.
 // Le composant reste dans src/components/sim/ au cas où on rouvrirait
 // une vue globale "avaries actives".
@@ -13,10 +15,14 @@ import { KeysPanel } from './components/sim/KeysPanel';
 import { useGessieStore } from './store/useGessieStore';
 import { loadAllTools, loadStationByName, listStationNames } from './lib/loadFixtures';
 import { GareSelect } from './design/primitives/GareSelect';
+import { ResizeHandle } from './design/primitives/ResizeHandle';
 import { colors, spacing, typography } from './design/tokens';
 import './App.css';
 
 const DEFAULT_STATION = 'saint_saturnin';
+const TCO_HEIGHT_KEY = 'gessieweb.tcoHeight';
+const TCO_HEIGHT_MIN = 200;
+const TCO_HEIGHT_MAX_RATIO = 0.9; // 90% de la hauteur viewport
 
 function App() {
   const station = useGessieStore((s) => s.station);
@@ -27,6 +33,27 @@ function App() {
   const [selected, setSelected] = useState<string>(() =>
     stationNames.includes(DEFAULT_STATION) ? DEFAULT_STATION : (stationNames[0] ?? '')
   );
+
+  // Hauteur du TCO en px. Persistée dans localStorage entre sessions.
+  // Initialisée à 50% de la hauteur viewport si rien en stockage.
+  const [tcoHeight, setTcoHeight] = useState<number>(() => {
+    if (typeof window === 'undefined') return 480;
+    const saved = window.localStorage.getItem(TCO_HEIGHT_KEY);
+    const parsed = saved ? parseInt(saved, 10) : NaN;
+    if (!isNaN(parsed) && parsed >= TCO_HEIGHT_MIN) return parsed;
+    return Math.round(window.innerHeight * 0.5);
+  });
+
+  const persistTcoHeight = () => {
+    window.localStorage.setItem(TCO_HEIGHT_KEY, String(tcoHeight));
+  };
+
+  const handleTcoResize = (deltaY: number) => {
+    setTcoHeight((h) => {
+      const max = Math.round(window.innerHeight * TCO_HEIGHT_MAX_RATIO);
+      return Math.min(max, Math.max(TCO_HEIGHT_MIN, h + deltaY));
+    });
+  };
 
   // Charge la gare puis lance immédiatement la simulation : Léa atterrit
   // directement en mode play sans avoir à cliquer.
@@ -83,12 +110,12 @@ function App() {
           </span>
         )}
       </header>
-      <TcoViewport key={station?.id ?? 'empty'} height="50vh" />
+      <TcoViewport key={station?.id ?? 'empty'} height={tcoHeight} />
+      <ResizeHandle onResize={handleTcoResize} onResizeEnd={persistTcoHeight} />
       <SimControls />
       <LeversPanel />
       <BlocsPanel />
       <AtrPanel />
-      <KeysPanel />
     </div>
   );
 }

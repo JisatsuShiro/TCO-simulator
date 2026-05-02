@@ -1,7 +1,9 @@
 // Levier de poste d'aiguillage — primitive métallique skeuomorphique.
 //
-// État binaire : `plus` (manche en haut, idle) / `minus` (manche en bas, actif).
-// Le manche pivote autour du pivot central du boîtier.
+// État binaire : `plus` (manche en haut, idle) / `minus` (manche basculé à
+// droite à 90°, actif). Le manche pivote autour du pivot central du boîtier.
+// Convention "tip to the side" — bascule horizontale plutôt que verticale,
+// proche du geste réel d'un opérateur PRS qui tire le manche vers lui.
 //
 // Animation de refus didactique : si le levier ne peut pas basculer
 // (enclenchement bloqué), le manche tente la rotation, bute, oscille,
@@ -13,6 +15,7 @@
 // l'animation locale via Web Animations API.
 
 import { useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { colors, motion, shadows, typography } from '../tokens';
 
 interface LeverProps {
@@ -28,6 +31,13 @@ interface LeverProps {
   refused?: boolean;
   /** Désactive le levier (mode Édition par exemple). */
   disabled?: boolean;
+  /**
+   * Slot rendu dans le bas du boîtier — destiné aux serrures (`KeyHole`
+   * variant `embedded`) intégrées à la plaque du levier, à la manière d'un
+   * vrai poste PRS. La zone est en dessous du pivot, donc jamais traversée
+   * par le manche.
+   */
+  keyholeSlot?: ReactNode;
   onClick: () => void;
 }
 
@@ -37,17 +47,20 @@ const SHAFT_WIDTH = 5;
 const SHAFT_HEIGHT = 26;
 const KNOB_SIZE = 13;
 
-// Décalage angulaire du "buttage" : ~30 % de la rotation cible (180°).
-const REFUSE_ANGLE_DELTA = 54;
+// Plus = 0° (manche vertical haut), minus = 90° (manche basculé à droite).
+const PLUS_ANGLE = 0;
+const MINUS_ANGLE = 90;
+// Décalage angulaire du "buttage" : ~30 % de la rotation cible (90°).
+const REFUSE_ANGLE_DELTA = 27;
 
-export function Lever({ id, num, label, position, refused = false, disabled = false, onClick }: LeverProps) {
+export function Lever({ id, num, label, position, refused = false, disabled = false, keyholeSlot, onClick }: LeverProps) {
   const shaftRef = useRef<HTMLDivElement>(null);
 
   // Animation de refus déclenchée par la transition false→true de `refused`.
   // Web Animations API native, pas de dépendance externe.
   useEffect(() => {
     if (!refused || !shaftRef.current) return;
-    const baseAngle = position === 'plus' ? 0 : 180;
+    const baseAngle = position === 'plus' ? PLUS_ANGLE : MINUS_ANGLE;
     const refuseAngle = baseAngle + REFUSE_ANGLE_DELTA;
     const anim = shaftRef.current.animate(
       [
@@ -67,8 +80,8 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
     return () => anim.cancel();
   }, [refused, position]);
 
-  const baseAngle = position === 'plus' ? 0 : 180;
-  const ariaLabel = `Levier ${num} ${label}, position ${position === 'plus' ? 'haute' : 'basse'}`;
+  const baseAngle = position === 'plus' ? PLUS_ANGLE : MINUS_ANGLE;
+  const ariaLabel = `Levier ${num} ${label}, position ${position === 'plus' ? 'haute' : 'basculée'}`;
 
   return (
     <button
@@ -106,7 +119,9 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
           border: `1px solid ${colors.metal.shadow}`,
           boxShadow: shadows.metallicOuter,
           position: 'relative',
-          overflow: 'hidden',
+          // Pas de `overflow: hidden` : avec minus à 90° (manche horizontal),
+          // la tête sphérique dépasse légèrement la bordure droite — on laisse
+          // le débordement visible pour ne pas la rogner.
         }}
       >
         {/* Pivot central */}
@@ -158,6 +173,27 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
             }}
           />
         </div>
+
+        {/* Slot serrures intégrées : positionné dans la moitié basse de la
+            plaque, sous le pivot — jamais traversé par le manche (plus = haut,
+            minus = droite). Le parent y rend une `LeverKeyholeStrip`. */}
+        {keyholeSlot && (
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 4,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 2,
+              zIndex: 1,
+            }}
+          >
+            {keyholeSlot}
+          </div>
+        )}
       </div>
 
       {/* Étiquette deux lignes : numéro de levier puis affectations contrôlées.

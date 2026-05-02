@@ -20,7 +20,7 @@ import type { CSSProperties } from 'react';
 import { colors, motion, radii, typography } from '../tokens';
 
 export type KeyHoleState = 'closed-with-key' | 'open-no-key' | 'closed-no-key';
-export type KeyHoleVariant = 'small' | 'large';
+export type KeyHoleVariant = 'small' | 'large' | 'embedded';
 
 interface Props {
   state: KeyHoleState;
@@ -33,9 +33,13 @@ interface Props {
   title?: string;
 }
 
+// `embedded` : variante minuscule pour serrures intégrées à une plaque
+// métallique (ex: sous un levier). Pas d'anse, pas de label dessous —
+// juste le corps + trou. Le parent gère le tooltip via `title`.
 const dims: Record<KeyHoleVariant, { w: number; h: number; bodyH: number; arcR: number; holeR: number }> = {
   small: { w: 24, h: 28, bodyH: 16, arcR: 7, holeR: 2.4 },
   large: { w: 40, h: 48, bodyH: 28, arcR: 12, holeR: 4 },
+  embedded: { w: 14, h: 16, bodyH: 16, arcR: 0, holeR: 2.2 },
 };
 
 export function KeyHole({ state, label, onClick, variant = 'small', refused = false, title }: Props) {
@@ -117,6 +121,8 @@ export function KeyHole({ state, label, onClick, variant = 'small', refused = fa
     A ${d.arcR} ${d.arcR} 0 0 1 ${arcCx + d.arcR} ${arcCy}
     L ${arcCx + d.arcR} ${arcCy + 2}`;
 
+  const isEmbedded = variant === 'embedded';
+
   return (
     <button
       type="button"
@@ -139,13 +145,13 @@ export function KeyHole({ state, label, onClick, variant = 'small', refused = fa
           transition: 'filter 120ms ease',
         }}
       >
-        {/* Corps du cadenas */}
+        {/* Corps du cadenas / serrure */}
         <rect
           x={1}
           y={bodyY}
           width={d.w - 2}
           height={d.bodyH - 1}
-          rx={radii.sm}
+          rx={isEmbedded ? d.holeR : radii.sm}
           fill={bodyFill}
           stroke={bodyStroke}
           strokeWidth={1}
@@ -159,27 +165,33 @@ export function KeyHole({ state, label, onClick, variant = 'small', refused = fa
           height={d.holeR * 1.6}
           fill={holeFill}
         />
-        {/* Anse en U inversé (translatée vers le haut quand ouvert) */}
-        <path
-          d={arcPath}
-          fill="none"
-          stroke={armStroke}
-          strokeWidth={variant === 'large' ? 3 : 2}
-          strokeLinecap="round"
-          transform={armOffsetY ? `translate(0 ${armOffsetY})` : undefined}
-        />
+        {/* Anse en U inversé : seulement pour les variantes "cadenas autonome".
+            La variante `embedded` représente une serrure intégrée à une plaque
+            (ex: sous un levier) — pas d'anse. */}
+        {!isEmbedded && (
+          <path
+            d={arcPath}
+            fill="none"
+            stroke={armStroke}
+            strokeWidth={variant === 'large' ? 3 : 2}
+            strokeLinecap="round"
+            transform={armOffsetY ? `translate(0 ${armOffsetY})` : undefined}
+          />
+        )}
       </svg>
-      <span
-        style={{
-          fontFamily: typography.mono.family,
-          fontSize: typography.size.xs,
-          color: hasKey ? colors.text.primary : colors.text.secondary,
-          fontWeight: typography.weight.medium,
-          letterSpacing: 0.3,
-        }}
-      >
-        {label}
-      </span>
+      {!isEmbedded && (
+        <span
+          style={{
+            fontFamily: typography.mono.family,
+            fontSize: typography.size.xs,
+            color: hasKey ? colors.text.primary : colors.text.secondary,
+            fontWeight: typography.weight.medium,
+            letterSpacing: 0.3,
+          }}
+        >
+          {label}
+        </span>
+      )}
     </button>
   );
 }

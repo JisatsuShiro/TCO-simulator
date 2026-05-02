@@ -17,12 +17,62 @@ import { Lever } from '../../design/primitives/Lever';
 import { KnobButton } from '../../design/primitives/KnobButton';
 import { Panel } from '../../design/primitives/Panel';
 import { spacing } from '../../design/tokens';
-import type { Lever as LeverType } from '../../sim/types';
+import type { Affectation, Lever as LeverType } from '../../sim/types';
+import { LeverKeyholeStrip, AuxiliaryKeysColumn } from './KeysPanel';
 
 interface Group {
   /** Liste des signalIds FC qui couvrent tous les leviers du groupe. */
   fcSignals: string[];
   levers: LeverType[];
+}
+
+/**
+ * Classifie un levier : pilote-t-il (au moins) une aiguille ou uniquement
+ * des contrôles/signaux ? On regarde le type de chaque affectation, avec
+ * une heuristique de secours sur le préfixe "Ag" (convention Gessie pour
+ * les aiguilles).
+ */
+function classifyLever(
+  lever: LeverType,
+  affectations: Record<string, Affectation>,
+): 'aiguille' | 'controle' {
+  for (const affId of lever.affectations) {
+    const aff = affectations[affId];
+    if (aff?.type === 'aiguille') return 'aiguille';
+    if (affId.startsWith('Ag')) return 'aiguille';
+  }
+  return 'controle';
+}
+
+/**
+ * Construit les groupes FC à partir d'une liste de leviers : on regroupe
+ * les leviers consécutifs partageant exactement le même ensemble de
+ * signaux FC. Les leviers sans FC sont laissés en groupes solo.
+ */
+function buildFcGroups(
+  levers: LeverType[],
+  affectations: Record<string, Affectation>,
+): Group[] {
+  const fcsByLever = levers.map((l) =>
+    l.affectations
+      .filter((aff) => affectations[aff]?.positionFC !== undefined)
+      .sort(),
+  );
+  const result: Group[] = [];
+  let current: Group | null = null;
+  for (let i = 0; i < levers.length; i++) {
+    const fcs = fcsByLever[i];
+    const key = fcs.join('|');
+    const canMerge = fcs.length > 0;
+    if (canMerge && current && current.fcSignals.join('|') === key) {
+      current.levers.push(levers[i]);
+    } else {
+      if (current) result.push(current);
+      current = { fcSignals: fcs, levers: [levers[i]] };
+    }
+  }
+  if (current) result.push(current);
+  return result;
 }
 
 export function LeversPanel() {
@@ -45,37 +95,31 @@ export function LeversPanel() {
     });
   }, [data]);
 
-  // Pour chaque levier, liste des affectations qui ont un FC.
-  // On les utilise pour grouper les leviers consécutifs partageant les
-  // mêmes FCs.
-  const groups = useMemo<Group[]>(() => {
+  // Sépare les leviers en deux familles : ceux qui pilotent des
+  // contrôles/signaux et ceux qui pilotent des aiguilles. Affichés
+  // respectivement à gauche et à droite du panel.
+  const controleLevers = useMemo(() => {
     if (!data) return [];
-    const fcsByLever = levers.map((l) =>
-      l.affectations
-        .filter((aff) => data.affectations[aff]?.positionFC !== undefined)
-        .sort(),
-    );
-    const result: Group[] = [];
-    let current: Group | null = null;
-    for (let i = 0; i < levers.length; i++) {
-      const fcs = fcsByLever[i];
-      const key = fcs.join('|');
-      // Un levier sans FC ne se merge jamais avec ses voisins : il forme
-      // toujours son propre groupe solo. Ainsi chaque levier solo est un
-      // flex-item séparé, susceptible de wrapper et d'être réparti sur
-      // les deux rangées. Sans cette règle, des stations comme Clelles
-      // (aucun FC) finissaient en un seul groupe géant débordant.
-      const canMerge = fcs.length > 0;
-      if (canMerge && current && current.fcSignals.join('|') === key) {
-        current.levers.push(levers[i]);
-      } else {
-        if (current) result.push(current);
-        current = { fcSignals: fcs, levers: [levers[i]] };
-      }
-    }
-    if (current) result.push(current);
-    return result;
+    return levers.filter((l) => classifyLever(l, data.affectations) === 'controle');
   }, [data, levers]);
+
+  const aiguilleLevers = useMemo(() => {
+    if (!data) return [];
+    return levers.filter((l) => classifyLever(l, data.affectations) === 'aiguille');
+  }, [data, levers]);
+
+  // Groupes FC : seuls les contrôles peuvent partager un commutateur FC.
+  const controleGroups = useMemo<Group[]>(() => {
+    if (!data) return [];
+    return buildFcGroups(controleLevers, data.affectations);
+  }, [data, controleLevers]);
+
+  // Aiguilles : pas de FC, donc chaque levier est son propre groupe solo.
+  // On garde la même structure pour mutualiser le rendu LeverGroup.
+  const aiguilleGroups = useMemo<Group[]>(
+    () => aiguilleLevers.map((l) => ({ fcSignals: [], levers: [l] })),
+    [aiguilleLevers],
+  );
 
   if (!data) return null;
   if (levers.length === 0) return null;
@@ -94,23 +138,9 @@ export function LeversPanel() {
     }, 0);
   };
 
-  const fcCount = groups.reduce((acc, g) => acc + g.fcSignals.length, 0);
-
-  // Sépare les groupes en deux rangées : la première rangée prend les
-  // groupes jusqu'à atteindre la moitié des leviers, le reste va sur la
-  // seconde. Un groupe partagé par un FC reste indivisible.
-  const targetFirstRow = Math.ceil(levers.length / 2);
-  const firstRow: Group[] = [];
-  const secondRow: Group[] = [];
-  let firstRowCount = 0;
-  for (const g of groups) {
-    if (firstRowCount < targetFirstRow) {
-      firstRow.push(g);
-      firstRowCount += g.levers.length;
-    } else {
-      secondRow.push(g);
-    }
-  }
+  const fcCount =
+    controleGroups.reduce((acc, g) => acc + g.fcSignals.length, 0) +
+    aiguilleGroups.reduce((acc, g) => acc + g.fcSignals.length, 0);
 
   // alignItems: flex-start → on aligne les tops des groupes. Comme chaque
   // groupe a une zone FC fixe (FC_ZONE_HEIGHT), tous les boîtiers de leviers
@@ -129,35 +159,60 @@ export function LeversPanel() {
     <Panel
       title="Leviers"
       meta={`${levers.length} levier${levers.length > 1 ? 's' : ''}${fcCount ? ` · ${fcCount} FC` : ''}`}
-      bodyDirection="column"
-      bodyGap={40}
-      bodyAlign="center"
+      bodyDirection="row"
+      bodyGap={spacing.md}
+      bodyAlign="start"
       padding={12}
     >
-      <div style={rowStyle}>
-        {firstRow.map((group, gi) => (
-          <LeverGroup
-            key={`r1-${gi}`}
-            group={group}
-            refusedLever={refusedLever}
-            onLeverClick={handleLeverClick}
-            onFcToggle={toggleCommutFC}
-          />
-        ))}
+      {/* Zone principale : leviers de contrôle à gauche, leviers d'aiguille
+          à droite — convention PRS classique où l'opérateur lit les
+          itinéraires (aiguilles) près des sorties de la grille TCO et garde
+          les commandes auxiliaires (contrôles) à part. Les deux sous-zones
+          sont englobées dans un wrapper flex pour que la colonne auxiliaire
+          de droite (boîtes à clés / cadenas / verrous centraux) reste
+          alignée à droite du panel et ne passe pas sous les leviers. */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 40,
+          alignItems: 'flex-start',
+          flex: 1,
+          minWidth: 0,
+          flexWrap: 'wrap',
+        }}
+      >
+        {controleGroups.length > 0 && (
+          <div style={rowStyle}>
+            {controleGroups.map((group, gi) => (
+              <LeverGroup
+                key={`c-${gi}`}
+                group={group}
+                refusedLever={refusedLever}
+                onLeverClick={handleLeverClick}
+                onFcToggle={toggleCommutFC}
+              />
+            ))}
+          </div>
+        )}
+        {aiguilleGroups.length > 0 && (
+          <div style={rowStyle}>
+            {aiguilleGroups.map((group, gi) => (
+              <LeverGroup
+                key={`a-${gi}`}
+                group={group}
+                refusedLever={refusedLever}
+                onLeverClick={handleLeverClick}
+                onFcToggle={toggleCommutFC}
+              />
+            ))}
+          </div>
+        )}
       </div>
-      {secondRow.length > 0 && (
-        <div style={rowStyle}>
-          {secondRow.map((group, gi) => (
-            <LeverGroup
-              key={`r2-${gi}`}
-              group={group}
-              refusedLever={refusedLever}
-              onLeverClick={handleLeverClick}
-              onFcToggle={toggleCommutFC}
-            />
-          ))}
-        </div>
-      )}
+
+      {/* Colonne droite : boîtes à clés / cadenas / verrous centraux.
+          Retourne null automatiquement si aucun de ces éléments n'existe. */}
+      <AuxiliaryKeysColumn />
     </Panel>
   );
 }
@@ -210,7 +265,10 @@ function LeverGroup({
             <FcCell key={signalId} signalId={signalId} onToggle={onFcToggle} />
           ))}
       </div>
-      {/* Rangée des leviers : tous les boîtiers démarrent au même Y. */}
+      {/* Rangée des leviers : tous les boîtiers démarrent au même Y.
+          Les serrures du levier sont rendues DANS la plaque (slot
+          `keyholeSlot`) pour reproduire le visuel d'un poste PRS réel
+          où les serrures sont fixées sur la plaque métallique. */}
       <div style={{ display: 'flex', gap: LEVER_GAP, alignItems: 'flex-start' }}>
         {group.levers.map((l) => (
           <Lever
@@ -221,6 +279,7 @@ function LeverGroup({
             position={l.position}
             refused={refusedLever === l.id}
             onClick={() => onLeverClick(l.id, l.position)}
+            keyholeSlot={<LeverKeyholeStrip leverId={l.id} embedded />}
           />
         ))}
       </div>

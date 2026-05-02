@@ -1,22 +1,26 @@
-// Panel des clés : affiche `holdedKey` (clé en main), la liste des locks,
-// groups (boîtes à clés), centralLocks (verrous centraux), et les keyholes
-// attachés aux leviers. Click sur un keyhole pour take/put.
+// Composants liés aux serrures et clés. Anciennement un Panel autonome,
+// désormais une bibliothèque de building blocks rendus DANS le LeversPanel :
 //
-// Visuel : un keyhole avec présence est cliquable en "take", un keyhole vide
-// est cliquable en "put" (si on tient une clé compatible). Les actions
-// échouent silencieusement (cohérent avec Gessie).
+//   - `LeverKeyholeStrip(leverId)` : la rangée de serrures d'un levier
+//     donné (placée sous le levier dans la grille du LeversPanel).
+//   - `AuxiliaryKeysColumn()` : la colonne de droite — boîtes à clés,
+//     cadenas, verrous centraux — affichée à côté de la rangée de leviers.
 //
-// Sélecteurs primitifs pour éviter les boucles infinies de re-render :
-// on lit les listes d'IDs via une string CSV puis split (pattern compatible
-// avec les sélecteurs scalaires Zustand).
+// Visuel : un keyhole avec présence est cliquable en "take", un keyhole
+// vide est cliquable en "put" (si on tient une clé compatible). Les
+// actions échouent silencieusement (cohérent avec Gessie). Détection de
+// refus : on lit la présence avant et après via `setTimeout(0)`, et si
+// inchangée on déclenche l'animation didactique de la serrure.
+//
+// Sélecteurs primitifs (CSV split) pour éviter les boucles "getSnapshot
+// should be cached".
 
 import { useState } from 'react';
 import { useGessieStore } from '../../store/useGessieStore';
-import { Panel } from '../../design/primitives/Panel';
 import { KeyHole } from '../../design/primitives/KeyHole';
 import type { KeyHoleState } from '../../design/primitives/KeyHole';
 import { KeyTag } from '../../design/primitives/KeyTag';
-import { colors, spacing, typography } from '../../design/tokens';
+import { colors, radii, spacing, typography } from '../../design/tokens';
 
 /**
  * Helper d'animation refus : exécute `action`, puis vérifie via
@@ -38,15 +42,7 @@ function useRefusalDetection(): { refused: boolean; trigger: (run: () => void, r
   return { refused, trigger };
 }
 
-// ===== Helpers : sélecteurs scalaires (string CSV) =====
-
-function useLockIds(): string[] {
-  // Cast en CSV pour rester scalaire au sens Zustand.
-  const csv = useGessieStore((s) =>
-    s.player.data ? Object.keys(s.player.data.locks).sort().join('\n') : '',
-  );
-  return csv === '' ? [] : csv.split('\n');
-}
+// ===== Sélecteurs scalaires (CSV) =====
 
 function useGroupIds(): string[] {
   const csv = useGessieStore((s) =>
@@ -55,23 +51,17 @@ function useGroupIds(): string[] {
   return csv === '' ? [] : csv.split('\n');
 }
 
-function useCentralLockUids(): string[] {
+function useLockIds(): string[] {
   const csv = useGessieStore((s) =>
-    s.player.data ? Object.keys(s.player.data.centralLocks).sort().join('\n') : '',
+    s.player.data ? Object.keys(s.player.data.locks).sort().join('\n') : '',
   );
   return csv === '' ? [] : csv.split('\n');
 }
 
-function useLeverIdsWithKeyholes(): string[] {
-  const csv = useGessieStore((s) => {
-    const data = s.player.data;
-    if (!data) return '';
-    return Object.values(data.levers)
-      .filter((l) => l.keyholes && Object.keys(l.keyholes).length > 0)
-      .map((l) => l.id)
-      .sort()
-      .join('\n');
-  });
+function useCentralLockUids(): string[] {
+  const csv = useGessieStore((s) =>
+    s.player.data ? Object.keys(s.player.data.centralLocks).sort().join('\n') : '',
+  );
   return csv === '' ? [] : csv.split('\n');
 }
 
@@ -87,111 +77,23 @@ function deriveState(presence: boolean, holdedKey: string | undefined): KeyHoleS
   return 'closed-no-key';
 }
 
-// ===== Composant principal =====
+// ===== Public : LeverKeyholeStrip =====
 
-export function KeysPanel() {
-  const holdedKey = useGessieStore((s) => s.player.data?.holdedKey);
-  const lockIds = useLockIds();
-  const groupIds = useGroupIds();
-  const centralLockUids = useCentralLockUids();
-  const leverIds = useLeverIdsWithKeyholes();
-
-  const total =
-    lockIds.length + groupIds.length + centralLockUids.length + leverIds.length;
-  if (total === 0) return null;
-
-  const sectionTitleStyle: React.CSSProperties = {
-    fontSize: typography.size.xs,
-    color: colors.text.muted,
-    fontWeight: typography.weight.medium,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    marginBottom: 4,
-  };
-
-  const sectionRowStyle: React.CSSProperties = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  };
-
-  const groupContainerStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: spacing.xs,
-    padding: `${spacing.xs}px ${spacing.sm}px`,
-    background: colors.surface.darkest,
-    border: `1px solid ${colors.border.subtle}`,
-    borderRadius: 4,
-  };
-
-  return (
-    <Panel
-      title="Clés"
-      meta={
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: spacing.xs }}>
-          <span>en main :</span>
-          {holdedKey ? <KeyTag label={holdedKey} held /> : <span>—</span>}
-        </span>
-      }
-      scroll
-      maxHeight={240}
-    >
-      {leverIds.length > 0 && (
-        <div>
-          <div style={sectionTitleStyle}>Leviers</div>
-          <div style={sectionRowStyle}>
-            {leverIds.map((id) => (
-              <LeverKeyholeBox key={id} leverId={id} groupContainerStyle={groupContainerStyle} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {groupIds.length > 0 && (
-        <div>
-          <div style={sectionTitleStyle}>Boîtes à clés</div>
-          <div style={sectionRowStyle}>
-            {groupIds.map((id) => (
-              <GroupBox key={id} groupId={id} groupContainerStyle={groupContainerStyle} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {lockIds.length > 0 && (
-        <div>
-          <div style={sectionTitleStyle}>Cadenas ({lockIds.length})</div>
-          <div style={sectionRowStyle}>
-            {lockIds.map((id) => (
-              <LockBox key={id} keyId={id} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {centralLockUids.length > 0 && (
-        <div>
-          <div style={sectionTitleStyle}>Verrous centraux</div>
-          <div style={sectionRowStyle}>
-            {centralLockUids.map((uid) => (
-              <CentralLockBox key={uid} uid={uid} />
-            ))}
-          </div>
-        </div>
-      )}
-    </Panel>
-  );
-}
-
-// ===== Sous-composants =====
-
-function LeverKeyholeBox({
+/**
+ * Rangée des serrures attachées à un levier. Si le levier n'a aucune
+ * serrure, retourne null.
+ *
+ * Variantes :
+ *   - par défaut : grandes serrures avec label, à rendre à côté du levier.
+ *   - `embedded` : petites serrures sans label, prévues pour être posées
+ *     dans le bas du boîtier du Lever (cf. prop `keyholeSlot` du Lever).
+ */
+export function LeverKeyholeStrip({
   leverId,
-  groupContainerStyle,
+  embedded = false,
 }: {
   leverId: string;
-  groupContainerStyle: React.CSSProperties;
+  embedded?: boolean;
 }) {
   const keysCsv = useGessieStore((s) => {
     const lev = s.player.data?.levers[leverId];
@@ -200,17 +102,32 @@ function LeverKeyholeBox({
   });
   const keys = keysCsv === '' ? [] : keysCsv.split('\n');
   if (keys.length === 0) return null;
+
   return (
-    <div style={groupContainerStyle}>
-      <strong style={{ fontSize: typography.size.xs, color: colors.text.secondary }}>L{leverId}</strong>
+    <div
+      style={{
+        display: 'flex',
+        gap: embedded ? 2 : spacing.xxs,
+        justifyContent: 'center',
+        marginTop: embedded ? 0 : spacing.xxs,
+      }}
+    >
       {keys.map((k) => (
-        <LeverKeyhole key={k} leverId={leverId} keyId={k} />
+        <LeverKeyhole key={k} leverId={leverId} keyId={k} embedded={embedded} />
       ))}
     </div>
   );
 }
 
-function LeverKeyhole({ leverId, keyId }: { leverId: string; keyId: string }) {
+function LeverKeyhole({
+  leverId,
+  keyId,
+  embedded = false,
+}: {
+  leverId: string;
+  keyId: string;
+  embedded?: boolean;
+}) {
   const presence = useGessieStore(
     (s) => s.player.data?.levers[leverId]?.keyholes?.[keyId]?.presence ?? false,
   );
@@ -240,8 +157,116 @@ function LeverKeyhole({ leverId, keyId }: { leverId: string; keyId: string }) {
       label={keyId}
       onClick={handleClick}
       refused={refused}
+      variant={embedded ? 'embedded' : 'small'}
       title={`${keyId} (${position})`}
     />
+  );
+}
+
+// ===== Public : AuxiliaryKeysColumn =====
+
+/**
+ * Colonne droite du LeversPanel : badge "clé en main" + boîtes à clés
+ * (groups) + cadenas (locks) + verrous centraux (centralLocks).
+ *
+ * Retourne null si aucun de ces éléments n'existe dans la station — la
+ * colonne disparaît proprement, le LeversPanel reprend toute sa largeur.
+ */
+export function AuxiliaryKeysColumn() {
+  const holdedKey = useGessieStore((s) => s.player.data?.holdedKey);
+  const groupIds = useGroupIds();
+  const lockIds = useLockIds();
+  const centralLockUids = useCentralLockUids();
+
+  const total = groupIds.length + lockIds.length + centralLockUids.length;
+  if (total === 0) return null;
+
+  const sectionTitleStyle: React.CSSProperties = {
+    fontSize: typography.size.xs,
+    color: colors.text.muted,
+    fontWeight: typography.weight.medium,
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    marginBottom: spacing.xxs,
+  };
+
+  const sectionRowStyle: React.CSSProperties = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+  };
+
+  const groupContainerStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: spacing.xs,
+    padding: `${spacing.xs}px ${spacing.sm}px`,
+    background: colors.surface.darkest,
+    border: `1px solid ${colors.border.subtle}`,
+    borderRadius: radii.sm,
+  };
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: spacing.md,
+        padding: spacing.sm,
+        background: colors.surface.medium,
+        border: `1px solid ${colors.border.subtle}`,
+        borderRadius: radii.md,
+        minWidth: 180,
+        alignSelf: 'stretch',
+      }}
+    >
+      {/* Badge "clé en main" en tête de colonne. */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: spacing.xs,
+          fontSize: typography.size.xs,
+          color: colors.text.secondary,
+        }}
+      >
+        <span style={{ textTransform: 'uppercase', letterSpacing: 0.6 }}>en main</span>
+        {holdedKey ? <KeyTag label={holdedKey} held /> : <span style={{ color: colors.text.muted }}>—</span>}
+      </div>
+
+      {groupIds.length > 0 && (
+        <div>
+          <div style={sectionTitleStyle}>Boîtes à clés</div>
+          <div style={sectionRowStyle}>
+            {groupIds.map((id) => (
+              <GroupBox key={id} groupId={id} groupContainerStyle={groupContainerStyle} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {lockIds.length > 0 && (
+        <div>
+          <div style={sectionTitleStyle}>Cadenas</div>
+          <div style={sectionRowStyle}>
+            {lockIds.map((id) => (
+              <LockBox key={id} keyId={id} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {centralLockUids.length > 0 && (
+        <div>
+          <div style={sectionTitleStyle}>Verrous centraux</div>
+          <div style={sectionRowStyle}>
+            {centralLockUids.map((uid) => (
+              <CentralLockBox key={uid} uid={uid} />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
