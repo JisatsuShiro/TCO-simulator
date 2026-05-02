@@ -53,17 +53,19 @@ function useZoneCirculation(name: string): boolean {
  * décentrage visuel quand on tourne de 45/-45° (cf. controle, idem).
  */
 export function TcoZone({ item }: Props) {
+  // Hooks d'abord (rules-of-hooks).
+  const name = item.name ? String(item.name) : '';
+  // Couleur Gessie d'origine : circulation:true → rouge, sinon blanc.
+  const circulation = useZoneCirculation(name);
+
   if (item.xPos == null || item.yPos == null) return null;
 
   const variation = item.variationId ?? 'default';
   if (variation === 'hidden') return null;
 
-  const name = item.name ? String(item.name) : '';
   const rotate = parseInt(String(item.rotate ?? '0'), 10) || 0;
   const rotateOffset = -2 * (rotate / 45);
 
-  // Couleur Gessie d'origine : circulation:true → rouge, sinon blanc.
-  const circulation = useZoneCirculation(name);
   const color = circulation ? '#FF0000' : '#ffffff';
 
   return (

@@ -170,6 +170,13 @@ function pathObliqueTrunk(vMod: number, hMod: number): string {
  *     pour les 4 sous-cas, possible bug)
  */
 export function TcoAiguille({ item, tool }: Props) {
+  // Hooks d'abord — interdit après early return (react-hooks/rules-of-hooks).
+  const name = item.name ? String(item.name) : '';
+  const hasAffectation = useAiguilleHasAffectation(name);
+  const etat = useAiguillePosition(name);
+  const ctrlGauche = useAiguilleControleGauche(name);
+  const ctrlDroite = useAiguilleControleDroite(name);
+
   if (item.xPos == null || item.yPos == null || !item.variationId) return null;
 
   const variation = tool.variations[item.variationId];
@@ -178,12 +185,6 @@ export function TcoAiguille({ item, tool }: Props) {
   const shape = variation.ui;
   const parsed = parseShape(shape);
   if (!parsed) return null;
-
-  const name = item.name ? String(item.name) : '';
-  const hasAffectation = useAiguilleHasAffectation(name);
-  const etat = useAiguillePosition(name);
-  const ctrlGauche = useAiguilleControleGauche(name);
-  const ctrlDroite = useAiguilleControleDroite(name);
 
   const d =
     parsed.trunk === 'e'
@@ -218,18 +219,14 @@ export function TcoAiguille({ item, tool }: Props) {
     // TCO agrandi le `48 ± 20` original tombait pile au centre visuel de
     // l'aiguille (path large de ~132px). On décale à `48 ± 30` (et idem pour
     // la branche) pour que les ronds se voient bien sur leur voie respective.
-    let trunkCx = 0, trunkCy = 0, branchCx = 0, branchCy = 0;
-    if (parsed.trunk === 'e') {
-      trunkCx = 48 + 40 * parsed.vMod * parsed.hMod;
-      trunkCy = 0;
-      branchCx = parsed.vMod * parsed.hMod === 1 ? 73 : 33;
-      branchCy = 20 * parsed.vMod;
-    } else {
-      trunkCx = 50 - 10 * parsed.hMod;
-      trunkCy = 0;
-      branchCx = 73;
-      branchCy = 20 * parsed.vMod;
-    }
+    const trunkCx = parsed.trunk === 'e'
+      ? 48 + 40 * parsed.vMod * parsed.hMod
+      : 50 - 10 * parsed.hMod;
+    const trunkCy = 0;
+    const branchCx = parsed.trunk === 'e'
+      ? parsed.vMod * parsed.hMod === 1 ? 73 : 33
+      : 73;
+    const branchCy = 20 * parsed.vMod;
 
     circles = (
       <>
@@ -245,12 +242,24 @@ export function TcoAiguille({ item, tool }: Props) {
 
   return (
     <g transform={`translate(${item.xPos}, ${item.yPos})`}>
+      {/* Zone de hit élargie : rect transparent qui capture les clics
+          (gauche/droit) sur toute l'emprise visuelle de l'aiguille, pas
+          seulement sur le stroke fin du path. */}
+      <rect
+        x={-15}
+        y={-55}
+        width={140}
+        height={120}
+        fill="transparent"
+        pointerEvents="all"
+      />
       <path
         d={d}
         fill="transparent"
         stroke="#ecf0f1"
         strokeWidth={2}
         strokeMiterlimit={10}
+        pointerEvents="none"
       />
       {circles}
       {name && (

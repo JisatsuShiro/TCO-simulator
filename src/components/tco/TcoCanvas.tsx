@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useGessieStore } from '../../store/useGessieStore';
 import { getRenderer } from './renderers';
+import type { ContextMenuTarget } from './TcoContextMenu';
+import type { StationItem } from '../../types/gessie';
 
 /* Plus de props : le SVG occupe 100% de son conteneur via CSS, et le viewBox
  * gère le scaling vectoriel pour que tout le contenu soit visible. */
@@ -12,6 +14,14 @@ interface BoundingBox {
   height: number;
 }
 
+interface Props {
+  /** Clic-droit sur un item dont l'affectation supporte au moins une avarie
+   *  (aiguille / contrôle / zone). */
+  onAvariesMenu?: (target: ContextMenuTarget, x: number, y: number) => void;
+  /** Clic-droit sur une voie : ouvre le menu de lancement de train. */
+  onTrainMenu?: (suggestedStartingPoint: string | null, x: number, y: number) => void;
+}
+
 /**
  * Conteneur SVG du TCO. Itère sur station.items et délègue à la primitive
  * correspondant à item.toolId.
@@ -20,10 +30,9 @@ interface BoundingBox {
  * box des items, et `preserveAspectRatio="xMidYMid meet"` (défaut) scale
  * vectoriellement pour faire tenir tout le contenu sans déformer.
  */
-export function TcoCanvas() {
+export function TcoCanvas({ onAvariesMenu, onTrainMenu }: Props) {
   const station = useGessieStore((s) => s.station);
   const tools = useGessieStore((s) => s.tools);
-  const setHoveredUid = useGessieStore((s) => s.setHoveredUid);
 
   const bbox: BoundingBox = useMemo(() => {
     if (!station || station.items.length === 0) {
@@ -61,6 +70,26 @@ export function TcoCanvas() {
 
   const viewBox = `${bbox.minX} ${bbox.minY} ${bbox.width} ${bbox.height}`;
 
+  const handleContextMenu = (e: React.MouseEvent<SVGGElement>, item: StationItem) => {
+    // Voie ou rail → menu de lancement de train, point de départ inféré
+    // par proximité géométrique (zone la plus proche du clic).
+    if ((item.toolId === 'voie' || item.toolId === 'rail') && onTrainMenu) {
+      e.preventDefault();
+      const svg = e.currentTarget.ownerSVGElement;
+      const clickPt = svg ? clientToSvg(svg, e.clientX, e.clientY) : null;
+      const closest = clickPt ? findClosestZone(clickPt) : null;
+      onTrainMenu(closest, e.clientX, e.clientY);
+      return;
+    }
+    // Aiguille / contrôle / zone → menu d'avaries.
+    if (onAvariesMenu) {
+      const target = resolveAvariesTarget(item);
+      if (!target) return;
+      e.preventDefault();
+      onAvariesMenu(target, e.clientX, e.clientY);
+    }
+  };
+
   return (
     <svg
       width="100%"
@@ -75,12 +104,7 @@ export function TcoCanvas() {
           if (!tool) return null;
           const Renderer = getRenderer(item.toolId);
           return (
-            <g
-              key={item.uid}
-              onMouseEnter={() => setHoveredUid(item.uid)}
-              onMouseLeave={() => setHoveredUid(null)}
-              style={{ cursor: 'help' }}
-            >
+            <g key={item.uid} onContextMenu={(e) => handleContextMenu(e, item)}>
               <Renderer item={item} tool={tool} />
             </g>
           );
@@ -88,4 +112,90 @@ export function TcoCanvas() {
       </g>
     </svg>
   );
+}
+
+/**
+ * Résout l'item du TCO en cible de menu d'avaries. On essaie plusieurs
+ * conventions de clé :
+ *   - aiguille  → 'Ag' + item.name
+ *   - controle  → item.name (signal carré ou box-style)
+ *   - zone      → item.name ou 'z ' + item.name
+ *
+ * Lecture lazy via getState() : on n'a pas besoin de souscription Zustand,
+ * juste de récupérer les affectations à l'instant du clic-droit.
+ */
+function resolveAvariesTarget(item: StationItem): ContextMenuTarget | null {
+  const data = useGessieStore.getState().player.data;
+  if (!data) return null;
+  const name = item.name != null ? String(item.name) : '';
+  if (!name) return null;
+
+  const candidates = [name, 'Ag' + name, 'z ' + name];
+  for (const key of candidates) {
+    const a = data.affectations[key];
+    if (!a) continue;
+    if (a.type === 'aiguille' || a.type === 'controle' || a.type === 'zone') {
+      return {
+        id: key,
+        affType: a.type,
+        hasEap: Boolean(a.eap),
+        hasEpa: Boolean(a.epa),
+        hasProxi: Boolean(a.pedales?.Proxi),
+      };
+    }
+  }
+  return null;
+}
+
+/**
+ * Convertit des coordonnées écran (clientX/Y) en coordonnées SVG monde
+ * en utilisant la matrice CTM courante du SVG. Tient compte du viewBox
+ * et du scaling appliqué par `preserveAspectRatio`.
+ */
+function clientToSvg(svg: SVGSVGElement, x: number, y: number): { x: number; y: number } | null {
+  const ctm = svg.getScreenCTM();
+  if (!ctm) return null;
+  const pt = new DOMPoint(x, y).matrixTransform(ctm.inverse());
+  return { x: pt.x, y: pt.y };
+}
+
+/**
+ * Trouve la zone (affectation type 'zone') dont la position est la plus
+ * proche du point cliqué (en coordonnées SVG monde). Retourne l'ID
+ * d'affectation ou null si aucune zone n'a été trouvée.
+ *
+ * Les zones n'ont pas de position sur l'affectation directement — on
+ * lit la position via le station item correspondant (toolId === 'zone',
+ * dont le `name` correspond à la clé d'affectation).
+ */
+function findClosestZone(clickPt: { x: number; y: number }): string | null {
+  const state = useGessieStore.getState();
+  const data = state.player.data;
+  const station = state.station;
+  if (!data || !station) return null;
+
+  let best: { id: string; dist: number } | null = null;
+  for (const item of station.items) {
+    if (item.toolId !== 'zone') continue;
+    if (item.xPos == null || item.yPos == null) continue;
+    const itemName = item.name != null ? String(item.name) : '';
+    if (!itemName) continue;
+
+    const candidates = [itemName, 'z ' + itemName];
+    let affId: string | null = null;
+    for (const k of candidates) {
+      const a = data.affectations[k];
+      if (a && a.type === 'zone') {
+        affId = k;
+        break;
+      }
+    }
+    if (!affId) continue;
+
+    const dist = Math.hypot(item.xPos - clickPt.x, item.yPos - clickPt.y);
+    if (!best || dist < best.dist) {
+      best = { id: affId, dist };
+    }
+  }
+  return best?.id ?? null;
 }

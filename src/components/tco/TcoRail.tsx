@@ -90,8 +90,28 @@ export function TcoRail({ item }: Props) {
   const isDashed = item.variationId === 'dashed';
   const dashArray = isDashed ? '8 4' : undefined;
 
+  // Hit rect : bounding box approximative du rail à partir des nodes,
+  // pour permettre le clic-droit (menu Lancer un train) n'importe où sur
+  // le segment, pas seulement sur le stroke fin du path.
+  const lastX = used[used.length - 1]?.x ?? 0;
+  const yDeltas = used.map((n) => n.y);
+  const yMin = Math.min(0, ...yDeltas);
+  const yMax = Math.max(0, ...yDeltas);
+  const hitX = xPos - 4;
+  const hitY = yPos + yMin - (RAIL_GAP / 2 + 4);
+  const hitWidth = lastX + 8;
+  const hitHeight = yMax - yMin + RAIL_GAP + 8;
+
   return (
     <g>
+      <rect
+        x={hitX}
+        y={hitY}
+        width={hitWidth}
+        height={hitHeight}
+        fill="transparent"
+        pointerEvents="all"
+      />
       <path
         d={pathTop}
         fill="none"
@@ -100,6 +120,7 @@ export function TcoRail({ item }: Props) {
         strokeLinecap="round"
         strokeLinejoin="miter"
         strokeDasharray={dashArray}
+        pointerEvents="none"
       />
       <path
         d={pathBot}
@@ -109,6 +130,7 @@ export function TcoRail({ item }: Props) {
         strokeLinecap="round"
         strokeLinejoin="miter"
         strokeDasharray={dashArray}
+        pointerEvents="none"
       />
     </g>
   );

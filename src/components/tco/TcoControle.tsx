@@ -202,7 +202,37 @@ function pathTivDown(): string {
   return `M-33,10 m${W + 4},${2 + H / 2} h5 v-${4 + H / 2}`;
 }
 
+// Mode "double" — pair de cercles : extérieur rouge si actif, intérieur
+// jaune au repos. Reproduit le rendu Gessie pour controle.double_zap_eap_epa.
+function DoubleCircles({
+  cxOuter, cyOuter,
+  cxInner, cyInner,
+  active,
+}: {
+  cxOuter: number; cyOuter: number;
+  cxInner: number; cyInner: number;
+  active: boolean;
+}) {
+  return (
+    <>
+      <circle cx={cxOuter} cy={cyOuter} r={3} fill={active ? '#FF2200' : 'white'} stroke="#000000" strokeWidth={1} />
+      <circle cx={cxInner} cy={cyInner} r={3} fill={active ? 'white' : '#FFEE44'} stroke="#000000" strokeWidth={1} />
+    </>
+  );
+}
+
 export function TcoControle({ item }: Props) {
+  // Hooks d'abord (rules-of-hooks).
+  const name = item.name ? String(item.name) : '';
+  // État du contrôle (F = fermé / O = ouvert). Lu depuis Player.affectations
+  // si la sim est lancée, sinon null (= pas de rond, juste la boîte blanche).
+  // Sémantique SNCF : carré au repos = position "F" = rond rouge ; quand le
+  // levier est actionné, position passe à "O" → le rond rouge disparaît.
+  const etat = useAffectationPosition(name || null);
+  // États EAP/EPA/FA/proxi — encodés en CSV pour rester scalaire.
+  const visualCsv = useControleVisualState(name || null);
+  const v = decodeVisualState(visualCsv);
+
   if (item.xPos == null || item.yPos == null) return null;
 
   const variation = item.variationId ?? 'hidden';
@@ -214,20 +244,9 @@ export function TcoControle({ item }: Props) {
     : variation === 'bottom' ? 'down'
     : variation; // sam / tiv-up / tiv-down passent tel quel
 
-  const name = item.name ? String(item.name) : '';
   const isD = name.startsWith('D');
   const ouverture = Boolean(item.controleOuverture);
   const rotation = parseFloat(String(item.rotation ?? '0')) || 0;
-
-  // État du contrôle (F = fermé / O = ouvert). Lu depuis Player.affectations
-  // si la sim est lancée, sinon null (= pas de rond, juste la boîte blanche).
-  // Sémantique SNCF : carré au repos = position "F" = rond rouge ; quand le
-  // levier est actionné, position passe à "O" → le rond rouge disparaît.
-  const etat = useAffectationPosition(name || null);
-
-  // États EAP/EPA/FA/proxi — encodés en CSV pour rester scalaire.
-  const visualCsv = useControleVisualState(name || null);
-  const v = decodeVisualState(visualCsv);
 
   // Sélection du path selon la position
   let d: string;
@@ -386,25 +405,6 @@ function ControleAddOns({
       <text x={-45} y={28} fontSize={12} fill="#ecf0f1" fontFamily="system-ui">EP</text>
     </>
   );
-
-  // Mode "double" — pair de cercles : extérieur rouge si actif, intérieur
-  // jaune au repos. Reproduit le rendu Gessie pour controle.double_zap_eap_epa.
-  function DoubleCircles({
-    cxOuter, cyOuter,
-    cxInner, cyInner,
-    active,
-  }: {
-    cxOuter: number; cyOuter: number;
-    cxInner: number; cyInner: number;
-    active: boolean;
-  }) {
-    return (
-      <>
-        <circle cx={cxOuter} cy={cyOuter} r={3} fill={active ? '#FF2200' : 'white'} stroke="#000000" strokeWidth={1} />
-        <circle cx={cxInner} cy={cyInner} r={3} fill={active ? 'white' : '#FFEE44'} stroke="#000000" strokeWidth={1} />
-      </>
-    );
-  }
 
   const EAP = v.hasEap && v.double ? (
     position === 'up' ? (

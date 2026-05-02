@@ -39,11 +39,11 @@ function useSignalPosition(name: string | null): string | null {
  * c'est le levier associé qui le commande).
  */
 export function TcoSignal({ item }: Props) {
-  if (item.xPos == null || item.yPos == null) return null;
-
   const name = item.name ? String(item.name) : '';
   const etat = useSignalPosition(name || null);
   const isActive = etat === 'A';
+
+  if (item.xPos == null || item.yPos == null) return null;
 
   return (
     <g transform={`translate(${item.xPos}, ${item.yPos})`}>

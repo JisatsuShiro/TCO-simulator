@@ -24,17 +24,17 @@ export interface PrimitiveProps {
  * Procéduraux fidèles à Gessie : aiguille, joint, tjd/tjs/to (TcoTraverse).
  * Le reste utilise encore TcoSvgIcon avec une taille à l'œil — à fidéliser.
  */
-const TcoTaquet = (props: PrimitiveProps) => <TcoSvgIcon {...props} size={20} />;
-const TcoArrow  = (props: PrimitiveProps) => <TcoSvgIcon {...props} size={20} />;
+const renderTaquet: ComponentType<PrimitiveProps> = (props) => <TcoSvgIcon {...props} size={20} />;
+const renderArrow: ComponentType<PrimitiveProps> = (props) => <TcoSvgIcon {...props} size={20} />;
 
 export const renderers: Record<string, ComponentType<PrimitiveProps>> = {
   aiguille: TcoAiguille,
   tjd:      TcoTraverse,
   tjs:      TcoTraverse,
   to:       TcoTraverse,
-  taquet:   TcoTaquet,
+  taquet:   renderTaquet,
   joint:    TcoJoint,
-  arrow:    TcoArrow,
+  arrow:    renderArrow,
 
   rail:     TcoRail,
   voie:     TcoVoie,

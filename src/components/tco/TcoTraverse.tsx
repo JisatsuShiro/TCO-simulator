@@ -145,6 +145,13 @@ function tjsCircles(
  *   - Fans (paths rotate(±22deg)) reproduits pour tjd uniquement.
  */
 export function TcoTraverse({ item, tool }: Props) {
+  // Hooks d'abord (rules-of-hooks).
+  const nameUp = item.nameUp ? String(item.nameUp) : '';
+  const nameDown = item.nameDown ? String(item.nameDown) : '';
+  // Affectations aiguilles : "Ag" + name (cf. tco-traverse data() @287139).
+  const agH = useAiguillePosition(nameUp ? 'Ag' + nameUp : null);
+  const agB = useAiguillePosition(nameDown ? 'Ag' + nameDown : null);
+
   if (item.xPos == null || item.yPos == null || !item.variationId) return null;
   const variation = tool.variations[item.variationId];
   if (!variation) return null;
@@ -154,12 +161,6 @@ export function TcoTraverse({ item, tool }: Props) {
   const type = tool.id; // "tjd" | "tjs" | "to"
 
   const d = buildPath(shape, type, jonction);
-  const nameUp = item.nameUp ? String(item.nameUp) : '';
-  const nameDown = item.nameDown ? String(item.nameDown) : '';
-
-  // Affectations aiguilles : "Ag" + name (cf. tco-traverse data() @287139).
-  const agH = useAiguillePosition(nameUp ? 'Ag' + nameUp : null);
-  const agB = useAiguillePosition(nameDown ? 'Ag' + nameDown : null);
 
   return (
     <g transform={`translate(${item.xPos}, ${item.yPos})`}>

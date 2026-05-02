@@ -75,12 +75,24 @@ export function TcoVoie({ item }: Props) {
 
   return (
     <g transform={`translate(${item.xPos}, ${item.yPos})`}>
+      {/* Zone de hit élargie pour le clic-droit (menu Lancer un train).
+          Le path lui-même est fin (rails + flèches), faut viser pile dessus
+          sans ce rect. */}
+      <rect
+        x={-10}
+        y={-22}
+        width={220}
+        height={44}
+        fill="transparent"
+        pointerEvents="all"
+      />
       <path
         d={d}
         fill="transparent"
         stroke="#ecf0f1"
         strokeWidth={2}
         strokeMiterlimit={10}
+        pointerEvents="none"
       />
       {name && (
         <text
