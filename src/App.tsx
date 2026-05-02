@@ -16,7 +16,7 @@ import { GareSelect } from './design/primitives/GareSelect';
 import { colors, spacing, typography } from './design/tokens';
 import './App.css';
 
-const DEFAULT_STATION = 'clelles';
+const DEFAULT_STATION = 'saint_saturnin';
 
 function App() {
   const station = useGessieStore((s) => s.station);
