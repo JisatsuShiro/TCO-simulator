@@ -612,7 +612,7 @@ export function updateTransit(
     const o = s.affectations[zoneId];
     if (!o || !o.transit) break;
     s = updateTransitMutation(s, direction, zoneId, unlockLever);
-    const post = s.affectations[zoneId];
+    const post: Affectation | undefined = s.affectations[zoneId];
     if (post?.observers) s = informObservers(s, post.observers);
     zoneId = post?.transit?.[direction]?.nextZone;
   }

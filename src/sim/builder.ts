@@ -110,7 +110,7 @@ function asArray(value: unknown): string[] {
  */
 function parseKeyholeSpec(spec: string): KeyHole {
   const m = spec.split(/ (.+)/);
-  let posLetter = m[0];
+  const posLetter = m[0];
   const rest = m[1] ?? '';
   let position: 'plus' | 'minus' = 'plus';
   if (posLetter === 'R') position = 'minus';
@@ -523,8 +523,8 @@ function applyAnnexeII(
       asArray(dir.controleFugitifTaquetBas).length +
       asArray(dir.controleFugitifSignalFerme).length +
       asArray(dir.controleFugitifZoneProtection).length;
-    if (fugitifCount > 0 && !(lever as Record<string, unknown>).annulateurElec) {
-      (lever as Record<string, unknown>).annulateurElec = { enabled: false };
+    if (fugitifCount > 0 && !lever.annulateurElec) {
+      lever.annulateurElec = { enabled: false };
     }
 
     const signal = affectations[signalId];
@@ -700,8 +700,8 @@ function applyAnnexeIV(
     if (!lever) continue;
     if (ag.plus) {
       lever.zonesIsolees = { plus: asArray(ag.plus), minus: [] };
-      if (!(lever as Record<string, unknown>).annulateurElec) {
-        (lever as Record<string, unknown>).annulateurElec = { enabled: false };
+      if (!lever.annulateurElec) {
+        lever.annulateurElec = { enabled: false };
       }
     }
     lever.zonesTransit = { minus: [], plus: [] };
@@ -747,7 +747,7 @@ function applyAnnexeIV(
         return aff === sl.enclenchementContinuite;
       });
       for (const ml of matchingLevers) {
-        (ml as Record<string, unknown>).annulateurElec = { enabled: false };
+        ml.annulateurElec = { enabled: false };
       }
     }
 
@@ -856,10 +856,9 @@ function applyAnnexeV(
 
     for (const lv of asArray(ent.leviers)) {
       signal.eap.annulation[lv] = { ...annulCommon, lever: lv };
-      if (levers[lv]) {
-        (levers[lv] as Record<string, unknown>).annulateurElec = {
-          enabled: false,
-        };
+      const targetLever = levers[lv];
+      if (targetLever) {
+        targetLever.annulateurElec = { enabled: false };
       }
     }
   }
@@ -899,10 +898,9 @@ function applyAnnexeV(
       .annulation;
     for (const lv of asArray(ent.leviers)) {
       epaAnnul[lv] = { ...annulCommon, lever: lv };
-      if (levers[lv]) {
-        (levers[lv] as Record<string, unknown>).annulateurElec = {
-          enabled: false,
-        };
+      const targetLever = levers[lv];
+      if (targetLever) {
+        targetLever.annulateurElec = { enabled: false };
       }
     }
   }
