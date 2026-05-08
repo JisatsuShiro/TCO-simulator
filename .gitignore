@@ -32,3 +32,6 @@ todo.md
 
 # Gessie reference bundle (referenced in code comments by byte offset, not built)
 renderer.js
+
+# Claude Code local settings (per-user permissions)
+.claude/settings.local.json
