@@ -26,3 +26,9 @@ dist-ssr
 # BMAD personal/user-scoped configs (per BMAD installer convention)
 _bmad/config.user.toml
 _bmad/custom/config.user.toml
+
+# Personal scratch files
+todo.md
+
+# Gessie reference bundle (referenced in code comments by byte offset, not built)
+renderer.js
