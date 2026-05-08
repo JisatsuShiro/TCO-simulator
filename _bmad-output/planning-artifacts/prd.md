@@ -16,13 +16,13 @@ stepsCompleted:
 releaseMode: phased
 vision:
   user_is_builder: "Guill is a new SNCF operator who just discovered Gessie — primary user IS the PM. Strong empathy ground."
-  install_wall: "Trainees on Mac/Linux/locked-down corporate or school machines can't install Gessie (Windows Electron). gessieWeb removes that wall."
+  install_wall: "Trainees on Mac/Linux/locked-down corporate or school machines can't install Gessie (Windows Electron). Voie Libre removes that wall."
   product_stance: "Subtractive, not additive. v1 = Gessie's experience minus the install. No new features, no scope creep — discipline is the product."
   real_problem: "Training quality is currently gated by which OS your laptop runs. Mac/Linux/restricted trainees get less practice than Windows trainees; that asymmetry compounds across a training cycle."
-  future_state: "A new SNCF operator hears about gessieWeb on day 1, opens a URL on their company laptop, and is practicing clelles within minutes — same as a Windows peer. No 'I'll try it at home' deferral, no fade-out."
+  future_state: "A new SNCF operator hears about Voie Libre on day 1, opens a URL on their company laptop, and is practicing clelles within minutes — same as a Windows peer. No 'I'll try it at home' deferral, no fade-out."
   why_now: "Guill just lived the install wall as a trainee. Friction fresh, empathy real, skills available, cohort right behind."
   primary_differentiator: "Cross-platform reach via the browser. Not features."
-  guardrail: "Fidelity to Gessie matters more than feature surface. A trainee on gessieWeb should not have a 'Gessie does X but gessieWeb doesn't' moment with a Windows peer. The port must be INVISIBLE."
+  guardrail: "Fidelity to Gessie matters more than feature surface. A trainee on Voie Libre should not have a 'Gessie does X but Voie Libre doesn't' moment with a Windows peer. The port must be INVISIBLE."
 classification:
   projectType: web_app
   domain: edtech
@@ -52,19 +52,19 @@ projectClassification: brownfield
 workflowType: prd
 ---
 
-# Product Requirements Document - gessieWeb
+# Product Requirements Document - Voie Libre
 
 **Author:** Guill
 **Date:** 2026-05-02
 
 ## Executive Summary
 
-**gessieWeb** is a faithful web port of **Gessie**, the SNCF railway-signaling
+**Voie Libre** is a faithful web port of **Gessie**, the SNCF railway-signaling
 training simulator (Vue + Electron desktop). The port has one job: erase the
 install wall. SNCF trainees on Mac, Linux, or locked-down corporate/school
 machines cannot run Gessie today; their Windows-equipped peers can. That
 asymmetry compounds across a training cycle into a real practice-hours gap.
-gessieWeb closes the gap by making the same simulator accessible at a URL.
+Voie Libre closes the gap by making the same simulator accessible at a URL.
 
 **Target user:** new SNCF railway operators in their training cycle. Domain
 novices in signaling, not in technology — UX must hold their hand on signaling
@@ -72,16 +72,16 @@ concepts, not on tooling. The PRD's lead author is himself a new operator who
 hit the install wall on day one; product empathy is lived, not assumed.
 
 **Problem solved:** today, training quality is gated by which OS a trainee's
-laptop runs. The simulator is excellent; its distribution is not. gessieWeb
+laptop runs. The simulator is excellent; its distribution is not. Voie Libre
 removes the OS gate so every trainee gets the same number of practice hours
 regardless of hardware.
 
 ### What Makes This Special
 
-gessieWeb is **subtractive, not additive.** v1 does not add features to Gessie;
+Voie Libre is **subtractive, not additive.** v1 does not add features to Gessie;
 it removes the install. Cross-platform parity *is* the product. The discipline
 to ship that — and only that — is the differentiator: most ports drift into
-"while we're here, let's also ___" and never land. gessieWeb refuses the drift.
+"while we're here, let's also ___" and never land. Voie Libre refuses the drift.
 
 **Core insight:** the bottleneck on trainee proficiency is *who can run the
 simulator*, not *what the simulator does*. Reach is the missing factor. A
@@ -94,9 +94,9 @@ UX, scenario authoring, persistence/accounts. These may earn a place in v2+;
 they are out of scope until the URL-vs-install gap is closed for the current
 cohort. Fidelity to Gessie behavior is the floor and the ceiling for v1.
 
-**Guardrail:** the port must be **invisible**. A trainee on gessieWeb sitting
+**Guardrail:** the port must be **invisible**. A trainee on Voie Libre sitting
 next to a Windows peer on Gessie should never have a "wait, Gessie does X but
-gessieWeb doesn't" moment on a station they're both practicing. Behavioral
+Voie Libre doesn't" moment on a station they're both practicing. Behavioral
 parity on supported scenarios is the non-negotiable quality bar.
 
 ## Project Classification
@@ -127,9 +127,9 @@ Success criteria, ordered by load-bearing-ness:
    URL and reaches an interactive TCO without errors.
 2. From cold open, the trainee can complete the first-train moment without
    external instructions. (Onboarding must deliver this — see MVP scope below.)
-3. A trainee using gessieWeb side-by-side with a Windows peer using Gessie on
+3. A trainee using Voie Libre side-by-side with a Windows peer using Gessie on
    the supported MVP stations encounters **no behavioral parity break** — no
-   "wait, Gessie does X but gessieWeb doesn't" moment.
+   "wait, Gessie does X but Voie Libre doesn't" moment.
 4. The trainee comes back. A second session is the proof that the first had
    value. (Tracked as a personal/qualitative signal, not as a metric — see
    Business Success below.)
@@ -202,7 +202,7 @@ peer on Gessie. That is a smaller, sharper learning loop than a typical
 MVP.
 
 **Resource model: solo, time-bounded by the lead author's training cycle.**
-gessieWeb has one developer who is also a trainee. He has limited
+Voie Libre has one developer who is also a trainee. He has limited
 discretionary time and will exit the cohort when training ends. Two
 implications:
 
@@ -331,7 +331,7 @@ Open-ended; may earn scope later.
 a MacBook for personal study; uses a locked-down Windows PC at the training
 center. Heard about Gessie from a peer; tried to install it at training
 center (blocked) and at home (no clean Mac path). Gave up. Last week, a peer
-sent her a URL to "gessieWeb." Tech-comfortable enough to use a browser,
+sent her a URL to "Voie Libre." Tech-comfortable enough to use a browser,
 not a developer.
 
 **Opening scene.** Sunday evening, kitchen table, MacBook open. The peer
@@ -366,7 +366,7 @@ intends to come back. (Whether she does is Journey D.)
 
 ### Journey B — Léa, gets stuck
 
-**Opening scene.** Tuesday evening, her bedroom. Léa has used gessieWeb
+**Opening scene.** Tuesday evening, her bedroom. Léa has used Voie Libre
 twice now. Tonight she wants to try a more involved scenario — she heard
 her instructor mention "fermeture de carré" and she wants to see one.
 
@@ -405,7 +405,7 @@ npm run build` is clean. The new feature (or fix) is in.
 **Rising action.** Guill builds locally, runs the static `dist/` against
 a preview server. He opens it in Chrome on Windows, Firefox on Linux (a
 cheap VM or his other laptop), and Safari on macOS. He side-by-sides
-gessieWeb and Gessie on `saint_saturnin`: golden path, then three known
+Voie Libre and Gessie on `saint_saturnin`: golden path, then three known
 disturbance scenarios. Same on `amvville`. No observable divergence.
 
 **Climax.** He pushes to the static host (Netlify / Vercel / GH Pages —
@@ -429,7 +429,7 @@ hour, no dashboards, no servers.
 
 **Opening scene.** Wednesday lunch break, training center. Twenty minutes
 free. Léa has ten more days until a practical exam where she will need
-to read a TCO without hesitation. She opens the gessieWeb bookmark.
+to read a TCO without hesitation. She opens the Voie Libre bookmark.
 
 **Rising action.** Page loads in under three seconds. The default station
 is the one she practiced on Sunday — she has continuity, even though
@@ -439,7 +439,7 @@ either gone after first dismissal (cookieless, session-only, fine) or
 quiet enough to ignore. She runs three drills — first-train, then a
 disturbance she struggled with, then another. She closes the tab.
 
-**Climax.** This is where gessieWeb either earns its place in her habit
+**Climax.** This is where Voie Libre either earns its place in her habit
 loop or fades. The deciding question is: did her twelve minutes feel
 like *practice*, or like *figuring out the tool*? If it was practice, she
 will be back tomorrow. If it was figuring out the tool, she will not.
@@ -481,7 +481,7 @@ Capabilities the four journeys collectively demand:
 
 ## Domain-Specific Requirements
 
-gessieWeb's domain — adult professional training in railway signaling — has
+Voie Libre's domain — adult professional training in railway signaling — has
 **no regulatory or compliance surface** of the kind that would normally fill
 this section. We document the absence explicitly, with the trade-offs that
 made it so.
@@ -492,7 +492,7 @@ made it so.
   no accounts, no cookies needing consent, no telemetry, no PII. Refresh
   resets all state. This is not an oversight — it is the simplest path to
   ship and the simplest path to host.
-- **Safety-critical software certification.** gessieWeb is a training tool.
+- **Safety-critical software certification.** Voie Libre is a training tool.
   It cannot dispatch real trains and is not subject to DO-178-style or
   EN 50128-style certification regimes that apply to operational signaling
   software.
@@ -539,15 +539,15 @@ Technical Success, not a domain compliance requirement. We leave it there.
 
 ### Detected Innovation Areas
 
-gessieWeb does not introduce technical innovation. The novelty, such as it is,
+Voie Libre does not introduce technical innovation. The novelty, such as it is,
 lives in the *combination* applied to a narrow vertical:
 
 1. **First web-delivered SNCF railway-signaling simulator.** In the niche of
-   French SNCF signaling training tools, gessieWeb may be the first artifact
+   French SNCF signaling training tools, Voie Libre may be the first artifact
    a trainee can open with a URL alone, no install. This is novelty in the
    vertical, not in software at large.
 2. **Subtractive port discipline.** Most desktop-to-web ports drift into
-   feature additions; gessieWeb explicitly refuses. The feature surface at
+   feature additions; Voie Libre explicitly refuses. The feature surface at
    v1 is constrained to ≤ Gessie's. The discipline itself is the
    differentiator.
 3. **User-as-builder operating model.** The lead author is himself an SNCF
@@ -558,7 +558,7 @@ lives in the *combination* applied to a narrow vertical:
 ### Market Context & Competitive Landscape
 
 The competing artifact is **original Gessie** (Vue + Electron, Windows-leaning
-distribution). gessieWeb is not a market product; it is a delivery vehicle
+distribution). Voie Libre is not a market product; it is a delivery vehicle
 for the same simulator on machines Gessie cannot reach. There is no "market"
 in the commercial sense.
 
@@ -568,7 +568,7 @@ Validation reuses the metrics already in Success Criteria — no new
 instrumentation needed for the innovation claims:
 
 - Web-delivery niche-first: validated when a cohort peer asks "how can I
-  practice on my Mac?" and the answer they receive is the gessieWeb URL.
+  practice on my Mac?" and the answer they receive is the Voie Libre URL.
 - Subtractive discipline: validated at v1 ship date. Feature surface
   strictly ≤ Gessie's. Anything added has a written rationale.
 - User-as-builder loop: validated by retrospect — at 3 months, can the lead
@@ -598,7 +598,7 @@ technical contracts.
 
 ### Project-Type Overview
 
-gessieWeb is a single-page **React 19 SPA** built with **Vite 8**, using
+Voie Libre is a single-page **React 19 SPA** built with **Vite 8**, using
 **Zustand 5** for state and inline-styled SVG for the TCO render. There
 is no backend, no router, no SSR, no auth, no persistence layer, no
 build-time CMS. The deliverable is a static `dist/` directory served by
@@ -700,7 +700,7 @@ Operationally:
   trainee shares the URL on a social platform that previews links, the
   preview will be unstyled. This is an accepted v1 limitation.
 
-If gessieWeb ever moves from informal-use to officially-adopted (see
+If Voie Libre ever moves from informal-use to officially-adopted (see
 Domain Requirements § Informal-use mode only), this section is the
 first to revisit.
 
@@ -758,17 +758,17 @@ on purpose, and we name it.
 
 ### Distribution & Access
 
-- **FR1.** A trainee can open gessieWeb at a public URL without installing
+- **FR1.** A trainee can open Voie Libre at a public URL without installing
   anything.
-- **FR2.** A trainee can use gessieWeb on macOS, Linux, and Windows in
+- **FR2.** A trainee can use Voie Libre on macOS, Linux, and Windows in
   current Chrome, Firefox, Safari, and Edge.
-- **FR3.** A trainee can use gessieWeb without creating an account,
+- **FR3.** A trainee can use Voie Libre without creating an account,
   providing personal information, or accepting any data-collection
   consent.
 - **FR4.** A trainee can refresh the page (or close and re-open it)
   without losing access to the simulator. State resets to the built
   initial state; the URL itself remains usable.
-- **FR5.** All trainee-facing text in gessieWeb is presented in French.
+- **FR5.** All trainee-facing text in Voie Libre is presented in French.
 
 ### Simulation Core
 

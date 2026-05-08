@@ -1,5 +1,5 @@
 ---
-project_name: gessieWeb
+project_name: Voie Libre
 generated_by: bmad-document-project (deep scan)
 generated_on: 2026-05-02
 repository_type: monolith
@@ -7,9 +7,9 @@ project_type: web
 parts_count: 1
 ---
 
-# gessieWeb — Documentation Index
+# Voie Libre — Documentation Index
 
-This is the primary entry point for AI-assisted development of **gessieWeb**. Start here when you join a session, plan a brownfield PRD, or need to locate a topic.
+This is the primary entry point for AI-assisted development of **Voie Libre**. Start here when you join a session, plan a brownfield PRD, or need to locate a topic.
 
 > **AI agents:** if you're about to write code, read [`../_bmad-output/project-context.md`](../_bmad-output/project-context.md) **first** — it lists 95 enforced rules covering TS, React, Zustand, sim conventions, and gotchas. The docs in this folder describe **structure**; that file describes **policy**.
 
@@ -84,7 +84,7 @@ When kicking off a brownfield PRD via BMAD, point the workflow at this file (`do
 ## Repository layout in one glance
 
 ```
-gessieWeb/
+Voie Libre/
 ├── src/
 │   ├── App.tsx · main.tsx        React entry + shell
 │   ├── sim/                      Pure simulation (10 files, ~4150 LOC)

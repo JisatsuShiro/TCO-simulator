@@ -23,7 +23,7 @@ preliminaryDecisions:
 language: fr
 ---
 
-# Spécification de Design UX — gessieWeb
+# Spécification de Design UX — Voie Libre
 
 **Auteur :** Guill
 **Date :** 2026-05-02
@@ -36,7 +36,7 @@ language: fr
 
 ### Vision du projet
 
-gessieWeb est un portage web fidèle de Gessie (simulateur SNCF de signalisation, Vue/Electron desktop) destiné à supprimer le mur d'installation pour les stagiaires sur Mac, Linux et postes de centre de formation verrouillés. La posture est **soustractive et non additive** : on ne change ni la simulation, ni le vocabulaire métier, ni le comportement — on déplace seulement le canal de distribution. La Phase 1 MVP livre deux gares (`saint_saturnin`, `amvville`), une interface 100 % en français, et un déploiement sur hébergement statique gratuit (Vercel / Netlify / GitHub Pages).
+Voie Libre est un portage web fidèle de Gessie (simulateur SNCF de signalisation, Vue/Electron desktop) destiné à supprimer le mur d'installation pour les stagiaires sur Mac, Linux et postes de centre de formation verrouillés. La posture est **soustractive et non additive** : on ne change ni la simulation, ni le vocabulaire métier, ni le comportement — on déplace seulement le canal de distribution. La Phase 1 MVP livre deux gares (`saint_saturnin`, `amvville`), une interface 100 % en français, et un déploiement sur hébergement statique gratuit (Vercel / Netlify / GitHub Pages).
 
 L'auteur (Guill) est lui-même un nouveau OPC SNCF en formation. Cette posture dicte une exigence d'authenticité : le vocabulaire métier (carré, sémaphore, EAP/EPA, ATR, cantonnement BAL, FA) reste intact, et les conventions visuelles évoquent le poste d'aiguillage physique partout où ça aide à la mémorisation pour le futur passage au poste réel.
 
@@ -84,7 +84,7 @@ L'auteur (Guill) est lui-même un nouveau OPC SNCF en formation. Cette posture d
 
 ### Définition de l'expérience
 
-Le cœur de gessieWeb est une **boucle d'observation-action sur le TCO** qui simule le travail d'un agent de poste d'aiguillage :
+Le cœur de Voie Libre est une **boucle d'observation-action sur le TCO** qui simule le travail d'un agent de poste d'aiguillage :
 
 1. **Observer** la situation dans le viewport SVG (un train approche, un signal est ouvert, une zone est libre).
 2. **Décider** de l'action requise (basculer un levier, fermer un carré par commutFC, donner une autorisation ATR, prendre une clé).
@@ -214,7 +214,7 @@ Le simulateur Vue/Electron qu'on porte. Capture analysée : gare Saint Saturnin,
 
 **Ce qu'on modernise :**
 
-| Aspect Gessie | Direction gessieWeb |
+| Aspect Gessie | Direction Voie Libre |
 |---|---|
 | Palette gris-blanc style Windows 95 | Bleu nuit + gris ardoise (sombre, contemporain) |
 | Police système basique | Typographie technique moderne (Inter pour UI, IBM Plex Mono ou JetBrains Mono pour codes signal) |
@@ -232,11 +232,11 @@ Le simulateur Vue/Electron qu'on porte. Capture analysée : gare Saint Saturnin,
 
 #### 3. Simulateurs ferroviaires (OpenTTD, Train Simulator Classic, BVE Trainsim)
 
-Conventions de représentation ferroviaire, gestion d'états multiples sur un même item, vue tableau de bord. Pas de transposition directe (gessieWeb n'est pas un sim de conduite) mais validation que le grand public ferroviaire accepte les TCO denses.
+Conventions de représentation ferroviaire, gestion d'états multiples sur un même item, vue tableau de bord. Pas de transposition directe (Voie Libre n'est pas un sim de conduite) mais validation que le grand public ferroviaire accepte les TCO denses.
 
 #### 4. Outils pro denses (AutoCAD, Logic Pro, DAWs type Ableton)
 
-**Densité d'information sans bruit.** Les pros acceptent — et préfèrent — un écran chargé si chaque pixel a un sens. Palette sombre sobre, panneaux modulaires, typographie discrète. Référence pour la barre des panels opérateurs de gessieWeb.
+**Densité d'information sans bruit.** Les pros acceptent — et préfèrent — un écran chargé si chaque pixel a un sens. Palette sombre sobre, panneaux modulaires, typographie discrète. Référence pour la barre des panels opérateurs de Voie Libre.
 
 #### 5. Excalidraw, tldraw, CodePen
 
@@ -251,7 +251,7 @@ Conventions de représentation ferroviaire, gestion d'états multiples sur un m�
 #### Patterns de navigation
 
 - **Sélecteur unique en haut** (Linear, Excalidraw) → pour le `<select>` de gare. Pas de sidebar, pas de menu.
-- **Pas de routage** (CodePen, Excalidraw) → conforme au choix gessieWeb (une seule URL, état dans le store, pas de React Router).
+- **Pas de routage** (CodePen, Excalidraw) → conforme au choix Voie Libre (une seule URL, état dans le store, pas de React Router).
 - **Bandeau d'outils horizontal sous le canvas** (DAWs, AutoCAD) → modèle pour la barre des panels opérateurs.
 
 #### Patterns d'interaction
@@ -271,7 +271,7 @@ Conventions de représentation ferroviaire, gestion d'états multiples sur un m�
 
 2. **Gamification d'apprentissage** (Duolingo, Codecademy) — XP, badges, streaks, niveaux. Contraire à compétence calme et sérieux sans austérité. Léa apprend un métier, pas une langue ludique.
 
-3. **Modales de confirmation systématiques** (admin SaaS classique) — "Êtes-vous sûr ?", "Cette action est irréversible". Contraire à action directe, feedback immédiat et au silence comme respect. D'autant qu'aucune action gessieWeb n'est irréversible.
+3. **Modales de confirmation systématiques** (admin SaaS classique) — "Êtes-vous sûr ?", "Cette action est irréversible". Contraire à action directe, feedback immédiat et au silence comme respect. D'autant qu'aucune action Voie Libre n'est irréversible.
 
 ### Stratégie d'inspiration
 
@@ -435,7 +435,7 @@ Léa a déjà un modèle mental pré-formé par ses cours :
 |---|---|
 | Skeuomorphisme du levier | **Établi** — DAWs, sims industrielles, postes SNCF physiques |
 | Feedback animé sans modale | **Établi** — Logic Pro fader qui résiste, Twitter like animation |
-| Animation comme **explication** d'une logique métier | **Novel** — c'est ici que gessieWeb innove |
+| Animation comme **explication** d'une logique métier | **Novel** — c'est ici que Voie Libre innove |
 
 L'innovation est dans la **finalité didactique** de l'animation, pas dans la mécanique d'animation elle-même. Pas d'éducation utilisateur nécessaire.
 
@@ -647,7 +647,7 @@ Une seule direction visuelle a été produite et validée — pas de variantes c
 
 #### Header
 
-- Marque `gessieWeb` (suffixe `Web` en `accent.primary`)
+- Marque `Voie Libre` (suffixe `Web` en `accent.primary`)
 - Sélecteur de gare (Saint Saturnin par défaut), composant flat sombre
 - Toggle Édition / Simulation (segmented control, mode actif en `accent.primary`)
 - Sélecteur de vitesse 0× / 1× / 2× / 5× / 10× (boutons mono compact)
@@ -729,7 +729,7 @@ Le PRD a déjà documenté les **narratifs** de 4 parcours (Léa cold-success, L
 
 ### Parcours 1 — Léa découvre l'app et réussit son premier scénario
 
-**Entrée** : Léa ouvre une URL partagée par un camarade (`https://gessieweb.example/`).
+**Entrée** : Léa ouvre une URL partagée par un camarade (`https://Voie Libre.example/`).
 **Objectif** : faire transiter un train sur Saint Saturnin sans aide externe.
 **Durée cible** : < 5 minutes.
 
@@ -816,7 +816,7 @@ flowchart TD
     N --> SUCCESS[Mise à jour live]
 ```
 
-**Surfaces UI gessieWeb** : aucune directement — workflow dev externe. Le déploiement = `git push` ; l'hébergeur statique prend le relai.
+**Surfaces UI Voie Libre** : aucune directement — workflow dev externe. Le déploiement = `git push` ; l'hébergeur statique prend le relai.
 
 **Risque principal** : régression silencieuse (pas de test runner Phase 1). Mitigation = checklist manuelle dans `docs/development-guide.md` + soak-test rapide après déploiement.
 
@@ -855,7 +855,7 @@ flowchart TD
 
 - **Action directe, feedback immédiat** : un clic = une action. Toujours.
 - **Refus = animation contextuelle** : pas de message, le comportement est l'explication.
-- **Pas de confirmation** : aucune action gessieWeb n'est irréversible.
+- **Pas de confirmation** : aucune action Voie Libre n'est irréversible.
 
 #### Pattern d'observation
 
@@ -987,7 +987,7 @@ Cette section formalise les patterns de cohérence pour les situations communes 
 
 ### Patterns de feedback
 
-| Type | Pattern gessieWeb | Anti-pattern (banni) |
+| Type | Pattern Voie Libre | Anti-pattern (banni) |
 |---|---|---|
 | Succès d'action | Aucun feedback explicite — le TCO réagit | Toast "Saved !", modale "Action réussie", "Bravo !" |
 | Refus d'action | Animation contextuelle sur l'élément (Lever) ou flash 600 ms (autres panels Phase 1) | Modale "Erreur : action interdite", message rouge global |
@@ -1026,7 +1026,7 @@ Très peu de formulaires en Phase 1. Le seul cas réel : **panel Trains "+ Lance
 
 ### États vides et chargement
 
-| État | Pattern gessieWeb |
+| État | Pattern Voie Libre |
 |---|---|
 | Chargement initial des fixtures | Page blanche brève (< 100 ms typique avec Vite glob eager). Si > 200 ms : message minimal centré "Chargement…" en `text.muted`, sans spinner |
 | Pas de gare sélectionnée | Ne se produit pas (Saint Saturnin par défaut Phase 1) |

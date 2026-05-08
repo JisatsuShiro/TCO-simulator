@@ -6,15 +6,15 @@
   },
   "mode": "initial_scan",
   "scan_level": "deep",
-  "project_root": "C:/Users/guill/projets/gessieWeb",
-  "project_knowledge": "C:/Users/guill/projets/gessieWeb/docs",
+  "project_root": "C:/Users/guill/projets/Voie Libre",
+  "project_knowledge": "C:/Users/guill/projets/Voie Libre/docs",
   "repository_type": "monolith",
   "project_parts": [
     {
-      "part_id": "gessieweb",
-      "root_path": "C:/Users/guill/projets/gessieWeb",
+      "part_id": "Voie Libre",
+      "root_path": "C:/Users/guill/projets/Voie Libre",
       "project_type_id": "web",
-      "display_name": "gessieWeb (web)",
+      "display_name": "Voie Libre (web)",
       "scan_overrides": {
         "requires_api_scan": false,
         "requires_data_models": false,
@@ -24,9 +24,9 @@
   ],
   "project_types": [
     {
-      "part_id": "gessieweb",
+      "part_id": "Voie Libre",
       "project_type_id": "web",
-      "display_name": "gessieWeb (web)"
+      "display_name": "Voie Libre (web)"
     }
   ],
   "completed_steps": [
@@ -52,7 +52,7 @@
       "primary_tech": "React 19 + TypeScript 6 + Vite 8 + Zustand 5"
     },
     "technology_stack": {
-      "gessieweb": "React 19.2 SPA on Vite 8, Zustand 5 single-store, TS ~6.0 strict-ish, no test runner"
+      "Voie Libre": "React 19.2 SPA on Vite 8, Zustand 5 single-store, TS ~6.0 strict-ish, no test runner"
     },
     "components": "15 TCO SVG primitives + 8 operator panels + App shell",
     "apis": "N/A — no backend",

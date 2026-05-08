@@ -1,4 +1,4 @@
-// Bouton standard de l'UI gessieWeb.
+// Bouton standard de l'UI Voie Libre.
 //
 // Quatre variantes (cf. spec UX section "Hiérarchie des boutons") :
 //   - primary       : action engageante, max 1 par panel (Lancer simulation,

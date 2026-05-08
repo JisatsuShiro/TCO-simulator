@@ -11,7 +11,7 @@
 # ─────────────────────────────────────────────────────────────────
 
 [core]
-project_name = "gessieWeb"
+project_name = "Voie Libre"
 document_output_language = "English"
 output_folder = "_bmad-output"
 

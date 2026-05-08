@@ -16,14 +16,35 @@ import { AudioPlayers } from './components/sim/AudioPlayers';
 import { useGessieStore } from './store/useGessieStore';
 import { loadAllTools, loadStationByName, listStationNames } from './lib/loadFixtures';
 import { GareSelect } from './design/primitives/GareSelect';
+import { Logo } from './design/primitives/Logo';
 import { ResizeHandle } from './design/primitives/ResizeHandle';
 import { colors, spacing, typography } from './design/tokens';
 import './App.css';
 
 const DEFAULT_STATION = 'saint_saturnin';
-const TCO_HEIGHT_KEY = 'gessieweb.tcoHeight';
+const TCO_HEIGHT_KEY = 'voie-libre.tcoHeight';
+const TCO_HEIGHT_KEY_LEGACY = 'Voie Libre.tcoHeight';
 const TCO_HEIGHT_MIN = 200;
 const TCO_HEIGHT_MAX_RATIO = 0.9; // 90% de la hauteur viewport
+
+/**
+ * Migration localStorage : si l'ancienne clé `Voie Libre.tcoHeight` existe et
+ * qu'aucune valeur n'a encore été écrite sous la nouvelle clé `voie-libre.*`,
+ * on transfère et on supprime l'ancienne. Idempotent : appelable plusieurs
+ * fois sans effet de bord.
+ */
+function readTcoHeightFromStorage(): string | null {
+  if (typeof window === 'undefined') return null;
+  const current = window.localStorage.getItem(TCO_HEIGHT_KEY);
+  if (current !== null) return current;
+  const legacy = window.localStorage.getItem(TCO_HEIGHT_KEY_LEGACY);
+  if (legacy !== null) {
+    window.localStorage.setItem(TCO_HEIGHT_KEY, legacy);
+    window.localStorage.removeItem(TCO_HEIGHT_KEY_LEGACY);
+    return legacy;
+  }
+  return null;
+}
 
 function App() {
   const station = useGessieStore((s) => s.station);
@@ -37,9 +58,10 @@ function App() {
 
   // Hauteur du TCO en px. Persistée dans localStorage entre sessions.
   // Initialisée à 50% de la hauteur viewport si rien en stockage.
+  // Migre depuis l'ancienne clé `Voie Libre.tcoHeight` à la première lecture.
   const [tcoHeight, setTcoHeight] = useState<number>(() => {
     if (typeof window === 'undefined') return 480;
-    const saved = window.localStorage.getItem(TCO_HEIGHT_KEY);
+    const saved = readTcoHeightFromStorage();
     const parsed = saved ? parseInt(saved, 10) : NaN;
     if (!isNaN(parsed) && parsed >= TCO_HEIGHT_MIN) return parsed;
     return Math.round(window.innerHeight * 0.5);
@@ -96,6 +118,7 @@ function App() {
           flexShrink: 0,
         }}
       >
+        <Logo size={32} />
         <h1
           style={{
             margin: 0,
@@ -105,7 +128,7 @@ function App() {
             letterSpacing: 0.3,
           }}
         >
-          gessieWeb
+          Voie Libre
         </h1>
         <span style={{ color: colors.text.muted, fontSize: typography.size.xs }}>POC TCO</span>
         <GareSelect value={selected} onChange={setSelected} options={stationNames} />

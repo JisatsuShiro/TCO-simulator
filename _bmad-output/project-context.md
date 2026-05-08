@@ -1,5 +1,5 @@
 ---
-project_name: 'gessieWeb'
+project_name: 'Voie Libre'
 user_name: 'Guill'
 date: '2026-05-02'
 sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
@@ -248,7 +248,7 @@ npm run lint && npm run build
 - `dist/`, `node_modules/`, `.vite/`, caches divers
 - `_bmad-output/` : à conserver versionné (contexte BMAD utile pour les agents)
 
-### Critical Don't-Miss Rules (gotchas spécifiques gessieWeb)
+### Critical Don't-Miss Rules (gotchas spécifiques Voie Libre)
 
 **Sémantique des codes SNCF — ne pas inventer**
 - Signaux : `F` (fermé/rouge), `O` (ouvert), `I` (inactif), `A` (avertissement actif)
@@ -317,7 +317,7 @@ npm run lint && npm run build
 ## Usage Guidelines
 
 **Pour les agents IA :**
-- Lire ce fichier avant d'implémenter du code dans gessieWeb
+- Lire ce fichier avant d'implémenter du code dans Voie Libre
 - Suivre **toutes** les règles telles que documentées
 - En cas de doute, choisir l'option la plus restrictive
 - Mettre à jour ce fichier si un nouveau pattern émerge

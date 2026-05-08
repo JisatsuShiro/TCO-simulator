@@ -1,4 +1,4 @@
-# Component Inventory — gessieWeb
+# Component Inventory — Voie Libre
 
 _Generated 2026-05-02 by `bmad-document-project` (deep scan)._
 

@@ -7,7 +7,7 @@
 //
 // Animation de refus didactique : si le levier ne peut pas basculer
 // (enclenchement bloqué), le manche tente la rotation, bute, oscille,
-// revient. C'est l'expérience signature de gessieWeb — voir spec UX
+// revient. C'est l'expérience signature de Voie Libre — voir spec UX
 // "Expérience signature : le levier qui bute".
 //
 // Le composant ne consulte pas Zustand : le parent détecte le refus

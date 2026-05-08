@@ -1,4 +1,4 @@
-# Development Guide — gessieWeb
+# Development Guide — Voie Libre
 
 _Generated 2026-05-02 by `bmad-document-project`._
 
@@ -16,7 +16,7 @@ OS: project develops on **Windows 11** (paths use bash on Windows; PowerShell al
 
 ```bash
 git clone <repo>
-cd gessieWeb
+cd Voie Libre
 npm install
 ```
 

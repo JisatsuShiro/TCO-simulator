@@ -1,10 +1,10 @@
-# Architecture — gessieWeb
+# Architecture — Voie Libre
 
 _Generated 2026-05-02 by `bmad-document-project` (deep scan, web project type)._
 
 ## Executive summary
 
-**gessieWeb** is a single-page web port of the **Gessie** train-signaling simulator (originally a Vue + Electron desktop app). It reproduces the operator's view of a French SNCF *Tableau de Contrôle Optique* (TCO): the operator manipulates levers, signals, blocs, ATRs and keys to route trains through a station while the simulation enforces interlocking rules and disturbances ("avaries").
+**Voie Libre** is a single-page web port of the **Gessie** train-signaling simulator (originally a Vue + Electron desktop app). It reproduces the operator's view of a French SNCF *Tableau de Contrôle Optique* (TCO): the operator manipulates levers, signals, blocs, ATRs and keys to route trains through a station while the simulation enforces interlocking rules and disturbances ("avaries").
 
 This is a **POC port**, not a green-field rewrite. The source of truth for behavior is a webpack-extracted `renderer.js` from the original Electron bundle; ported files reference the original line offsets in headers (`// renderer.js @<line>`).
 

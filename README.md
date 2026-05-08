@@ -1,4 +1,4 @@
-# gessieWeb
+# Voie Libre
 
 Port web de **Gessie**, simulateur de poste de signalisation SNCF (PRS — Poste tout Relais à transit Souple) initialement développé en Vue + Electron. Reproduit la vue opérateur d'un *Tableau de Contrôle Optique* (TCO) : leviers, signaux, blocs de cantonnement, ATR, serrures, avaries… avec les enclenchements et les avaries injectables, pour la formation des aiguilleurs.
 

@@ -1,4 +1,4 @@
-# Source Tree Analysis — gessieWeb
+# Source Tree Analysis — Voie Libre
 
 _Generated 2026-05-02 by `bmad-document-project` (deep scan)._
 
@@ -7,7 +7,7 @@ This is an annotated map of the repository, focused on what an AI agent (or new 
 ## Repository root
 
 ```
-gessieWeb/
+Voie Libre/
 ├── index.html                 # Vite HTML entry — mounts /src/main.tsx into #root
 ├── vite.config.ts             # Vite config (only @vitejs/plugin-react)
 ├── tsconfig.json              # Solution file → references tsconfig.app.json + tsconfig.node.json
