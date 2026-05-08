@@ -108,13 +108,29 @@ export interface Lever {
     moving: Incompatibility;
   };
   keyholes?: Record<string, KeyHole>;
-  /** Liste des dispositifs de blocage (cf. annexe II). */
-  dispositifs?: unknown[];
+  /**
+   * Étiquettes mémo posées par l'opérateur (DA / DSA / DR). Pure couche
+   * d'annotation, sans effet sur les enclenchements. Cf. `toggleDispositifAttention`.
+   */
+  dispositifs: string[];
   /** Pour zonesIsolees / zonesTransit : indexé par "plus"/"minus". */
   zonesIsolees?: { plus: string[]; minus: string[] };
   zonesTransit?: { plus: string[]; minus: string[] };
   /** Directions actives sur ce levier (signaux) — cf. SignalDirection. */
   directions?: SignalDirection[];
+  /**
+   * Signal principal piloté par ce levier (annexeII `signalId`). Sert au
+   * formatage du label "{signalId}/{destination}" type Gessie. Première
+   * occurrence d'annexeII retenue si plusieurs entries existent.
+   */
+  signalId?: string;
+  /**
+   * Labels de destination abbréviés (annexeII `id`) — un par entrée annexeII
+   * ayant ce leverId. Ex : ["VA", "V5 à 9", "EP"] pour lever 22 saint_saturnin.
+   * Utilisé pour composer "{signalId}/{first à last}" quand plusieurs leviers
+   * partagent le même signal.
+   */
+  directionLabels?: string[];
   /** Annulateur électrique : levier symbolique de "rétention". */
   annulateurElec?: { enabled: boolean };
   /** Verrous d'approche en attente — chaînés sur le levier. */
@@ -200,8 +216,20 @@ export interface Affectation {
   epa?: SignalEpa;
   /** Annulateur FA pressé ? */
   fa?: boolean;
-  annulateurFA?: { pressed: boolean };
-  annulSubstitution?: { pressed: boolean };
+  /**
+   * Annulateur de Fermeture Automatique : `enabled` à true = sceau brisé,
+   * la FA déclenchée par un train ne refermera pas le signal (le bypass
+   * vit dans `closeWithFA`). Repro Gessie (mutation CHANGE_FA_STATUS).
+   */
+  annulateurFA?: { enabled: boolean };
+  /**
+   * Annulateur de substitution : permet d'ouvrir le signal *malgré* l'occupation
+   * d'une zone de protection. Bouton fugitif (pressé seulement le temps de la
+   * dispatch). `zone` désigne la zone de protection à condition (réf. Gessie
+   * `controlePermanentAnnulZoneOccupee`) — la dispatch ne fait rien si la zone
+   * n'est pas en circulation.
+   */
+  annulSubstitution?: { pressed: boolean; zone?: string };
   /**
    * État du commutateur de Fermeture Carré : `false` au repos (commutateur
    * non engagé, le signal s'ouvre normalement), `true` quand le commutateur

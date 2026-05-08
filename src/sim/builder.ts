@@ -469,6 +469,40 @@ function applyAnnexeIbis(station: Station): Record<string, CentralLock> {
  *  - Création d'annulateur électrique si controles fugitifs présents.
  *  - Setup des pédales spéciales (Proxi, FA).
  */
+/**
+ * Abrège le `id` d'une entrée annexeII (label de destination) pour affichage
+ * dans le label du levier, en suivant les conventions Gessie observées :
+ *
+ *   "Voie 2"        → "V2"
+ *   "Voie A"        → "VA"
+ *   "Voie 1 LP"     → "V1"     (suffixe de code-lieu trimmé)
+ *   "Voies 5 à 9"   → "V5 à 9"
+ *   "VU Nohans"     → "VU"     (suffixe de lieu déposé)
+ *   "EP La Motte"   → "EP"     (suffixe de lieu déposé)
+ *   "VA La Motte"   → "VA"
+ *
+ * Règles :
+ *   - Si le premier mot est "Voie"/"Voies", on le réduit à "V" puis on
+ *     concatène la suite. Les codes-lieu en queue (jeton 2+ majuscules,
+ *     ex: "LP", "BMV") sont retirés.
+ *   - Sinon, on garde uniquement le premier mot (qui est généralement déjà
+ *     une abréviation type "VU" / "VA" / "EP").
+ */
+function abbreviateDestinationLabel(id: string): string {
+  const parts = id.trim().split(/\s+/).filter((p) => p !== '');
+  if (parts.length === 0) return '';
+  const first = parts[0];
+  if (first === 'Voie' || first === 'Voies') {
+    let tail = parts.slice(1);
+    // Retire un éventuel code-lieu trailing (2+ lettres majuscules).
+    while (tail.length > 1 && /^[A-Z]{2,}$/.test(tail[tail.length - 1])) {
+      tail = tail.slice(0, -1);
+    }
+    return 'V' + tail.join(' ');
+  }
+  return first;
+}
+
 function applyAnnexeII(
   station: Station,
   affectations: Record<string, Affectation>,
@@ -482,6 +516,16 @@ function applyAnnexeII(
     const signalId = String(dir.signalId ?? '');
     const lever = levers[leverId];
     if (!lever) continue;
+
+    // Signal principal + label de destination abbrégé pour formatage UI.
+    // Repro convention Gessie : "{signalId}/{abbreviated destination}".
+    if (!lever.signalId && signalId !== '') lever.signalId = signalId;
+    const dirIdRaw = String(dir.id ?? '').trim();
+    if (dirIdRaw !== '') {
+      const abbrev = abbreviateDestinationLabel(dirIdRaw);
+      if (!lever.directionLabels) lever.directionLabels = [];
+      lever.directionLabels.push(abbrev);
+    }
 
     if (!lever.directions) lever.directions = [];
     const leverList = String(dir.levierMoins ?? '')
@@ -615,7 +659,7 @@ function applyAnnexeII(
       if (dir.faIsAnnulable) {
         fa.annulable = true;
         if (!signal.annulateurFA) {
-          signal.annulateurFA = { pressed: false };
+          signal.annulateurFA = { enabled: false };
         }
       }
     }
@@ -646,10 +690,13 @@ function applyAnnexeII(
     );
 
     // Annulateur de substitution.
+    // Repro Gessie : `ye.annulSubstitution = { pressed: !1, zone: ge.controlePermanentAnnulZoneOccupee }`.
     if (!signal.annulSubstitution && dir.controlePermanentAnnulationSubstitution) {
-      signal.annulSubstitution = { pressed: false };
-      (signal as Record<string, unknown>).annulSubstitutionZone =
-        dir.controlePermanentAnnulZoneOccupee;
+      const zone = dir.controlePermanentAnnulZoneOccupee;
+      signal.annulSubstitution = {
+        pressed: false,
+        zone: typeof zone === 'string' && zone !== '' ? zone : undefined,
+      };
     }
 
     // Le signal devient observer de tous les items contrôlés par cette direction.
@@ -919,13 +966,13 @@ function applyAnnexeVI(station: Station): TransitAnnulator[] {
       zones: asArray(e.zones),
       on: false,
       pressed: false,
-      autorisation: e.terrain ? false : true,
+      autorisation: false,
       terrain: !!e.terrain,
       ...(e as object),
     } as TransitAnnulator;
     obj.on = false;
     obj.pressed = false;
-    if (e.terrain) obj.autorisation = false;
+    obj.autorisation = false;
     out.push(obj);
   }
   return out;

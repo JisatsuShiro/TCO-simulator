@@ -123,7 +123,7 @@ function pathUp(isD: boolean, ouverture: boolean): string {
   if (isD) {
     // Boîte ovale : seuls les coins arrondis (pas d'allongement horizontal)
     return (
-      `M3,-25 ` +
+      `M3,-30 ` +
       `m0,${R} ` +
       `a${R},${R} 0 0 1 ${R},${-R} ` +
       `a${R},${R} 0 0 1 ${R},${R} ` +
@@ -131,15 +131,15 @@ function pathUp(isD: boolean, ouverture: boolean): string {
       `a${R},${R} 0 0 1 ${-R},${R} ` +
       `a${R},${R} 0 0 1 ${-R},${-R} ` +
       `z ` +
-      `M-2,-25 ` +
+      `M-2,-30 ` +
       `m5,${H / 2} ` +
       `h-5 ` +
-      `v${4 + H / 2}`
+      `v${9 + H / 2}`
     );
   }
   const ext = ouverture ? 12 : 0;
   return (
-    `M0,-25 ` +
+    `M0,-30 ` +
     `m0,${R} ` +
     `a${R},${R} 0 0 1 ${R},${-R} ` +
     `h${W + ext - 2 * R} ` +
@@ -149,10 +149,10 @@ function pathUp(isD: boolean, ouverture: boolean): string {
     `h${-(W + ext) + 2 * R} ` +
     `a${R},${R} 0 0 1 ${-R},${-R} ` +
     `z ` +
-    `M-5,-25 ` +
+    `M-5,-30 ` +
     `m5,${H / 2} ` +
     `h-5 ` +
-    `v${4 + H / 2}`
+    `v${9 + H / 2}`
   );
 }
 
@@ -215,8 +215,8 @@ function DoubleCircles({
 }) {
   return (
     <>
-      <circle cx={cxOuter} cy={cyOuter} r={3} fill={active ? '#FF2200' : 'white'} stroke="#000000" strokeWidth={1} />
-      <circle cx={cxInner} cy={cyInner} r={3} fill={active ? 'white' : '#FFEE44'} stroke="#000000" strokeWidth={1} />
+      <circle cx={cxOuter} cy={cyOuter} r={4} fill={active ? '#FF2200' : 'white'} stroke="#000000" strokeWidth={1} />
+      <circle cx={cxInner} cy={cyInner} r={4} fill={active ? 'white' : '#FFEE44'} stroke="#000000" strokeWidth={1} />
     </>
   );
 }
@@ -284,9 +284,9 @@ export function TcoControle({ item }: Props) {
   let redCx = 0, redCy = 0, yellowCx = 0, yellowCy = 0;
   if (position === 'up') {
     redCx = W / 2;
-    redCy = -25 + H / 2;
+    redCy = -30 + H / 2;
     yellowCx = 12 + W / 2;
-    yellowCy = -25 + H / 2;
+    yellowCy = -30 + H / 2;
   } else if (position === 'down') {
     redCx = -25 + W / 2;
     redCy = 12 + H / 2;
@@ -380,13 +380,13 @@ function ControleAddOns({
     <>
       {position === 'up' ? (
         <>
-          <circle cx={-20} cy={-40} r={7} fill="none" stroke="#ecf0f1" strokeWidth={1.5} />
-          <text x={-24} y={-37} fontSize={7} fill="#ecf0f1" fontFamily="system-ui">FA</text>
+          <circle cx={-30} cy={-45} r={11} fill="none" stroke="#ecf0f1" strokeWidth={1.5} />
+          <text x={-30} y={-45} fontSize={13} fontWeight="bold" textAnchor="middle" dominantBaseline="central" fill="#ecf0f1" fontFamily="system-ui">FA</text>
         </>
       ) : (
         <>
-          <circle cx={-18 + 2 * W} cy={12 + 2 * H} r={7} fill="none" stroke="#ecf0f1" strokeWidth={1.5} />
-          <text x={-22 + 2 * W} y={14 + 2 * H} fontSize={7} fill="#ecf0f1" fontFamily="system-ui">FA</text>
+          <circle cx={-8 + 2 * W} cy={17 + 2 * H} r={11} fill="none" stroke="#ecf0f1" strokeWidth={1.5} />
+          <text x={-8 + 2 * W} y={17 + 2 * H} fontSize={13} fontWeight="bold" textAnchor="middle" dominantBaseline="central" fill="#ecf0f1" fontFamily="system-ui">FA</text>
         </>
       )}
     </>
@@ -397,29 +397,29 @@ function ControleAddOns({
       <circle
         cx={-40}
         cy={15}
-        r={3}
+        r={4}
         fill={v.proxiPressed ? '#FFEE44' : 'transparent'}
         stroke="#ecf0f1"
         strokeWidth={1.5}
       />
-      <text x={-45} y={28} fontSize={12} fill="#ecf0f1" fontFamily="system-ui">EP</text>
+      <text x={-45} y={35} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">EP</text>
     </>
   );
 
   const EAP = v.hasEap && v.double ? (
     position === 'up' ? (
       <>
-        <text y={-20} x={-55} fontSize={12} fill="#ecf0f1" fontFamily="system-ui">ZAp</text>
-        <DoubleCircles cxOuter={-38} cyOuter={-14} cxInner={-46} cyInner={-14} active={v.eapZap} />
-        <text y={-20} x={-30} fontSize={12} fill="#ecf0f1" fontFamily="system-ui">EAp</text>
-        <DoubleCircles cxOuter={-15} cyOuter={-14} cxInner={-23} cyInner={-14} active={v.eapEap} />
+        <text y={-20} x={-65} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">ZAp</text>
+        <DoubleCircles cxOuter={-48} cyOuter={-14} cxInner={-58} cyInner={-14} active={v.eapZap} />
+        <text y={-20} x={-30} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">EAp</text>
+        <DoubleCircles cxOuter={-15} cyOuter={-14} cxInner={-25} cyInner={-14} active={v.eapEap} />
       </>
     ) : (
       <>
-        <text y={28} x={5} fontSize={12} fill="#ecf0f1" fontFamily="system-ui">EAp</text>
-        <DoubleCircles cxOuter={22} cyOuter={14} cxInner={14} cyInner={14} active={v.eapEap} />
-        <text y={28} x={30} fontSize={12} fill="#ecf0f1" fontFamily="system-ui">ZAp</text>
-        <DoubleCircles cxOuter={46} cyOuter={14} cxInner={37} cyInner={14} active={v.eapZap} />
+        <text y={28} x={5} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">EAp</text>
+        <DoubleCircles cxOuter={22} cyOuter={14} cxInner={12} cyInner={14} active={v.eapEap} />
+        <text y={28} x={40} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">ZAp</text>
+        <DoubleCircles cxOuter={56} cyOuter={14} cxInner={46} cyInner={14} active={v.eapZap} />
       </>
     )
   ) : null;
@@ -427,11 +427,11 @@ function ControleAddOns({
   const EPA = v.hasEpa && !v.hasEap ? (
     v.double ? (
       <>
-        <text y={position === 'up' ? -20 : 28} x={position === 'up' ? -30 : 5} fontSize={12} fill="#ecf0f1" fontFamily="system-ui">EPa</text>
+        <text y={position === 'up' ? -20 : 28} x={position === 'up' ? -30 : 5} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">EPa</text>
         <DoubleCircles
           cxOuter={position === 'up' ? -15 : 22}
           cyOuter={position === 'up' ? -14 : 14}
-          cxInner={position === 'up' ? -23 : 14}
+          cxInner={position === 'up' ? -25 : 12}
           cyInner={position === 'up' ? -14 : 14}
           active={v.epaEpa}
         />
@@ -442,12 +442,12 @@ function ControleAddOns({
         <circle
           cx={position === 'up' ? -22 : -22}
           cy={position === 'up' ? -17 : -17}
-          r={3}
+          r={4}
           fill={v.epaEpa ? '#FF2200' : '#FFEE44'}
           stroke="#000000"
           strokeWidth={1}
         />
-        <text x={-30} y={-20} fontSize={12} fill="#ecf0f1" fontFamily="system-ui">Epa</text>
+        <text x={-30} y={-20} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">Epa</text>
       </>
     )
   ) : null;

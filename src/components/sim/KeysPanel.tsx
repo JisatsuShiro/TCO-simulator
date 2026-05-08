@@ -327,10 +327,14 @@ function GroupKeyhole({ groupId, keyId }: { groupId: string; keyId: string }) {
 
 function LockBox({ keyId }: { keyId: string }) {
   const presence = useGessieStore((s) => s.player.data?.locks[keyId]?.presence ?? false);
+  const position = useGessieStore((s) => s.player.data?.locks[keyId]?.position);
   const holdedKey = useGessieStore((s) => s.player.data?.holdedKey);
   const takeKey = useGessieStore((s) => s.takeKey);
   const putKey = useGessieStore((s) => s.putKey);
+  const toggleLock = useGessieStore((s) => s.toggleLock);
   const { refused, trigger } = useRefusalDetection();
+  const { refused: rotationRefused, trigger: triggerRotation } =
+    useRefusalDetection();
 
   const handleClick = () => {
     const before = Boolean(presence);
@@ -344,14 +348,57 @@ function LockBox({ keyId }: { keyId: string }) {
     );
   };
 
+  // Position 'plus' ≡ N (Normal), 'minus' ≡ R (Renversé). Affichage : la
+  // lettre courante. Click → toggleLock (bascule N↔R). Refus silencieux si
+  // R→N tenté sans clé présente — on lit la position avant/après pour
+  // déclencher l'animation refus.
+  const positionLabel = position === 'plus' ? 'N' : position === 'minus' ? 'R' : '?';
+  const handleRotate = () => {
+    // Encodage "position est plus ?" en bool pour réutiliser useRefusalDetection.
+    // before/after identiques ⇒ pas de bascule ⇒ refus.
+    const before = position === 'plus';
+    triggerRotation(
+      () => toggleLock(keyId),
+      () => useGessieStore.getState().player.data?.locks[keyId]?.position === 'plus',
+      before,
+    );
+  };
+
   return (
-    <KeyHole
-      state={deriveState(Boolean(presence), holdedKey)}
-      label={keyId}
-      onClick={handleClick}
-      refused={refused}
-      variant="large"
-    />
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+      <KeyHole
+        state={deriveState(Boolean(presence), holdedKey)}
+        label={keyId}
+        onClick={handleClick}
+        refused={refused}
+        variant="large"
+      />
+      <button
+        type="button"
+        onClick={handleRotate}
+        aria-label={`Rotation cadenas ${keyId}, position ${positionLabel === 'N' ? 'Normale' : 'Renversée'}`}
+        title={`Tourner ${keyId} (${positionLabel} → ${positionLabel === 'N' ? 'R' : 'N'})`}
+        style={{
+          background: position === 'minus' ? colors.signal.jaune : colors.surface.medium,
+          color: position === 'minus' ? colors.surface.darkest : colors.text.primary,
+          border: `1px solid ${rotationRefused ? colors.signal.rouge : colors.border.default}`,
+          borderRadius: radii.sm,
+          padding: '2px 8px',
+          minWidth: 30,
+          cursor: 'pointer',
+          fontFamily: typography.mono.family,
+          fontSize: typography.size.xs,
+          fontWeight: typography.weight.bold,
+          letterSpacing: '0.05em',
+          transition: 'background 120ms, border-color 120ms',
+          boxShadow: rotationRefused
+            ? `0 0 0 2px ${colors.signal.rouge}55`
+            : undefined,
+        }}
+      >
+        {positionLabel}
+      </button>
+    </div>
   );
 }
 

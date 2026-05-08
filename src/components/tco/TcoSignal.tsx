@@ -50,16 +50,17 @@ export function TcoSignal({ item }: Props) {
       <circle
         cx={0}
         cy={0}
-        r={5}
+        r={6}
         fill={isActive ? '#FFCC00' : 'transparent'}
         stroke="#ecf0f1"
         strokeWidth={1.5}
       />
       {name && (
         <text
-          x={10}
+          x={11}
           y={4}
-          fontSize={12}
+          fontSize={14}
+          fontWeight="bold"
           fill="#ecf0f1"
           fontFamily="system-ui"
         >

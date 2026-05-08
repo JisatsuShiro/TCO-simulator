@@ -240,6 +240,45 @@ export function takeCentralKey(state: PlayerData, uid: string): PlayerData {
 // Note : opérateur `!==` utilisé avec `||` dans le bundle, mais l'effet net
 // est : on n'agit QUE si keyId === holdedKey.
 
+// ===== toggleLock =====
+//
+// Bascule la position d'un cadenas (entrée de `state.locks`) entre 'plus' (N)
+// et 'minus' (R). Repro Gessie (renderer.js) :
+//   toggleLock(e, t) {
+//     var n = v.locks[t], a = "N" === n.position ? "R" : "N";
+//     ("N" != a || n.keyhole.presence) && e.commit("CHANGE_LOCK_POSITION", { keyId: t, newPosition: a });
+//   }
+//
+// Sémantique des positions (annexe Ibis Gessie) :
+//   - 'plus'  ≡ "N" (Normal / au repos)
+//   - 'minus' ≡ "R" (Renversé / verrouillé)
+//
+// Garde : R→N (minus → plus) refusé si la clé n'est pas présente. N→R toujours
+// autorisé.
+//
+// Note : le bundle lit `n.keyhole.presence` (sur ce qu'il prend pour un objet
+// "lock" avec un nested keyhole), mais dans le port `state.locks[k]` EST le
+// keyhole — on lit donc directement `lock.presence` (cohérent avec keys.ts:53,
+// resolveContainer pour `lock:true`).
+
+export function toggleLock(state: PlayerData, keyId: string): PlayerData {
+  const lock = state.locks[keyId];
+  if (!lock) return state;
+
+  const newPos: 'plus' | 'minus' = lock.position === 'plus' ? 'minus' : 'plus';
+
+  // R→N (minus→plus) : refusé sans clé présente.
+  if (newPos === 'plus' && !lock.presence) return state;
+
+  return {
+    ...state,
+    locks: {
+      ...state.locks,
+      [keyId]: { ...lock, position: newPos },
+    },
+  };
+}
+
 export function putCentralKey(state: PlayerData, uid: string): PlayerData {
   const central = state.centralLocks[uid];
   if (!central) return state;

@@ -69,8 +69,29 @@ export interface Station {
   annexeV?: unknown[];
   annexeVI?: unknown[];
   annexeILabels?: unknown[];
-  objectsStyle?: Record<string, unknown>;
+  /**
+   * Items auxiliaires à positionnement absolu (cartouches, indicateurs
+   * terrain, leviers du pupitre…). Chaque entrée porte un `parentType` qui
+   * détermine quel composant la rend (atrGroup, atr, lever, bloc…). Le TCO
+   * Web exploite uniquement les entrées qu'il sait rendre — le reste est
+   * ignoré silencieusement.
+   */
+  objectsStyle?: ObjectStyleItem[];
   controlesVU?: unknown[];
+}
+
+/** Item de `objectsStyle` — équivalent web des objets superposés au TCO. */
+export interface ObjectStyleItem {
+  id: string;
+  parentType: string;
+  type?: string;
+  name?: string;
+  position?: {
+    position?: string;
+    left?: string;
+    top?: string;
+  };
+  [key: string]: unknown;
 }
 
 /** Helper : reconstruit le `type` d'un item à la mode Gessie. */

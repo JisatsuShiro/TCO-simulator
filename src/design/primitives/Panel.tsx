@@ -15,7 +15,12 @@ import type { CSSProperties, ReactNode } from 'react';
 import { colors, spacing, typography } from '../tokens';
 
 interface Props {
-  title: string;
+  /**
+   * Titre du panel. `string` pour le cas usuel (libellé), `ReactNode` quand
+   * un panel veut composer une UI riche en place du titre — typiquement
+   * une rangée d'onglets (cf. `LeversPanel`).
+   */
+  title: ReactNode;
   /** Élément(s) affiché(s) à droite du titre (compteurs, méta). */
   meta?: ReactNode;
   /** Active le scroll vertical avec maxHeight (par défaut 220 px). */
@@ -91,16 +96,22 @@ export function Panel({
   return (
     <section style={wrapperStyle}>
       <header style={headerStyle}>
-        <span
-          style={{
-            fontWeight: typography.weight.semibold,
-            color: colors.text.primary,
-            fontSize: typography.size.sm,
-            letterSpacing: 0.2,
-          }}
-        >
-          {title}
-        </span>
+        {typeof title === 'string' ? (
+          <span
+            style={{
+              fontWeight: typography.weight.semibold,
+              color: colors.text.primary,
+              fontSize: typography.size.sm,
+              letterSpacing: 0.2,
+            }}
+          >
+            {title}
+          </span>
+        ) : (
+          // Title custom (rangée d'onglets, contrôles…) — pas d'enrobage
+          // pour laisser le panel composer sa propre apparence.
+          title
+        )}
         {meta != null && (
           <span style={{ color: colors.text.secondary, fontSize: typography.size.xs }}>
             {meta}

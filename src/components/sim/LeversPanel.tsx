@@ -11,20 +11,24 @@
 // la largeur du groupe, leviers en row 2). Le conteneur principal
 // est en flex-wrap pour gérer le débordement horizontal.
 
-import { useState, useMemo } from 'react';
-import { useGessieStore } from '../../store/useGessieStore';
+import { useState, useMemo, useEffect } from 'react';
+import { useGessieStore, type LeverRefusalEntry } from '../../store/useGessieStore';
 import { Lever } from '../../design/primitives/Lever';
-import { KnobButton } from '../../design/primitives/KnobButton';
 import { Panel } from '../../design/primitives/Panel';
-import { spacing } from '../../design/tokens';
+import { colors, radii, spacing, typography } from '../../design/tokens';
 import type { Affectation, Lever as LeverType } from '../../sim/types';
 import { LeverKeyholeStrip, AuxiliaryKeysColumn } from './KeysPanel';
+import { DispositifsMenu, type DispositifsTarget } from './DispositifsMenu';
+import {
+  FaPushButton,
+  AnnulSubstitutionPushButton,
+  FcPushButton,
+  EpaKeybox,
+  AeKeybox,
+} from './AnnulCells';
+import { AtrPlate } from './AtrPanel';
 
-interface Group {
-  /** Liste des signalIds FC qui couvrent tous les leviers du groupe. */
-  fcSignals: string[];
-  levers: LeverType[];
-}
+type LeversView = 'leviers' | 'refusals';
 
 /**
  * Classifie un levier : pilote-t-il (au moins) une aiguille ou uniquement
@@ -45,41 +49,124 @@ function classifyLever(
 }
 
 /**
- * Construit les groupes FC à partir d'une liste de leviers : on regroupe
- * les leviers consécutifs partageant exactement le même ensemble de
- * signaux FC. Les leviers sans FC sont laissés en groupes solo.
+ * Annulateurs/commutateurs applicables à un levier, regroupés par signal.
+ * Un levier qui contrôle plusieurs signaux peut avoir plusieurs entrées.
  */
-function buildFcGroups(
+interface ChannelAnnotations {
+  /** Signaux dont l'annulateur FA est exposé en slot-top. */
+  faSignals: string[];
+  /** Signaux dont l'annulateur de substitution est exposé en slot-top. */
+  substSignals: string[];
+  /** Signaux dont le commutateur FC est exposé en slot-top. */
+  fcSignals: string[];
+  /** Signaux avec EPA exposé en slot-bottom (keybox laitonné). */
+  epaSignals: string[];
+}
+
+/**
+ * Construit les annotations par canal AU NIVEAU D'UN GROUPE, en dédupliquant
+ * les annulateurs partagés entre plusieurs leviers du même signal. Règle :
+ * le PREMIER levier (ordre d'itération) qui possède un signal "réclame" son
+ * annulateur FA/Subst/FC/EPA ; les leviers suivants voient une cellule vide
+ * pour ce signal (mais le rail garde sa hauteur, donc l'alignement
+ * horizontal est préservé).
+ */
+function computeGroupAnnotations(
   levers: LeverType[],
   affectations: Record<string, Affectation>,
-): Group[] {
-  const fcsByLever = levers.map((l) =>
-    l.affectations
-      .filter((aff) => affectations[aff]?.positionFC !== undefined)
-      .sort(),
-  );
-  const result: Group[] = [];
-  let current: Group | null = null;
-  for (let i = 0; i < levers.length; i++) {
-    const fcs = fcsByLever[i];
-    const key = fcs.join('|');
-    const canMerge = fcs.length > 0;
-    if (canMerge && current && current.fcSignals.join('|') === key) {
-      current.levers.push(levers[i]);
-    } else {
-      if (current) result.push(current);
-      current = { fcSignals: fcs, levers: [levers[i]] };
+): Map<string, ChannelAnnotations> {
+  const result = new Map<string, ChannelAnnotations>();
+  const claimedFa = new Set<string>();
+  const claimedSubst = new Set<string>();
+  const claimedFc = new Set<string>();
+  const claimedEpa = new Set<string>();
+  for (const lever of levers) {
+    const ann: ChannelAnnotations = {
+      faSignals: [],
+      substSignals: [],
+      fcSignals: [],
+      epaSignals: [],
+    };
+    for (const affId of lever.affectations) {
+      const aff = affectations[affId];
+      if (!aff) continue;
+      if (aff.annulateurFA && !claimedFa.has(affId)) {
+        ann.faSignals.push(affId);
+        claimedFa.add(affId);
+      }
+      if (aff.annulSubstitution && !claimedSubst.has(affId)) {
+        ann.substSignals.push(affId);
+        claimedSubst.add(affId);
+      }
+      if (aff.positionFC !== undefined && !claimedFc.has(affId)) {
+        ann.fcSignals.push(affId);
+        claimedFc.add(affId);
+      }
+      if (aff.epa && !claimedEpa.has(affId)) {
+        ann.epaSignals.push(affId);
+        claimedEpa.add(affId);
+      }
     }
+    result.set(lever.id, ann);
   }
-  if (current) result.push(current);
   return result;
 }
 
 export function LeversPanel() {
   const data = useGessieStore((s) => s.player.data);
   const toggleLever = useGessieStore((s) => s.toggleLever);
-  const toggleCommutFC = useGessieStore((s) => s.toggleCommutFC);
+  const toggleAnnulElec = useGessieStore((s) => s.toggleAnnulElec);
+  const refusalsCount = useGessieStore((s) => s.leverRefusals.length);
+  const refusalsUnseen = useGessieStore((s) => s.leverRefusalsUnseen);
+  const markRefusalsSeen = useGessieStore((s) => s.markLeverRefusalsSeen);
+  const atrCount = useGessieStore(
+    (s) => s.player.data?.transitAnnulateurs.length ?? 0,
+  );
+  // Signaux qui exposent un EPA (annulateur de parcours) — un par signal,
+  // dédupliqué. Rendus dans leur propre cartouche à côté du groupe ATR.
+  // Pour chaque signal on remonte aussi la liste des leviers qui le pilotent
+  // (inverse de l'index lever→affectations) afin d'étiqueter le keybox avec
+  // "L<leverIds>".
+  const epaEntries = useMemo(() => {
+    if (!data) return [] as { signalId: string; leverIds: string[] }[];
+    const signalToLevers = new Map<string, string[]>();
+    for (const lever of Object.values(data.levers)) {
+      for (const sid of lever.affectations) {
+        const arr = signalToLevers.get(sid) ?? [];
+        arr.push(lever.id);
+        signalToLevers.set(sid, arr);
+      }
+    }
+    const sortNatural = (a: string, b: string) => {
+      const na = parseInt(a, 10);
+      const nb = parseInt(b, 10);
+      if (!isNaN(na) && !isNaN(nb)) return na - nb;
+      if (!isNaN(na)) return -1;
+      if (!isNaN(nb)) return 1;
+      return a.localeCompare(b);
+    };
+    return Object.entries(data.affectations)
+      .filter(([, a]) => Boolean(a.epa))
+      .map(([signalId]) => ({
+        signalId,
+        leverIds: (signalToLevers.get(signalId) ?? []).slice().sort(sortNatural),
+      }))
+      .sort((a, b) => a.signalId.localeCompare(b.signalId));
+  }, [data]);
+  const [view, setView] = useState<LeversView>('leviers');
   const [refusedLever, setRefusedLever] = useState<string | null>(null);
+  const [dispositifsMenu, setDispositifsMenu] = useState<
+    { x: number; y: number; target: DispositifsTarget } | null
+  >(null);
+
+  // Quand l'opérateur consulte l'onglet "Refus", on marque tout comme lu →
+  // arrête le clignotement. On laisse les entrées dans la liste pour
+  // consultation : seul le badge `unseen` est reset.
+  useEffect(() => {
+    if (view === 'refusals' && refusalsUnseen > 0) {
+      markRefusalsSeen();
+    }
+  }, [view, refusalsUnseen, markRefusalsSeen]);
 
   // Liste triée des leviers (mémoïsée pour stabiliser les positions de groupe).
   const levers = useMemo(() => {
@@ -108,19 +195,6 @@ export function LeversPanel() {
     return levers.filter((l) => classifyLever(l, data.affectations) === 'aiguille');
   }, [data, levers]);
 
-  // Groupes FC : seuls les contrôles peuvent partager un commutateur FC.
-  const controleGroups = useMemo<Group[]>(() => {
-    if (!data) return [];
-    return buildFcGroups(controleLevers, data.affectations);
-  }, [data, controleLevers]);
-
-  // Aiguilles : pas de FC, donc chaque levier est son propre groupe solo.
-  // On garde la même structure pour mutualiser le rendu LeverGroup.
-  const aiguilleGroups = useMemo<Group[]>(
-    () => aiguilleLevers.map((l) => ({ fcSignals: [], levers: [l] })),
-    [aiguilleLevers],
-  );
-
   if (!data) return null;
   if (levers.length === 0) return null;
 
@@ -138,175 +212,855 @@ export function LeversPanel() {
     }, 0);
   };
 
-  const fcCount =
-    controleGroups.reduce((acc, g) => acc + g.fcSignals.length, 0) +
-    aiguilleGroups.reduce((acc, g) => acc + g.fcSignals.length, 0);
-
-  // alignItems: flex-start → on aligne les tops des groupes. Comme chaque
-  // groupe a une zone FC fixe (FC_ZONE_HEIGHT), tous les boîtiers de leviers
-  // démarrent au même Y. Les labels en dessous peuvent avoir des hauteurs
-  // variables sans casser l'alignement.
-  // Le gap entre groupes est identique au gap entre leviers d'un même groupe
-  // (LEVER_GAP) pour que tous les leviers paraissent uniformément espacés.
-  const rowStyle: React.CSSProperties = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: LEVER_GAP,
-    alignItems: 'flex-start',
+  const handleLeverContextMenu = (e: React.MouseEvent, leverId: string) => {
+    e.preventDefault();
+    setDispositifsMenu({ x: e.clientX, y: e.clientY, target: { kind: 'lever', leverId } });
   };
+
+  // Rails actifs par groupe : un rail apparaît si au moins un canal du
+  // groupe l'utilise. Les Aiguilles sortent typiquement à NO_RAILS, ce qui
+  // supprime la colonne labels et le slot-top entier pour ce groupe.
+  const groupRailsControle = computeGroupRails(controleLevers, data.affectations);
+  const groupRailsAiguille = computeGroupRails(aiguilleLevers, data.affectations);
+
+  // Annotations dédupliquées par groupe : si plusieurs leviers partagent un
+  // signal (cas Cv212/EP — destination EP / destination LP), seul le premier
+  // levier rend l'annulateur FA/Subst/FC/EPA. Les suivants voient une
+  // cellule vide.
+  const annotationsControle = computeGroupAnnotations(controleLevers, data.affectations);
+  const annotationsAiguille = computeGroupAnnotations(aiguilleLevers, data.affectations);
+
+  // Nombre de leviers par signal — sert au format de label Gessie : on
+  // suffixe "/destination" uniquement si le signal a >1 leviers à
+  // disambiguer.
+  const signalLeverCounts = computeSignalLeverCounts(levers);
+
+  const tabs = (
+    <LeversTabs
+      activeView={view}
+      onChange={setView}
+      refusalsTotal={refusalsCount}
+      refusalsUnseen={refusalsUnseen}
+    />
+  );
 
   return (
     <Panel
-      title="Leviers"
-      meta={`${levers.length} levier${levers.length > 1 ? 's' : ''}${fcCount ? ` · ${fcCount} FC` : ''}`}
+      title={tabs}
       bodyDirection="row"
       bodyGap={spacing.md}
       bodyAlign="start"
       padding={12}
     >
-      {/* Zone principale : leviers de contrôle à gauche, leviers d'aiguille
-          à droite — convention PRS classique où l'opérateur lit les
-          itinéraires (aiguilles) près des sorties de la grille TCO et garde
-          les commandes auxiliaires (contrôles) à part. Les deux sous-zones
-          sont englobées dans un wrapper flex pour que la colonne auxiliaire
-          de droite (boîtes à clés / cadenas / verrous centraux) reste
-          alignée à droite du panel et ne passe pas sous les leviers. */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 40,
-          alignItems: 'flex-start',
-          flex: 1,
-          minWidth: 0,
-          flexWrap: 'wrap',
-        }}
-      >
-        {controleGroups.length > 0 && (
-          <div style={rowStyle}>
-            {controleGroups.map((group, gi) => (
-              <LeverGroup
-                key={`c-${gi}`}
-                group={group}
-                refusedLever={refusedLever}
-                onLeverClick={handleLeverClick}
-                onFcToggle={toggleCommutFC}
-              />
-            ))}
+      {view === 'leviers' ? (
+        <>
+          {/* Zone principale "pupitre intégré" : leviers groupés en deux
+              cartouches (Signaux à gauche, Aiguilles à droite). Chaque
+              levier devient un "canal" vertical avec ses annulateurs au-
+              dessus et son keybox/AE en-dessous. */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              minWidth: 0,
+              gap: spacing.sm,
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: spacing.md,
+                alignItems: 'flex-start',
+                flexWrap: 'wrap',
+              }}
+            >
+            {controleLevers.length > 0 && (
+              <ChannelGroup
+                tag="signal"
+                tagLabel="Signaux"
+                rails={groupRailsControle}
+              >
+                {controleLevers.map((l) => (
+                  <LeverChannel
+                    key={l.id}
+                    lever={l}
+                    annotations={annotationsControle.get(l.id) ?? EMPTY_ANNOTATIONS}
+                    signalLeverCounts={signalLeverCounts}
+                    refusedLever={refusedLever}
+                    groupRails={groupRailsControle}
+                    onLeverClick={handleLeverClick}
+                    onAnnulElecToggle={toggleAnnulElec}
+                    onLeverContextMenu={handleLeverContextMenu}
+                  />
+                ))}
+              </ChannelGroup>
+            )}
+            {aiguilleLevers.length > 0 && (
+              <ChannelGroup
+                tag="aig"
+                tagLabel="Aiguilles"
+                rails={groupRailsAiguille}
+              >
+                {aiguilleLevers.map((l) => (
+                  <LeverChannel
+                    key={l.id}
+                    lever={l}
+                    annotations={annotationsAiguille.get(l.id) ?? EMPTY_ANNOTATIONS}
+                    signalLeverCounts={signalLeverCounts}
+                    refusedLever={refusedLever}
+                    groupRails={groupRailsAiguille}
+                    onLeverClick={handleLeverClick}
+                    onAnnulElecToggle={toggleAnnulElec}
+                    onLeverContextMenu={handleLeverContextMenu}
+                  />
+                ))}
+              </ChannelGroup>
+            )}
+            {atrCount > 0 && (
+              <ChannelGroup
+                tag="atr"
+                tagLabel="Annulateurs de transit"
+              >
+                {Array.from({ length: atrCount }, (_, i) => (
+                  <AtrPlate key={i} index={i} />
+                ))}
+              </ChannelGroup>
+            )}
+            {epaEntries.length > 0 && (
+              <ChannelGroup
+                tag="atr"
+                tagLabel="Annul EPA"
+              >
+                {epaEntries.map((e) => (
+                  <EpaKeybox
+                    key={`epa-${e.signalId}`}
+                    signalId={e.signalId}
+                    leverIds={e.leverIds}
+                  />
+                ))}
+              </ChannelGroup>
+            )}
+            </div>
           </div>
-        )}
-        {aiguilleGroups.length > 0 && (
-          <div style={rowStyle}>
-            {aiguilleGroups.map((group, gi) => (
-              <LeverGroup
-                key={`a-${gi}`}
-                group={group}
-                refusedLever={refusedLever}
-                onLeverClick={handleLeverClick}
-                onFcToggle={toggleCommutFC}
-              />
-            ))}
-          </div>
-        )}
-      </div>
 
-      {/* Colonne droite : boîtes à clés / cadenas / verrous centraux.
-          Retourne null automatiquement si aucun de ces éléments n'existe. */}
-      <AuxiliaryKeysColumn />
+          {/* Colonne droite : boîtes à clés / cadenas / verrous centraux.
+              Retourne null automatiquement si aucun de ces éléments
+              n'existe. */}
+          <AuxiliaryKeysColumn />
+        </>
+      ) : (
+        <RefusalsView />
+      )}
+
+      {dispositifsMenu && (
+        <DispositifsMenu
+          x={dispositifsMenu.x}
+          y={dispositifsMenu.y}
+          target={dispositifsMenu.target}
+          onClose={() => setDispositifsMenu(null)}
+        />
+      )}
+
+      {/* Keyframes pour le clignotement de l'onglet "Refus" quand des
+          refus non lus s'accumulent. Couleur ↔ blanc → halo rouge → couleur,
+          discret mais accrocheur. */}
+      <style>{`@keyframes gessieRefusBlink {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); border-color: ${colors.signal.rouge}; background: ${colors.signal.rouge}; color: #fff; }
+        50% { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.55); border-color: #FF6B6B; background: #FF6B6B; color: #fff; }
+      }`}</style>
     </Panel>
   );
 }
 
-// Hauteur réservée à la zone FC en haut de chaque groupe. Identique pour
-// tous les groupes (avec ou sans FC) afin que les boîtiers des leviers
-// s'alignent au même Y sur toute une rangée.
-const FC_ZONE_HEIGHT = 56;
+// ===== LeversTabs ============================================================
+//
+// Onglets dans le header du LeversPanel. Deux onglets :
+//   - "Leviers" : la grille classique (positions actuelles, FC, AE, clés…)
+//   - "Refus N" : journal des refus de toggleLever — pulse en rouge quand
+//                 `refusalsUnseen > 0`. Clic = switch view + mark seen.
 
-// Gap horizontal commun à tous les leviers — appliqué à la fois entre
-// leviers d'un même groupe FC et entre groupes différents, afin que tous
-// les leviers paraissent espacés uniformément.
-const LEVER_GAP = 12;
-
-function LeverGroup({
-  group,
-  refusedLever,
-  onLeverClick,
-  onFcToggle,
+function LeversTabs({
+  activeView,
+  onChange,
+  refusalsTotal,
+  refusalsUnseen,
 }: {
-  group: Group;
-  refusedLever: string | null;
-  onLeverClick: (id: string, positionBefore: 'plus' | 'minus') => void;
-  onFcToggle: (signalId: string) => void;
+  activeView: LeversView;
+  onChange: (v: LeversView) => void;
+  refusalsTotal: number;
+  refusalsUnseen: number;
 }) {
-  const hasFc = group.fcSignals.length > 0;
+  return (
+    <div style={{ display: 'flex', gap: spacing.xxs, alignItems: 'center' }}>
+      <TabButton
+        label="Leviers"
+        active={activeView === 'leviers'}
+        onClick={() => onChange('leviers')}
+      />
+      <TabButton
+        label="Refus"
+        badge={refusalsTotal}
+        active={activeView === 'refusals'}
+        blink={refusalsUnseen > 0}
+        onClick={() => onChange('refusals')}
+      />
+    </div>
+  );
+}
+
+function TabButton({
+  label,
+  active,
+  blink = false,
+  badge,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  blink?: boolean;
+  badge?: number;
+  onClick: () => void;
+}) {
+  // L'animation n'est appliquée qu'au badge `unseen > 0`. Le bouton lui-même
+  // garde son apparence neutre/active pour ne pas distraire en permanence.
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      aria-label={
+        badge && badge > 0
+          ? `Onglet ${label} (${badge}${blink ? ', non lu' : ''})`
+          : `Onglet ${label}`
+      }
+      style={{
+        background: active ? colors.surface.dark : 'transparent',
+        color: active ? colors.text.primary : colors.text.secondary,
+        border: `1px solid ${active ? colors.border.default : 'transparent'}`,
+        borderRadius: radii.sm,
+        padding: '4px 10px',
+        cursor: 'pointer',
+        fontFamily: typography.ui.family,
+        fontSize: typography.size.sm,
+        fontWeight: active ? typography.weight.semibold : typography.weight.medium,
+        letterSpacing: 0.2,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: spacing.xxs,
+        transition: `background 120ms, color 120ms`,
+      }}
+    >
+      <span>{label}</span>
+      {badge != null && badge > 0 && (
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: 18,
+            height: 16,
+            padding: '0 5px',
+            borderRadius: 999,
+            background: blink ? colors.signal.rouge : colors.surface.medium,
+            color: blink ? '#fff' : colors.text.secondary,
+            border: `1px solid ${blink ? colors.signal.rouge : colors.border.subtle}`,
+            fontFamily: typography.mono.family,
+            fontSize: typography.size.xs,
+            fontWeight: typography.weight.bold,
+            animation: blink ? 'gessieRefusBlink 1s ease-in-out infinite' : undefined,
+          }}
+        >
+          {badge}
+        </span>
+      )}
+    </button>
+  );
+}
+
+// ===== RefusalsView ==========================================================
+//
+// Liste chronologique inversée des refus de toggleLever (le plus récent en
+// haut). Chaque entrée affiche l'heure simulée, le levier ciblé, le code de
+// garde, et la raison FR localisée. Bouton "Effacer" en haut pour purger.
+
+function RefusalsView() {
+  const refusals = useGessieStore((s) => s.leverRefusals);
+  const clear = useGessieStore((s) => s.clearLeverRefusals);
+
+  if (refusals.length === 0) {
+    return (
+      <div
+        style={{
+          flex: 1,
+          minHeight: 80,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: colors.text.muted,
+          fontStyle: 'italic',
+          fontSize: typography.size.sm,
+        }}
+      >
+        Aucun refus enregistré. Les manœuvres impossibles s'afficheront ici.
+      </div>
+    );
+  }
+
+  // Tri décroissant par uid (qui contient le timestamp, donc ordre stable
+  // chronologique inverse).
+  const ordered = [...refusals].reverse();
 
   return (
     <div
       style={{
+        flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'stretch',
-        gap: 0,
+        gap: spacing.xs,
+        minWidth: 0,
       }}
     >
-      {/* Zone FC : hauteur fixe pour aligner les leviers en dessous. */}
       <div
         style={{
-          height: FC_ZONE_HEIGHT,
           display: 'flex',
-          justifyContent: 'space-around',
-          alignItems: 'flex-end',
-          gap: spacing.xs,
-          paddingBottom: spacing.xs,
+          justifyContent: 'flex-end',
         }}
       >
-        {hasFc &&
-          group.fcSignals.map((signalId) => (
-            <FcCell key={signalId} signalId={signalId} onToggle={onFcToggle} />
-          ))}
+        <button
+          type="button"
+          onClick={clear}
+          style={{
+            background: 'transparent',
+            color: colors.text.secondary,
+            border: `1px solid ${colors.border.default}`,
+            borderRadius: radii.sm,
+            padding: '2px 10px',
+            cursor: 'pointer',
+            fontFamily: typography.ui.family,
+            fontSize: typography.size.xs,
+          }}
+        >
+          Effacer
+        </button>
       </div>
-      {/* Rangée des leviers : tous les boîtiers démarrent au même Y.
-          Les serrures du levier sont rendues DANS la plaque (slot
-          `keyholeSlot`) pour reproduire le visuel d'un poste PRS réel
-          où les serrures sont fixées sur la plaque métallique. */}
-      <div style={{ display: 'flex', gap: LEVER_GAP, alignItems: 'flex-start' }}>
-        {group.levers.map((l) => (
-          <Lever
-            key={l.id}
-            id={l.id}
-            num={l.id}
-            label={l.affectations.join(', ')}
-            position={l.position}
-            refused={refusedLever === l.id}
-            onClick={() => onLeverClick(l.id, l.position)}
-            keyholeSlot={<LeverKeyholeStrip leverId={l.id} embedded />}
-          />
+      <ul
+        style={{
+          listStyle: 'none',
+          margin: 0,
+          padding: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: spacing.xxs,
+          maxHeight: 320,
+          overflowY: 'auto',
+        }}
+      >
+        {ordered.map((entry) => (
+          <RefusalRow key={entry.uid} entry={entry} />
         ))}
+      </ul>
+    </div>
+  );
+}
+
+function RefusalRow({ entry }: { entry: LeverRefusalEntry }) {
+  const time = formatSimTime(entry.time);
+  return (
+    <li
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: spacing.sm,
+        padding: `${spacing.xs}px ${spacing.sm}px`,
+        background: colors.surface.medium,
+        border: `1px solid ${colors.border.subtle}`,
+        borderRadius: radii.sm,
+        fontFamily: typography.ui.family,
+        fontSize: typography.size.sm,
+      }}
+    >
+      <span
+        style={{
+          fontFamily: typography.mono.family,
+          fontSize: typography.size.xs,
+          color: colors.text.muted,
+          minWidth: 60,
+          letterSpacing: 0.4,
+        }}
+      >
+        {time}
+      </span>
+      <span
+        style={{
+          fontFamily: typography.mono.family,
+          fontWeight: typography.weight.bold,
+          color: colors.text.primary,
+          minWidth: 32,
+        }}
+      >
+        L{entry.leverId}
+      </span>
+      <span
+        style={{
+          fontFamily: typography.mono.family,
+          fontSize: typography.size.xs,
+          padding: '1px 6px',
+          borderRadius: radii.sm,
+          background: colors.surface.darkest,
+          color: colors.text.secondary,
+          border: `1px solid ${colors.border.subtle}`,
+          textTransform: 'uppercase',
+          letterSpacing: 0.4,
+          alignSelf: 'flex-start',
+        }}
+      >
+        {entry.guard}
+      </span>
+      <span
+        style={{
+          flex: 1,
+          color: colors.text.primary,
+          minWidth: 0,
+        }}
+      >
+        {entry.reason}
+      </span>
+    </li>
+  );
+}
+
+function formatSimTime(ms: number): string {
+  if (!Number.isFinite(ms) || ms <= 0) return '--:--:--';
+  const d = new Date(ms);
+  // Heure simulée — on lit l'horloge du Player en UTC pour reproduire
+  // l'affichage du Clock primitive (qui formate aussi en UTC HH:MM:SS).
+  const hh = String(d.getUTCHours()).padStart(2, '0');
+  const mm = String(d.getUTCMinutes()).padStart(2, '0');
+  const ss = String(d.getUTCSeconds()).padStart(2, '0');
+  return `${hh}:${mm}:${ss}`;
+}
+
+// Largeur d'un canal (top slot + lever + bottom slot empilés).
+const CHANNEL_WIDTH = 78;
+
+// Hauteur d'un rail dans le slot-top (cellule FA / Subst / FC). Les rails
+// sont empilés verticalement à des Y FIXES → tous les boutons d'un même
+// type s'alignent horizontalement à travers la rangée des canaux.
+const RAIL_HEIGHT = 32;
+
+// Hauteur fixe du slot-bottom (AE + EPA keybox). Garde les pieds des
+// canaux alignés.
+// Hauteur du slot-bottom : juste assez pour le bouton AE (~24 px) + un peu
+// d'air. Les keyboxes EPA ont migré dans leur propre cartouche, donc ce
+// slot a maigri.
+const SLOT_BOTTOM_HEIGHT = 32;
+
+// Gap horizontal entre canaux.
+const CHANNEL_GAP = 4;
+
+/**
+ * Rails actifs dans un groupe de canaux. Un rail apparaît si AU MOINS un
+ * canal du groupe l'utilise. Les groupes sans aucun rail (ex : Aiguilles)
+ * n'ont pas de slot-top, ce qui les rend compacts visuellement.
+ */
+interface GroupRails {
+  fa: boolean;
+  subst: boolean;
+  fc: boolean;
+}
+
+function computeGroupRails(
+  levers: LeverType[],
+  affectations: Record<string, Affectation>,
+): GroupRails {
+  let fa = false;
+  let subst = false;
+  let fc = false;
+  for (const l of levers) {
+    for (const id of l.affectations) {
+      const aff = affectations[id];
+      if (!aff) continue;
+      if (aff.annulateurFA) fa = true;
+      if (aff.annulSubstitution) subst = true;
+      if (aff.positionFC !== undefined) fc = true;
+      if (fa && subst && fc) return { fa, subst, fc };
+    }
+  }
+  return { fa, subst, fc };
+}
+
+// Mapping des dispositifs d'attention vers les couleurs de la tête de manche.
+// Reproduit la convention "manchon coloré" qu'un opérateur PRS pose sur un
+// levier pour signaler son attention.
+const DISPOSITIF_KNOB_COLORS: Record<string, string> = {
+  DA: colors.signal.rouge,
+  DSA: colors.accent.primary,
+  DR: colors.signal.jaune,
+};
+
+// Ordre canonique : DA en haut, DSA au milieu, DR en bas (tri stable
+// indépendant de l'ordre d'activation, sinon les bandes "sautent" en
+// fonction de l'ordre des clics).
+const DISPOSITIF_ORDER = ['DA', 'DSA', 'DR'] as const;
+
+function knobColorsFor(dispositifs: string[]): string[] {
+  const set = new Set(dispositifs);
+  return DISPOSITIF_ORDER.filter((d) => set.has(d)).map((d) => DISPOSITIF_KNOB_COLORS[d]);
+}
+
+// ===== ChannelGroup : cartouche d'un groupe de canaux =====================
+//
+// Repro le `.group` du design "Pupitre intégré" : bordure subtile, tag pill
+// coloré (Signaux/Aiguilles), ligne de séparation, meta légère à droite.
+
+const TAG_PALETTE = {
+  signal: {
+    bg: 'rgba(91, 155, 255, 0.12)',
+    color: colors.accent.primary,
+    border: 'rgba(91, 155, 255, 0.25)',
+  },
+  aig: {
+    bg: 'rgba(234, 179, 8, 0.12)',
+    color: colors.signal.jaune,
+    border: 'rgba(234, 179, 8, 0.25)',
+  },
+  atr: {
+    bg: 'rgba(180, 150, 90, 0.15)',
+    color: '#d8c896',
+    border: 'rgba(180, 150, 90, 0.30)',
+  },
+} as const;
+
+function ChannelGroup({
+  tag,
+  tagLabel,
+  meta,
+  rails,
+  children,
+}: {
+  tag: keyof typeof TAG_PALETTE;
+  tagLabel: string;
+  meta?: string;
+  /** Rails actifs dans ce groupe — détermine la colonne labels à gauche. */
+  rails?: GroupRails;
+  children: React.ReactNode;
+}) {
+  const palette = TAG_PALETTE[tag];
+  const hasRails =
+    !!rails && (rails.fa || rails.subst || rails.fc);
+  return (
+    <div
+      style={{
+        background: 'rgba(255,255,255,0.015)',
+        border: `1px solid ${colors.border.subtle}`,
+        borderRadius: radii.md,
+        padding: `${spacing.xs}px ${spacing.sm}px`,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: spacing.xs,
+        minWidth: 0,
+      }}
+    >
+      {/* En-tête : tag pill + ligne + meta */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: spacing.sm,
+          fontSize: 10,
+          color: colors.text.muted,
+          textTransform: 'uppercase',
+          letterSpacing: 0.6,
+          fontWeight: typography.weight.semibold,
+        }}
+      >
+        <span
+          style={{
+            padding: '1px 7px',
+            borderRadius: radii.sm,
+            background: palette.bg,
+            color: palette.color,
+            border: `1px solid ${palette.border}`,
+            fontFamily: typography.mono.family,
+            fontWeight: typography.weight.medium,
+            letterSpacing: 0,
+            textTransform: 'none',
+            fontSize: 11,
+          }}
+        >
+          {tagLabel}
+        </span>
+        <span
+          style={{
+            flex: 1,
+            height: 1,
+            background: colors.border.subtle,
+          }}
+        />
+        {meta && (
+          <span
+            style={{
+              fontFamily: typography.mono.family,
+              color: colors.text.muted,
+              fontWeight: typography.weight.medium,
+              letterSpacing: 0,
+              textTransform: 'none',
+              fontSize: 11,
+            }}
+          >
+            {meta}
+          </span>
+        )}
+      </div>
+      {/* Corps : (colonne labels rails | grille de canaux) */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: spacing.xs }}>
+        {hasRails && rails && <RailLabelsColumn rails={rails} />}
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: `${spacing.xs}px ${CHANNEL_GAP}px`,
+            alignItems: 'flex-start',
+            flex: 1,
+            minWidth: 0,
+          }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
 }
 
-function FcCell({
-  signalId,
-  onToggle,
-}: {
-  signalId: string;
-  onToggle: (signalId: string) => void;
-}) {
-  // Pas de détection de refus : `toggleCommutFC` (sim/actions.ts) n'a aucune
-  // garde — le commutateur FC n'est pas soumis à enclenchement dans Gessie.
-  // Un clic = toggle systématique.
-  const active = useGessieStore(
-    (s) => Boolean(s.player.data?.affectations[signalId]?.positionFC),
-  );
+// ===== RailLabelsColumn : labels mono des rails à gauche du groupe ========
+//
+// Hauteur de chaque label = RAIL_HEIGHT, alignée verticalement avec les
+// cellules-rail correspondantes dans les canaux.
 
+function RailLabelsColumn({ rails }: { rails: GroupRails }) {
+  const labelStyle: React.CSSProperties = {
+    height: RAIL_HEIGHT,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    fontFamily: typography.mono.family,
+    fontSize: 9,
+    color: colors.text.muted,
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+  };
   return (
-    <KnobButton
-      id={signalId}
-      active={active}
-      label={signalId}
-      onClick={() => onToggle(signalId)}
-    />
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        paddingTop: spacing.xxs,
+        paddingRight: spacing.xs,
+        flexShrink: 0,
+      }}
+    >
+      {rails.fa && <span style={labelStyle}>Annul FA</span>}
+      {rails.subst && <span style={labelStyle}>Subst</span>}
+      {rails.fc && <span style={labelStyle}>FC</span>}
+    </div>
   );
 }
+
+// Une cellule-rail d'un canal — hauteur fixe RAIL_HEIGHT, contenu centré.
+// Vide ou pleine, elle réserve sa hauteur pour garantir l'alignement
+// horizontal des boutons à travers tous les canaux du groupe.
+function RailCell({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        height: RAIL_HEIGHT,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+// ===== LeverChannel : un canal vertical complet ============================
+//
+// Layout per-canal : slot-top (annulateurs FA / Subst / FC) + Lever (avec
+// ses serrures embarquées) + slot-bottom (AE + EPA keybox).
+//
+// Le slot-top et le slot-bottom ont des hauteurs FIXES pour aligner tous
+// les leviers d'une même rangée — même si un canal n'a aucun annulateur,
+// son slot reste réservé pour ne pas casser la grille visuelle.
+
+const EMPTY_ANNOTATIONS: ChannelAnnotations = {
+  faSignals: [],
+  substSignals: [],
+  fcSignals: [],
+  epaSignals: [],
+};
+
+function LeverChannel({
+  lever,
+  annotations,
+  signalLeverCounts,
+  refusedLever,
+  groupRails,
+  onLeverClick,
+  onAnnulElecToggle,
+  onLeverContextMenu,
+}: {
+  lever: LeverType;
+  /** Annotations du canal, déjà dédupliquées au niveau du groupe : un signal
+      partagé entre plusieurs leviers n'apparaît que dans les annotations du
+      premier d'entre eux. Les autres leviers reçoivent les listes vides
+      pour ce signal. */
+  annotations: ChannelAnnotations;
+  signalLeverCounts: Record<string, number>;
+  refusedLever: string | null;
+  /** Rails actifs au niveau du groupe — détermine quelles cellules-rail
+      ce canal doit RÉSERVER (même si vide) pour que les boutons FA/Subst/FC
+      s'alignent horizontalement à travers la rangée des canaux. */
+  groupRails: GroupRails;
+  onLeverClick: (id: string, positionBefore: 'plus' | 'minus') => void;
+  onAnnulElecToggle: (leverId: string) => void;
+  onLeverContextMenu: (e: React.MouseEvent, leverId: string) => void;
+}) {
+  const ann = annotations;
+  const hasAnyRail = groupRails.fa || groupRails.subst || groupRails.fc;
+
+  return (
+    <div
+      onContextMenu={(e) => onLeverContextMenu(e, lever.id)}
+      style={{
+        width: CHANNEL_WIDTH,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: spacing.xxs,
+        padding: `${spacing.xxs}px 2px`,
+        borderRadius: radii.sm,
+      }}
+    >
+      {/* Slot-top : 3 rails à hauteur fixe (FA / Subst / FC). Chaque rail
+          occupe RAIL_HEIGHT, qu'il soit rempli ou vide → tous les boutons
+          d'un même type sont alignés horizontalement à travers la rangée
+          des canaux. Les rails inactifs au niveau du GROUPE sont omis. */}
+      {hasAnyRail && (
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 2,
+          }}
+        >
+          {groupRails.fa && (
+            <RailCell>
+              {ann.faSignals.map((sid) => (
+                <FaPushButton key={`fa-${sid}`} signalId={sid} compact />
+              ))}
+            </RailCell>
+          )}
+          {groupRails.subst && (
+            <RailCell>
+              {ann.substSignals.map((sid) => (
+                <AnnulSubstitutionPushButton key={`as-${sid}`} signalId={sid} compact />
+              ))}
+            </RailCell>
+          )}
+          {groupRails.fc && (
+            <RailCell>
+              {ann.fcSignals.map((sid) => (
+                <FcPushButton key={`fc-${sid}`} signalId={sid} compact />
+              ))}
+            </RailCell>
+          )}
+        </div>
+      )}
+
+      {/* Lever : design inchangé (cf. design/primitives/Lever.tsx). Les
+          serrures sont rendues DANS la plaque via `keyholeSlot`. */}
+      <Lever
+        id={lever.id}
+        num={lever.id}
+        label={formatLeverLabel(lever, signalLeverCounts)}
+        position={lever.position}
+        refused={refusedLever === lever.id}
+        onClick={() => onLeverClick(lever.id, lever.position)}
+        keyholeSlot={<LeverKeyholeStrip leverId={lever.id} embedded />}
+        knobColors={knobColorsFor(lever.dispositifs)}
+      />
+
+      {/* Slot-bottom : AE (annulateur électrique du levier). Les keyboxes
+          EPA ont été déplacées vers le groupe "Annul EPA" à côté du groupe
+          "Annulateurs de transit" — un canal par signal au lieu d'un par
+          levier, ce qui évite la duplication quand un signal est piloté par
+          plusieurs leviers. */}
+      <div
+        style={{
+          height: SLOT_BOTTOM_HEIGHT,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          gap: 4,
+          paddingTop: 2,
+        }}
+      >
+        {lever.annulateurElec && (
+          <AeKeybox leverId={lever.id} onToggle={onAnnulElecToggle} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Compte le nombre de leviers qui contrôlent chaque signalId. Sert au
+ * formatLeverLabel : on n'ajoute le suffixe "/destination" que si plusieurs
+ * leviers partagent le même signal (sinon le signal seul suffit).
+ */
+function computeSignalLeverCounts(levers: LeverType[]): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const l of levers) {
+    if (!l.signalId) continue;
+    counts[l.signalId] = (counts[l.signalId] ?? 0) + 1;
+  }
+  return counts;
+}
+
+/**
+ * Construit le label d'un levier au format Gessie. Règle observée :
+ *   - Si le levier ne pilote pas de signal (aiguilles : Ag11, Ag15a/b…) ou
+ *     que le signal est unique sur ce poste → on retourne le label de
+ *     l'affectation principale (ou signalId).
+ *   - Si plusieurs leviers partagent le même signal → "{signalId}/{dest}".
+ *     Pour multi-destination on combine first-and-last avec " à ".
+ *
+ * Fallback : `lever.affectations[0]` si signalId est absent (cas aiguille).
+ */
+function formatLeverLabel(
+  lever: LeverType,
+  signalLeverCounts: Record<string, number>,
+): string {
+  const signalId = lever.signalId;
+  if (!signalId) {
+    return lever.affectations[0] ?? lever.id;
+  }
+  const sharedWithOthers = (signalLeverCounts[signalId] ?? 0) > 1;
+  if (!sharedWithOthers) return signalId;
+  const dests = lever.directionLabels ?? [];
+  if (dests.length === 0) return signalId;
+  if (dests.length === 1) return `${signalId}/${dests[0]}`;
+  return `${signalId}/${dests[0]} à ${dests[dests.length - 1]}`;
+}
+

@@ -1,7 +1,6 @@
 import type { ComponentType } from 'react';
 import type { StationItem, Tool } from '../../types/gessie';
 import { TcoSignal } from './TcoSignal';
-import { TcoSvgIcon } from './TcoSvgIcon';
 import { TcoAiguille } from './TcoAiguille';
 import { TcoJoint } from './TcoJoint';
 import { TcoTraverse } from './TcoTraverse';
@@ -11,6 +10,8 @@ import { TcoControle } from './TcoControle';
 import { TcoZone } from './TcoZone';
 import { TcoTrace } from './TcoTrace';
 import { TcoLabel } from './TcoLabel';
+import { TcoTaquet } from './TcoTaquet';
+import { TcoArrow } from './TcoArrow';
 import { TcoGenericPlaceholder } from './TcoGenericPlaceholder';
 
 export interface PrimitiveProps {
@@ -19,22 +20,18 @@ export interface PrimitiveProps {
 }
 
 /**
- * Tailles spécifiques par type d'item (en unités SVG).
- *
- * Procéduraux fidèles à Gessie : aiguille, joint, tjd/tjs/to (TcoTraverse).
- * Le reste utilise encore TcoSvgIcon avec une taille à l'œil — à fidéliser.
+ * Tous les types d'items ont désormais un rendu procédural fidèle. Le
+ * fallback TcoSvgIcon n'est plus utilisé ; il reste disponible pour les
+ * tools custom non encore portés (cf. TcoGenericPlaceholder).
  */
-const renderTaquet: ComponentType<PrimitiveProps> = (props) => <TcoSvgIcon {...props} size={20} />;
-const renderArrow: ComponentType<PrimitiveProps> = (props) => <TcoSvgIcon {...props} size={20} />;
-
 export const renderers: Record<string, ComponentType<PrimitiveProps>> = {
   aiguille: TcoAiguille,
   tjd:      TcoTraverse,
   tjs:      TcoTraverse,
   to:       TcoTraverse,
-  taquet:   renderTaquet,
+  taquet:   TcoTaquet,
   joint:    TcoJoint,
-  arrow:    renderArrow,
+  arrow:    TcoArrow,
 
   rail:     TcoRail,
   voie:     TcoVoie,

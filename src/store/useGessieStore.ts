@@ -14,6 +14,10 @@ import {
   cancelEPA as cancelEPAAction,
   closeWithFA as closeWithFAAction,
   toggleCommutFC as toggleCommutFCAction,
+  toggleAnnulElec as toggleAnnulElecAction,
+  annulSubstitution as annulSubstitutionAction,
+  diagnoseToggleLever,
+  type LeverRefusal,
 } from '../sim/actions';
 import {
   startTrain as startTrainAction,
@@ -21,6 +25,10 @@ import {
   moveTrainOut as moveTrainOutAction,
   releasePedale as releasePedaleAction,
   toggleDisturbance as toggleDisturbanceAction,
+  stopPhone as stopPhoneAction,
+  toggleFA as toggleFAAction,
+  trainCanStart as trainCanStartAction,
+  forceTrainStart as forceTrainStartAction,
 } from '../sim/train';
 import {
   pressTestBouton as pressTestBoutonAction,
@@ -43,8 +51,28 @@ import {
   putKey as putKeyAction,
   takeCentralKey as takeCentralKeyAction,
   putCentralKey as putCentralKeyAction,
+  toggleLock as toggleLockAction,
 } from '../sim/keys';
+import {
+  toggleDispositifAttention as toggleDispositifAttentionAction,
+  type ToggleDispositifPayload,
+} from '../sim/dispositifs';
 import type { Direction, PlayerData, SimEvent, Train } from '../sim/types';
+
+/**
+ * Entrée du journal des refus de toggleLever. Quand un opérateur tente de
+ * manœuvrer un levier et qu'une garde refuse, on stocke la raison ici pour
+ * affichage dans le panneau "Refus" du LeversPanel. C'est de l'UX, pas du
+ * gameplay — n'affecte pas la sim.
+ */
+export interface LeverRefusalEntry extends LeverRefusal {
+  /** Identifiant unique (timestamp ms + counter, monotonic). */
+  uid: string;
+  /** ID du levier concerné. */
+  leverId: string;
+  /** Heure simulée au moment du refus (clock.currentTime). */
+  time: number;
+}
 
 interface GessieState {
   // === Données station + tools (persistantes le temps de la session) ===
@@ -54,6 +82,14 @@ interface GessieState {
   // === Sim state ===
   clock: ClockState;
   player: PlayerState;
+
+  // === UX : journal des refus de toggleLever (panel "Refus") ===
+  leverRefusals: LeverRefusalEntry[];
+  /**
+   * Compteur de refus non lus. Reset à 0 quand l'opérateur ouvre l'onglet
+   * "Refus". Driving signal pour le clignotement de l'onglet.
+   */
+  leverRefusalsUnseen: number;
 
   // === Actions ===
   loadStation: (s: Station, tools: Tool[]) => void;
@@ -70,10 +106,49 @@ interface GessieState {
   tick: () => void;
   /** Bascule un levier (échec silencieux si une garde n'est pas satisfaite). */
   toggleLever: (leverId: string) => void;
+  /**
+   * Bascule l'annulateur électrique d'un levier ("brise le sceau"). Quand
+   * activé, le prochain `toggleLever` ignorera les gardes 6-10 (direction
+   * active, zones, continuité, EAP/EPA). Les incompatibilités et serrures
+   * restent vérifiées.
+   */
+  toggleAnnulElec: (leverId: string) => void;
+  /**
+   * Raccroche le téléphone : éteint la sonnerie sans relâcher le train (le
+   * train reste en pause tant que le signal n'est pas ouvert). Reproduction
+   * de l'action Vuex `stopPhone`.
+   */
+  stopPhone: () => void;
+  /**
+   * Ré-évalue la garde signal d'un train arrêté devant un contrôle fermé.
+   * Si le signal a été ouvert depuis, le train repart ; sinon il se rebloque
+   * (le téléphone resonne). Reproduction de `trainCanStart` Gessie.
+   */
+  trainCanStart: (trainId: string) => void;
+  /**
+   * Force le passage d'un train arrêté devant un contrôle fermé : le train
+   * franchit le signal **même fermé** (faute professionnelle simulée pour
+   * la formation). Reproduction de `forceTrainStart` Gessie avec
+   * `forcePassage: true`.
+   */
+  forceTrainStart: (trainId: string) => void;
   /** Annule un EPA avec délai (programme un setEPAOff). */
   cancelEPA: (signalId: string) => void;
   /** Ferme un signal automatiquement (Fermeture Automatique). */
   closeWithFA: (signalId: string) => void;
+  /**
+   * Bascule l'annulateur de Fermeture Automatique d'un signal ("brise le
+   * sceau"). Quand activé, la FA déclenchée au passage du train ne refermera
+   * pas le signal (bypass dans `closeWithFA`). Quand on réenclenche le sceau
+   * et qu'un EPA/EAP s'est accumulé, on tente une libération.
+   */
+  toggleFA: (signalId: string) => void;
+  /**
+   * Bouton fugitif "annulation de substitution" : tente d'ouvrir un signal
+   * malgré l'occupation d'une zone de protection. No-op si la zone surveillée
+   * n'est pas en circulation. Reproduit `annulSubstitution` (renderer.js).
+   */
+  annulSubstitution: (signalId: string) => void;
   /**
    * Bascule le commutateur de Fermeture Carré : verrouille/déverrouille
    * le signal. En déverrouillant, retire un setEPAOff éventuel de la file
@@ -98,11 +173,29 @@ interface GessieState {
   giveATRAutorisation: (atrId: string) => void;
   removeATRAutorisation: (atrId: string) => void;
 
+  /**
+   * Bascule un dispositif d'attention (DA / DSA / DR) sur un levier ou un
+   * bloc. Pure annotation opérateur, n'affecte pas les enclenchements.
+   * Reproduit `toggleDispositifAttention` (renderer.js).
+   */
+  toggleDispositifAttention: (payload: ToggleDispositifPayload) => void;
+
   // === Clés (étape 6 — partie C) ===
   takeKey: (payload: { lock?: boolean; groupId?: string; leverId?: string; keyId: string }) => void;
   putKey: (payload: { lock?: boolean; groupId?: string; leverId?: string; keyId: string }) => void;
   takeCentralKey: (uid: string) => void;
   putCentralKey: (uid: string) => void;
+  /**
+   * Tourne la clé d'un cadenas N↔R (plus↔minus). R→N refusé sans clé
+   * présente (refus silencieux). Reproduit `toggleLock` (renderer.js).
+   */
+  toggleLock: (keyId: string) => void;
+
+  // === Refus journal ===
+  /** Marque tous les refus comme lus (reset du badge clignotant). */
+  markLeverRefusalsSeen: () => void;
+  /** Vide entièrement le journal des refus. */
+  clearLeverRefusals: () => void;
 }
 
 /**
@@ -215,6 +308,63 @@ function dispatchPlayerEvent(
 }
 
 /**
+ * Helper partagé entre `trainCanStart` et `forceTrainStart` (cf.
+ * `sim/train.ts`). Encapsule l'orchestration Clock :
+ *   1. Resume tous les paused events du train (déplace pausedEvents → events)
+ *   2. Retire l'event arrivé (qu'on re-joue manuellement, déjà résolu par
+ *      l'action sim qui retourne le state post-moveTrainIn)
+ *   3. Pousse les nouveaux events générés par moveTrainIn
+ *   4. Re-pause les events que moveTrainIn a relinkés (signal toujours
+ *      fermé en mode `trainCanStart`)
+ */
+function applyTrainStartResult(
+  s: GessieState,
+  action: typeof trainCanStartAction,
+  trainId: string,
+): Partial<GessieState> | GessieState {
+  if (!s.player.data) return s;
+  const ctx = {
+    pausedEvents: s.clock.pausedEvents,
+    runningEvents: s.clock.events,
+    currentTime: s.clock.currentTime,
+  };
+  const res = action(s.player.data, { trainId }, ctx);
+  const playerChanged = res.state !== s.player.data;
+  const hasOps =
+    !!res.events?.length ||
+    !!res.pauseEventUids?.length ||
+    !!res.resumeEventUids?.length ||
+    !!res.removeEventUids?.length;
+  if (!playerChanged && !hasOps) return s;
+
+  let clock = s.clock;
+  if (res.resumeEventUids) {
+    for (const uid of res.resumeEventUids) {
+      clock = clockReducers.RESUME_EVENT(clock, uid);
+    }
+  }
+  if (res.removeEventUids) {
+    for (const uid of res.removeEventUids) {
+      clock = clockReducers.REMOVE_EVENT(clock, uid);
+    }
+  }
+  if (res.events) {
+    for (const ev of res.events) {
+      clock = clockReducers.ADD_EVENT(clock, ensureUid(ev));
+    }
+  }
+  if (res.pauseEventUids) {
+    for (const uid of res.pauseEventUids) {
+      clock = clockReducers.PAUSE_EVENT(clock, uid);
+    }
+  }
+  return {
+    player: playerChanged ? { ...s.player, data: res.state } : s.player,
+    clock,
+  };
+}
+
+/**
  * Applique un DispatchResult sur le couple (clock, player). Pousse les
  * nouveaux events, met en pause/reprend ceux signalés.
  */
@@ -281,6 +431,8 @@ export const useGessieStore = create<GessieState>((set, get) => ({
 
   clock: initialClockState,
   player: initialPlayerState,
+  leverRefusals: [],
+  leverRefusalsUnseen: 0,
 
   loadStation: (station, toolList) =>
     set({
@@ -289,6 +441,8 @@ export const useGessieStore = create<GessieState>((set, get) => ({
       // Reset Player + Clock (la nouvelle station n'a plus de sim active).
       player: initialPlayerState,
       clock: initialClockState,
+      leverRefusals: [],
+      leverRefusalsUnseen: 0,
     }),
 
   initPlayer: (startingTimeMs) => {
@@ -299,11 +453,18 @@ export const useGessieStore = create<GessieState>((set, get) => ({
     set({
       player: { mode: 'play', data },
       clock: clockReducers.INIT_CLOCK(initialClockState, t0),
+      leverRefusals: [],
+      leverRefusalsUnseen: 0,
     });
   },
 
   exitPlayer: () =>
-    set({ player: initialPlayerState, clock: initialClockState }),
+    set({
+      player: initialPlayerState,
+      clock: initialClockState,
+      leverRefusals: [],
+      leverRefusalsUnseen: 0,
+    }),
 
   setSpeed: (speed) =>
     set((s) => ({ clock: clockReducers.SET_SPEED(s.clock, speed) })),
@@ -336,12 +497,31 @@ export const useGessieStore = create<GessieState>((set, get) => ({
       if (!s.player.data) return s;
       const before = s.player.data;
       const next = toggleLeverAction(before, leverId);
-      if (next === before) return s; // garde refusée — no-op
+      if (next === before) {
+        // Garde refusée : on diagnostique pour expliquer à l'opérateur via
+        // le panneau "Refus". `diagnoseToggleLever` retourne la première
+        // garde qui aurait bloqué (cf. sim/actions.ts).
+        const diag = diagnoseToggleLever(before, leverId);
+        if (!diag) return s; // bizarre : no-op sans cause identifiable
+        const entry: LeverRefusalEntry = {
+          uid: `${Date.now()}-${s.leverRefusals.length}`,
+          leverId,
+          time: s.clock.currentTime,
+          guard: diag.guard,
+          reason: diag.reason,
+        };
+        return {
+          leverRefusals: [...s.leverRefusals, entry],
+          leverRefusalsUnseen: s.leverRefusalsUnseen + 1,
+        };
+      }
 
       // Détection des signaux qui viennent de s'ouvrir avec des linkedEvents
       // (= un train téléphonait — on le reprend dans la file Clock).
-      // Reproduit la logique Gessie `dispatch("resumeEvent", N)` dans
-      // updateAffectationPosition (cf. actions.ts:483, marqué TODO étape 6).
+      // Reproduit la logique Gessie `dispatch("resumeEvent", N)` qui vit dans
+      // updateAffectationPosition côté bundle. La logique reste ici (et non
+      // dans `sim/actions.ts`) pour conserver `updateAffectationPosition`
+      // pure : seul le store a accès au Clock (clockReducers, pausedEvents).
       const resumeUids: string[] = [];
       let cleaned = next;
       for (const [id, aff] of Object.entries(next.affectations)) {
@@ -378,6 +558,36 @@ export const useGessieStore = create<GessieState>((set, get) => ({
       };
     }),
 
+  toggleAnnulElec: (leverId) =>
+    set((s) => {
+      if (!s.player.data) return s;
+      const next = toggleAnnulElecAction(s.player.data, leverId);
+      if (next === s.player.data) return s;
+      return { player: { ...s.player, data: next } };
+    }),
+
+  stopPhone: () =>
+    set((s) => {
+      if (!s.player.data) return s;
+      const next = stopPhoneAction(s.player.data);
+      if (next === s.player.data) return s;
+      return { player: { ...s.player, data: next } };
+    }),
+
+  trainCanStart: (trainId) =>
+    set((s) => applyTrainStartResult(s, trainCanStartAction, trainId)),
+
+  forceTrainStart: (trainId) =>
+    set((s) => applyTrainStartResult(s, forceTrainStartAction, trainId)),
+
+  toggleDispositifAttention: (payload) =>
+    set((s) => {
+      if (!s.player.data) return s;
+      const next = toggleDispositifAttentionAction(s.player.data, payload);
+      if (next === s.player.data) return s;
+      return { player: { ...s.player, data: next } };
+    }),
+
   cancelEPA: (signalId) =>
     set((s) => {
       if (!s.player.data) return s;
@@ -399,6 +609,22 @@ export const useGessieStore = create<GessieState>((set, get) => ({
     set((s) => {
       if (!s.player.data) return s;
       const next = closeWithFAAction(s.player.data, signalId);
+      if (next === s.player.data) return s;
+      return { player: { ...s.player, data: next } };
+    }),
+
+  toggleFA: (signalId) =>
+    set((s) => {
+      if (!s.player.data) return s;
+      const next = toggleFAAction(s.player.data, signalId);
+      if (next === s.player.data) return s;
+      return { player: { ...s.player, data: next } };
+    }),
+
+  annulSubstitution: (signalId) =>
+    set((s) => {
+      if (!s.player.data) return s;
+      const next = annulSubstitutionAction(s.player.data, signalId);
       if (next === s.player.data) return s;
       return { player: { ...s.player, data: next } };
     }),
@@ -612,6 +838,24 @@ export const useGessieStore = create<GessieState>((set, get) => ({
       if (next === s.player.data) return s;
       return { player: { ...s.player, data: next } };
     }),
+
+  toggleLock: (keyId) =>
+    set((s) => {
+      if (!s.player.data) return s;
+      const next = toggleLockAction(s.player.data, keyId);
+      if (next === s.player.data) return s;
+      return { player: { ...s.player, data: next } };
+    }),
+
+  markLeverRefusalsSeen: () =>
+    set((s) => (s.leverRefusalsUnseen === 0 ? s : { leverRefusalsUnseen: 0 })),
+
+  clearLeverRefusals: () =>
+    set((s) =>
+      s.leverRefusals.length === 0 && s.leverRefusalsUnseen === 0
+        ? s
+        : { leverRefusals: [], leverRefusalsUnseen: 0 },
+    ),
 
 }));
 

@@ -3,6 +3,7 @@ import { TcoCanvas } from './TcoCanvas';
 import { TcoContextMenu } from './TcoContextMenu';
 import type { ContextMenuTarget } from './TcoContextMenu';
 import { TcoTrainMenu } from './TcoTrainMenu';
+import { TcoAtrLight } from './TcoAtrLight';
 
 interface Props {
   /** Hauteur du viewport visible (la largeur prend 100% du parent). */
@@ -57,6 +58,21 @@ export function TcoViewport({ height = '80vh' }: Props) {
           setTrainMenu({ suggestedStartingPoint, x, y });
         }}
       />
+      {/* LED ATR globale — repro `<div class="top">ATr <atr-light/></div>`
+          du bundle. Centré en haut du TCO, conditionné par la présence d'au
+          moins un ATR (le composant retourne null sinon). */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 8,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10,
+          pointerEvents: 'auto',
+        }}
+      >
+        <TcoAtrLight />
+      </div>
       {avariesMenu && (
         <TcoContextMenu
           x={avariesMenu.x}

@@ -60,6 +60,8 @@ export interface TrainActionResult extends ActionResult {
   pauseEventUids?: string[];
   /** Events à reprendre par uid. */
   resumeEventUids?: string[];
+  /** Events à retirer du Clock par uid (after resume). */
+  removeEventUids?: string[];
 }
 
 // ===== Helpers internes =====
@@ -164,6 +166,160 @@ function linkEventsToControlMutation(
 
 function setPhoneRingingMutation(state: PlayerData, ringing: boolean): PlayerData {
   return { ...state, phoneIsRinging: ringing };
+}
+
+// ===== stopPhone =====
+//
+// Reproduction de l'action Vuex `stopPhone` (renderer.js) :
+//   stopPhone(e) { e.commit("PHONE_STATUS", { ringing: false }) }
+//
+// Côté UI, le bouton "raccrocher" + le watcher `phoneIsRinging` arrêtent le
+// son. La sonnerie est rallumée par `setPhoneRingingMutation(true)` quand un
+// train arrive devant un signal fermé (cf. `moveTrainIn`).
+
+export function stopPhone(state: PlayerData): PlayerData {
+  if (!state.phoneIsRinging) return state;
+  return setPhoneRingingMutation(state, false);
+}
+
+// ===== toggleFA =====
+//
+// Bascule l'annulateur de Fermeture Automatique d'un signal.
+//
+// Reproduction fidèle de l'action Vuex `toggleFA` (renderer.js) :
+//   toggleFA(e, t) {
+//     var n = v.affectations[t], a = !n.annulateurFA.enabled;
+//     n.epa && a === false && e.dispatch("annulationEpa", { signalId: t });
+//     n.eap && a === false && e.dispatch("annulationEap", { signalId: t });
+//     e.commit("CHANGE_FA_STATUS", { signalId: t, newPosition: a });
+//   }
+//
+// Sémantique : `enabled = true` (sceau brisé) bypasse la fermeture déclenchée
+// par closeWithFA (cf. `actions.ts:723`). Quand l'opérateur réenclenche le
+// sceau (`a === false`), si le signal a accumulé un EPA/EAP pendant que la
+// FA était désactivée, on tente de les libérer via annulationEpa/Eap (qui
+// ont leurs propres gardes : levier en minus, pédale, zone…).
+//
+// L'ordre d'opérations Gessie (annulation* AVANT la mutation) est conservé,
+// même si ni `annulationEpa` ni `annulationEap` ne consultent
+// `annulateurFA.enabled` — pour rester strictement fidèle au bundle.
+
+export function toggleFA(state: PlayerData, signalId: string): PlayerData {
+  const aff = state.affectations[signalId];
+  if (!aff?.annulateurFA) return state;
+
+  const newEnabled = !aff.annulateurFA.enabled;
+
+  let s = state;
+  if (newEnabled === false) {
+    if (aff.epa) s = annulationEpa(s, signalId);
+    if (aff.eap) s = annulationEap(s, signalId);
+  }
+
+  // CHANGE_FA_STATUS : on relit l'affectation depuis `s` au cas où
+  // annulationEpa/Eap auraient muté l'objet (setEPAOff retourne un nouvel
+  // objet d'affectation).
+  const cur = s.affectations[signalId];
+  if (!cur?.annulateurFA) return s;
+  return {
+    ...s,
+    affectations: {
+      ...s.affectations,
+      [signalId]: { ...cur, annulateurFA: { enabled: newEnabled } },
+    },
+  };
+}
+
+// ===== trainCanStart / forceTrainStart =====
+//
+// Reproduit les actions Vuex `trainCanStart` et `forceTrainStart` (renderer.js).
+// Logique commune :
+//   1. Filtrer les pausedEvents du train (par nom).
+//   2. Trouver l'event "arrivé" : type === 'moveTrainIn' && remainingTime === 0.
+//      C'est celui qui fait sonner le téléphone (signal fermé devant le train).
+//   3. Reprendre TOUS les events paused du train (resume → events queue).
+//   4. Retirer l'event arrivé de la queue (on va le re-jouer manuellement).
+//   5. Re-jouer moveTrainIn avec `forcePassage` :
+//        - false (`trainCanStart`)  : ré-évalue la garde signal. Si le signal a
+//          été ouvert depuis, le train repart ; sinon il se rebloque.
+//        - true  (`forceTrainStart`): bypass garde signal (`moveTrainIn` à
+//          train.ts:773 fait `position === 'O' || forcePassage`). Le train
+//          franchit le signal fermé — faute professionnelle simulée pour
+//          l'apprentissage du geste interdit.
+//
+// Le store consomme le `TrainActionResult` enrichi pour orchestrer Clock
+// (resume + remove + add events + nouvelles pauses).
+
+interface TrainStartCtx {
+  pausedEvents: SimEvent[];
+  runningEvents: SimEvent[];
+  currentTime: number;
+}
+
+function trainStartImpl(
+  state: PlayerData,
+  trainId: string,
+  forcePassage: boolean,
+  ctx: TrainStartCtx,
+): TrainActionResult {
+  const trainPaused = ctx.pausedEvents.filter((e) => e.train?.name === trainId);
+  if (trainPaused.length === 0) return { state };
+
+  const arrived = trainPaused.find(
+    (e) => e.type === 'moveTrainIn' && (e.remainingTime ?? 0) === 0,
+  );
+  if (!arrived || !arrived.train || !arrived.target) return { state };
+
+  // moveTrainIn re-joue les gardes ; il a besoin de la file d'events à jour
+  // après le resume. Ici on simule le "post-resume" en ajoutant les paused
+  // remontés à `runningEvents`, puis en retirant l'arrivé (qu'on re-joue).
+  const resumedRunning = ctx.runningEvents.concat(
+    trainPaused.filter((e) => e.uid !== arrived.uid),
+  );
+
+  const moveCtx = {
+    allRunningEvents: resumedRunning,
+    runningEvents: resumedRunning,
+  };
+  const res = moveTrainIn(
+    state,
+    {
+      train: arrived.train,
+      target: arrived.target,
+      time: arrived.time ?? ctx.currentTime,
+      forcePassage,
+    },
+    moveCtx,
+  );
+
+  return {
+    state: res.state,
+    events: res.events,
+    pauseEventUids: res.pauseEventUids,
+    // Tous les paused du train sont remontés en file ; le store les retire
+    // de pausedEvents. moveTrainIn peut en repauser certains si le signal
+    // est toujours fermé (pauseEventUids ci-dessus).
+    resumeEventUids: trainPaused.map((e) => e.uid).filter((u): u is string => !!u),
+    // L'arrivé est remontée ET retirée — `removeEventUids` est appliqué
+    // après les resume côté store.
+    removeEventUids: arrived.uid ? [arrived.uid] : undefined,
+  };
+}
+
+export function trainCanStart(
+  state: PlayerData,
+  params: { trainId: string },
+  ctx: TrainStartCtx,
+): TrainActionResult {
+  return trainStartImpl(state, params.trainId, false, ctx);
+}
+
+export function forceTrainStart(
+  state: PlayerData,
+  params: { trainId: string },
+  ctx: TrainStartCtx,
+): TrainActionResult {
+  return trainStartImpl(state, params.trainId, true, ctx);
 }
 
 function addDisturbanceMutation(

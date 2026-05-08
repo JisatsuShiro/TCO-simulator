@@ -38,6 +38,15 @@ interface LeverProps {
    * par le manche.
    */
   keyholeSlot?: ReactNode;
+  /**
+   * Couleurs à appliquer sur la tête sphérique du manche (dispositifs
+   * d'attention). Si vide / undefined, on garde le rendu métallique. Si une
+   * seule couleur, la tête prend cette couleur uniformément. Si plusieurs,
+   * on les empile en bandes horizontales (linear-gradient à hard-stops).
+   * Reproduit visuellement les manchons colorés que l'opérateur place sur
+   * un levier au PRS pour signaler son attention (DA / DSA / DR).
+   */
+  knobColors?: string[];
   onClick: () => void;
 }
 
@@ -53,7 +62,28 @@ const MINUS_ANGLE = 90;
 // Décalage angulaire du "buttage" : ~30 % de la rotation cible (90°).
 const REFUSE_ANGLE_DELTA = 27;
 
-export function Lever({ id, num, label, position, refused = false, disabled = false, keyholeSlot, onClick }: LeverProps) {
+/**
+ * Construit le `background` CSS de la tête du manche selon les dispositifs
+ * actifs. Vide → gradient métallique. 1 couleur → solid. N couleurs →
+ * bandes horizontales (linear-gradient bottom-up à hard-stops, masquées par
+ * la border-radius circulaire). Une "lueur" radiale légère est superposée
+ * via box-shadow `inset` (cf. site d'utilisation) pour préserver le 3D.
+ */
+function knobBackground(knobColors: string[] | undefined): string {
+  if (!knobColors || knobColors.length === 0) {
+    return `radial-gradient(circle at 35% 30%, ${colors.metal.knobShine} 0%, ${colors.metal.knob} 55%, ${colors.metal.base} 100%)`;
+  }
+  if (knobColors.length === 1) return knobColors[0];
+  const step = 100 / knobColors.length;
+  // Bottom-up : `linear-gradient(0deg)` met la première couleur en bas.
+  // On préfère placer la première couleur en haut → 180deg (top-down).
+  const stops = knobColors
+    .map((c, i) => `${c} ${(i * step).toFixed(2)}%, ${c} ${((i + 1) * step).toFixed(2)}%`)
+    .join(', ');
+  return `linear-gradient(180deg, ${stops})`;
+}
+
+export function Lever({ id, num, label, position, refused = false, disabled = false, keyholeSlot, knobColors, onClick }: LeverProps) {
   const shaftRef = useRef<HTMLDivElement>(null);
 
   // Animation de refus déclenchée par la transition false→true de `refused`.
@@ -158,7 +188,10 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
             zIndex: 2,
           }}
         >
-          {/* Tête sphérique du manche, à l'extrémité du shaft */}
+          {/* Tête sphérique du manche, à l'extrémité du shaft. Quand des
+              dispositifs d'attention sont actifs, la tête prend leur couleur
+              (DA rouge / DR jaune / DSA bleu) ; on superpose un highlight
+              radial via `box-shadow inset` pour préserver le rendu sphérique. */}
           <div
             style={{
               position: 'absolute',
@@ -168,8 +201,11 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
               width: KNOB_SIZE,
               height: KNOB_SIZE,
               borderRadius: '50%',
-              background: `radial-gradient(circle at 35% 30%, ${colors.metal.knobShine} 0%, ${colors.metal.knob} 55%, ${colors.metal.base} 100%)`,
-              boxShadow: shadows.metallicKnob,
+              background: knobBackground(knobColors),
+              boxShadow:
+                knobColors && knobColors.length > 0
+                  ? `${shadows.metallicKnob}, inset 1.5px 1.5px 2px rgba(255,255,255,0.45), inset -1px -1px 2px rgba(0,0,0,0.35)`
+                  : shadows.metallicKnob,
             }}
           />
         </div>

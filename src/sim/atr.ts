@@ -153,15 +153,16 @@ export function releaseATRBouton(state: PlayerData, atrId: string): PlayerData {
   return s;
 }
 
-// ===== giveATRAutorisation (action — opérateur valide l'autorisation) =====
+// ===== giveATRAutorisation (action — opérateur brise la cassette "Au ATr") =====
 //
-// Bundle : `pressAuATr` (@258200) commit pressed:true + autorisation:true.
-// On fournit ici une variante dédiée qui ne touche que autorisation.
+// Reproduit `pressAuATr` du bundle (@258200) : commit pressed:true +
+// autorisation:true. C'est le "click sur cassette à briser" pour terrain :
+// un seul geste arme l'auatr (LED clignote) ET met la cassette en état brisé.
 
 export function giveATRAutorisation(state: PlayerData, atrId: string): PlayerData {
   const { idx } = findAtr(state, atrId);
   if (idx < 0) return state;
-  return patchAtr(state, idx, { autorisation: true });
+  return patchAtr(state, idx, { pressed: true, autorisation: true });
 }
 
 // ===== removeATRAutorisation =====

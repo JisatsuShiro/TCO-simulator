@@ -4,15 +4,26 @@
 // Sélecteurs Zustand primitifs (count + accès indexé par champ) pour éviter
 // les boucles "getSnapshot should be cached".
 
+import { useState } from 'react';
 import { useGessieStore } from '../../store/useGessieStore';
 import { Panel } from '../../design/primitives/Panel';
 import { Button } from '../../design/primitives/Button';
 import { Pill } from '../../design/primitives/Pill';
 import { colors, radii, spacing, typography } from '../../design/tokens';
+import { DispositifsMenu, type DispositifsTarget } from './DispositifsMenu';
 
 export function BlocsPanel() {
   const blocsCount = useGessieStore((s) => s.player.data?.blocs.length ?? 0);
+  const [dispositifsMenu, setDispositifsMenu] = useState<
+    { x: number; y: number; target: DispositifsTarget } | null
+  >(null);
+
   if (blocsCount === 0) return null;
+
+  const openMenu = (e: React.MouseEvent, blocId: string) => {
+    e.preventDefault();
+    setDispositifsMenu({ x: e.clientX, y: e.clientY, target: { kind: 'bloc', blocId } });
+  };
 
   return (
     <Panel
@@ -23,13 +34,27 @@ export function BlocsPanel() {
       bodyGap={spacing.sm}
     >
       {Array.from({ length: blocsCount }, (_, i) => (
-        <BlocRow key={i} index={i} />
+        <BlocRow key={i} index={i} onContextMenu={openMenu} />
       ))}
+      {dispositifsMenu && (
+        <DispositifsMenu
+          x={dispositifsMenu.x}
+          y={dispositifsMenu.y}
+          target={dispositifsMenu.target}
+          onClose={() => setDispositifsMenu(null)}
+        />
+      )}
     </Panel>
   );
 }
 
-function BlocRow({ index }: { index: number }) {
+function BlocRow({
+  index,
+  onContextMenu,
+}: {
+  index: number;
+  onContextMenu: (e: React.MouseEvent, blocId: string) => void;
+}) {
   const id = useGessieStore((s) => s.player.data?.blocs[index]?.id ?? '');
   const gareLabel = useGessieStore((s) => s.player.data?.blocs[index]?.gareLabel ?? '');
   const test = useGessieStore((s) => s.player.data?.blocs[index]?.test ?? '');
@@ -40,6 +65,11 @@ function BlocRow({ index }: { index: number }) {
   const commutSemaphoreLight = useGessieStore((s) => s.player.data?.blocs[index]?.commutSemaphoreLight ?? '');
   const blocage = useGessieStore((s) => s.player.data?.blocs[index]?.blocage ?? '');
   const semaphoreId = useGessieStore((s) => s.player.data?.blocs[index]?.semaphoreId ?? '');
+
+  const dispositifsCsv = useGessieStore(
+    (s) => (s.player.data?.blocs[index]?.dispositifs ?? []).slice().sort().join('\n'),
+  );
+  const dispositifs = dispositifsCsv === '' ? [] : dispositifsCsv.split('\n');
 
   const pressTest = useGessieStore((s) => s.pressTestBouton);
   const pressReddition = useGessieStore((s) => s.pressRedditionBouton);
@@ -81,7 +111,11 @@ function BlocRow({ index }: { index: number }) {
   };
 
   return (
-    <div style={cardStyle}>
+    <div
+      style={cardStyle}
+      onContextMenu={(e) => onContextMenu(e, id)}
+      title="Clic-droit : dispositifs d'attention (DA / DR)"
+    >
       <div style={headerStyle}>
         <strong
           style={{
@@ -101,6 +135,28 @@ function BlocRow({ index }: { index: number }) {
             }}
           >
             sémaphore {semaphoreId}
+          </span>
+        )}
+        {dispositifs.length > 0 && (
+          <span style={{ display: 'inline-flex', gap: 4, marginLeft: 'auto' }}>
+            {dispositifs.map((d) => (
+              <span
+                key={d}
+                style={{
+                  fontFamily: typography.mono.family,
+                  fontSize: 10,
+                  fontWeight: typography.weight.bold,
+                  color: colors.surface.darkest,
+                  background: colors.accent.warning,
+                  padding: '2px 5px',
+                  borderRadius: radii.sm,
+                  letterSpacing: '-0.04em',
+                  lineHeight: 1,
+                }}
+              >
+                {d}
+              </span>
+            ))}
           </span>
         )}
       </div>

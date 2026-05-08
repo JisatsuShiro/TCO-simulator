@@ -720,10 +720,73 @@ export function closeWithFA(state: PlayerData, signalId: string): PlayerData {
     if (!r?.circulation) return state;
   }
   let s = updateAffectationPosition(state, { affectationId: signalId, position: 'F' });
-  if (sDir.fa.annulable && i.annulateurFA?.pressed) {
+  if (sDir.fa.annulable && i.annulateurFA?.enabled) {
     s = updateAffectationPosition(s, { affectationId: signalId, position: 'O' });
   }
   return s;
+}
+
+// ===== annulSubstitution (bouton annulation de substitution) =====
+//
+// Bouton fugitif sous un signal qui permet d'ouvrir le signal *malgré*
+// l'occupation d'une zone de protection. La pression est valide uniquement
+// si la `zone` surveillée (cf. `controlePermanentAnnulZoneOccupee` Gessie)
+// est elle-même en circulation — sinon l'action no-op silencieusement.
+//
+// Reproduction fidèle de l'action Vuex `annulSubstitution` (renderer.js) :
+//   annulSubstitution(e, t) {
+//     var n = v.affectations[t];
+//     var a = v.affectations[n.annulSubstitution.zone];
+//     if (a && a.circulation) {
+//       e.commit("CHANGE_ANNUL_SUBSTITUTION", { signalId: t, newPosition: !0 });
+//       e.dispatch("updateAffectationPosition", { affectationId: t, position: n.requestedPosition });
+//       e.commit("CHANGE_ANNUL_SUBSTITUTION", { signalId: t, newPosition: !1 });
+//     }
+//   }
+//
+// Le toggle est intentionnellement fugitif : `pressed` ne reste à true que
+// pendant l'appel à `updateAffectationPosition`, qui lit `pressed` dans la
+// garde 4 (`actions.ts:423`) pour bypasser la vérification "zones de
+// protection occupées". Au repos, `pressed` est toujours false.
+
+export function annulSubstitution(state: PlayerData, signalId: string): PlayerData {
+  const aff = state.affectations[signalId];
+  if (!aff?.annulSubstitution?.zone) return state;
+  const zoneAff = state.affectations[aff.annulSubstitution.zone];
+  if (!zoneAff?.circulation) return state;
+
+  // 1. Mutation locale : pressed = true.
+  const pressedAff: Affectation = {
+    ...aff,
+    annulSubstitution: { ...aff.annulSubstitution, pressed: true },
+  };
+  let s: PlayerData = {
+    ...state,
+    affectations: { ...state.affectations, [signalId]: pressedAff },
+  };
+
+  // 2. Re-tente l'ouverture avec la requestedPosition (typiquement 'O' qui
+  // avait été bumpé en 'F' par la garde zonesDeProtections).
+  s = updateAffectationPosition(s, {
+    affectationId: signalId,
+    position: aff.requestedPosition,
+  });
+
+  // 3. Remet pressed = false. On relit le post car updateAffectationPosition
+  // a pu remplacer l'affectation (UPDATE_AFFECTATION_POSITION crée un
+  // nouvel objet).
+  const post = s.affectations[signalId];
+  if (!post?.annulSubstitution) return s;
+  return {
+    ...s,
+    affectations: {
+      ...s.affectations,
+      [signalId]: {
+        ...post,
+        annulSubstitution: { ...post.annulSubstitution, pressed: false },
+      },
+    },
+  };
 }
 
 // ===== toggleCommutFC (commutateur de Fermeture Carré) =====
@@ -858,84 +921,89 @@ export function toggleLever(state: PlayerData, leverId: string): PlayerData {
     }
   }
 
-  // 5. Annulateur électrique
-  if (lever.annulateurElec && lever.annulateurElec.enabled) return state;
+  // 5. Annulateur électrique : si `enabled === true`, l'opérateur a brisé le
+  // sceau du commutateur fugitif → bypass volontaire des gardes 6-10
+  // (direction active, zonesIsolees, zonesTransit, continuité, EAP/EPA).
+  // Reproduit la structure Gessie `if (!a.annulateurElec || !a.annulateurElec.enabled) { … }`
+  // (renderer.js, action toggleLever). Les gardes incompatibilités (3) et
+  // serrures (4) restent appliquées dans tous les cas.
+  if (!lever.annulateurElec || !lever.annulateurElec.enabled) {
+    // 6. Bascule vers minus avec direction active
+    if (targetPos === 'minus' && activeDirection) {
+      const dir = activeDirection;
+      if (dir.aiguille?.droite?.find((id) => aff[id]?.position !== 'D')) return state;
+      if (dir.aiguille?.gauche?.find((id) => aff[id]?.position !== 'G')) return state;
+      if (dir.taquetBas?.find((id) => aff[id]?.position !== 'B')) return state;
+      const sf = (dir as { signalFerme?: string[] }).signalFerme;
+      if (sf?.find((id) => aff[id]?.position !== 'F')) return state;
+      if (dir.zonesDeProtections?.find((id) => aff[id]?.circulation)) return state;
+      if (dir.pdProximite) {
+        for (const affId of lever.affectations) {
+          const a = aff[affId];
+          if (!a) continue;
+          const proxi = a.pedales?.Proxi;
+          if (!proxi?.pressed || a.disturbances.indexOf('NON_LIBERATION_EP') !== -1) {
+            return state;
+          }
+        }
+      }
+    }
 
-  // 6. Bascule vers minus avec direction active
-  if (targetPos === 'minus' && activeDirection) {
-    const dir = activeDirection;
-    if (dir.aiguille?.droite?.find((id) => aff[id]?.position !== 'D')) return state;
-    if (dir.aiguille?.gauche?.find((id) => aff[id]?.position !== 'G')) return state;
-    if (dir.taquetBas?.find((id) => aff[id]?.position !== 'B')) return state;
-    const sf = (dir as { signalFerme?: string[] }).signalFerme;
-    if (sf?.find((id) => aff[id]?.position !== 'F')) return state;
-    if (dir.zonesDeProtections?.find((id) => aff[id]?.circulation)) return state;
-    if (dir.pdProximite) {
+    // 7. zonesIsolees.plus
+    if (lever.zonesIsolees?.plus) {
+      for (const zoneId of lever.zonesIsolees.plus) {
+        const z = aff[zoneId];
+        if (z?.circulation) {
+          const atr = state.transitAnnulateurs.find(
+            (at) => at.on && at.zones.indexOf(zoneId) !== -1,
+          );
+          if (!atr) return state;
+        }
+      }
+    }
+
+    // 8. zonesTransit[currentPos]
+    const ztForCurrent = lever.zonesTransit?.[currentPos];
+    if (ztForCurrent && ztForCurrent.length > 0) {
+      for (let entry of ztForCurrent) {
+        if (entry[0] !== 'z') entry = `z ${entry}`;
+        const parts = entry.split(' ');
+        const zoneIdLookup = `${parts[0]} ${parts[1]}`;
+        const dir = parts[2] === 'I' ? 'impair' : 'pair';
+        const z = aff[zoneIdLookup];
+        if (!z) continue;
+        if (!z.circulation && z.transit?.[dir]?.haveTransit) return state;
+      }
+    }
+
+    // 9. Retour vers plus : continuite ne doit pas être en transit
+    if (targetPos === 'plus') {
       for (const affId of lever.affectations) {
         const a = aff[affId];
-        if (!a) continue;
-        const proxi = a.pedales?.Proxi;
-        if (!proxi?.pressed || a.disturbances.indexOf('NON_LIBERATION_EP') !== -1) {
-          return state;
+        if (a?.continuite) {
+          if (a.continuite.pair) {
+            const cp = aff[a.continuite.pair];
+            if (cp?.transit?.pair?.haveTransit) return state;
+          }
+          if (a.continuite.impair) {
+            const ci = aff[a.continuite.impair];
+            if (ci?.transit?.impair?.haveTransit) return state;
+          }
         }
       }
     }
-  }
 
-  // 7. zonesIsolees.plus
-  if (lever.zonesIsolees?.plus) {
-    for (const zoneId of lever.zonesIsolees.plus) {
-      const z = aff[zoneId];
-      if (z?.circulation) {
-        const atr = state.transitAnnulateurs.find(
-          (at) => at.on && at.zones.indexOf(zoneId) !== -1,
-        );
-        if (!atr) return state;
-      }
-    }
-  }
-
-  // 8. zonesTransit[currentPos]
-  const ztForCurrent = lever.zonesTransit?.[currentPos];
-  if (ztForCurrent && ztForCurrent.length > 0) {
-    for (let entry of ztForCurrent) {
-      if (entry[0] !== 'z') entry = `z ${entry}`;
-      const parts = entry.split(' ');
-      const zoneIdLookup = `${parts[0]} ${parts[1]}`;
-      const dir = parts[2] === 'I' ? 'impair' : 'pair';
-      const z = aff[zoneIdLookup];
-      if (!z) continue;
-      if (!z.circulation && z.transit?.[dir]?.haveTransit) return state;
-    }
-  }
-
-  // 9. Retour vers plus : continuite ne doit pas être en transit
-  if (targetPos === 'plus') {
-    for (const affId of lever.affectations) {
-      const a = aff[affId];
-      if (a?.continuite) {
-        if (a.continuite.pair) {
-          const cp = aff[a.continuite.pair];
-          if (cp?.transit?.pair?.haveTransit) return state;
-        }
-        if (a.continuite.impair) {
-          const ci = aff[a.continuite.impair];
-          if (ci?.transit?.impair?.haveTransit) return state;
-        }
-      }
-    }
-  }
-
-  // 10. Retour vers plus : EAP/EPA actifs → bloque
-  if (targetPos === 'plus') {
-    for (const affId of lever.affectations) {
-      const a = aff[affId];
-      if (a?.type === 'controle') {
-        if (a.eap && (a.eap.eap || a.disturbances.indexOf('DERANGEMENT_EAP') !== -1)) {
-          return state;
-        }
-        if (a.epa && (a.epa.epa || a.disturbances.indexOf('DERANGEMENT_EPA') !== -1)) {
-          return state;
+    // 10. Retour vers plus : EAP/EPA actifs → bloque
+    if (targetPos === 'plus') {
+      for (const affId of lever.affectations) {
+        const a = aff[affId];
+        if (a?.type === 'controle') {
+          if (a.eap && (a.eap.eap || a.disturbances.indexOf('DERANGEMENT_EAP') !== -1)) {
+            return state;
+          }
+          if (a.epa && (a.epa.epa || a.disturbances.indexOf('DERANGEMENT_EPA') !== -1)) {
+            return state;
+          }
         }
       }
     }
@@ -987,4 +1055,300 @@ export function toggleLever(state: PlayerData, leverId: string): PlayerData {
   }
 
   return next;
+}
+
+// ===== toggleAnnulElec =====
+//
+// Bascule l'annulateur électrique d'un levier (commutateur fugitif "à briser
+// le sceau"). Quand `enabled` passe à true, l'opérateur a délibérément forcé
+// l'override : `toggleLever` bypassera les gardes 6-10 (direction active,
+// zones, continuité, EAP/EPA). Les gardes incompatibilités et serrures
+// restent appliquées.
+//
+// Reproduction fidèle de l'action Vuex `toggleAnnulElec` (renderer.js) :
+//   toggleAnnulElec(e, t) {
+//     var n = v.levers[t], a = !n.annulateurElec.enabled;
+//     e.commit("CHANGE_ANNUL_ELEC_STATUS", { leverId: t, newPosition: a });
+//   }
+//
+// No-op silencieux si le levier n'a pas d'annulateur (cohérent avec le
+// `n.annulateurElec.enabled` qui crasherait sinon — ici on est défensif).
+
+export function toggleAnnulElec(state: PlayerData, leverId: string): PlayerData {
+  const lever = state.levers[leverId];
+  if (!lever?.annulateurElec) return state;
+  return {
+    ...state,
+    levers: {
+      ...state.levers,
+      [leverId]: {
+        ...lever,
+        annulateurElec: { enabled: !lever.annulateurElec.enabled },
+      },
+    },
+  };
+}
+
+// ===== diagnoseToggleLever =====
+//
+// Mirror non-mutant de `toggleLever` qui re-évalue les gardes et retourne la
+// PREMIÈRE qui refuse, avec un message FR identifiant l'élément bloquant.
+// Retourne `null` si l'action passerait toutes les gardes (donc commit OK).
+//
+// Utilisé par le store pour expliquer le refus à l'opérateur (panel "Refus")
+// après détection du no-op (`toggleLeverAction(state) === state`).
+//
+// Important : on garde la même structure que `toggleLever` pour rester
+// synchrone avec ses gardes — toute évolution de toggleLever doit être
+// reportée ici (sinon les diagnostics deviennent stale).
+
+export interface LeverRefusal {
+  /** Code identifiant la garde refusante (pour styling/icône). */
+  guard:
+    | 'incompatibility'
+    | 'keyhole'
+    | 'aiguille_droite'
+    | 'aiguille_gauche'
+    | 'taquet_bas'
+    | 'signal_ferme'
+    | 'zone_protection'
+    | 'proximite'
+    | 'zones_isolees'
+    | 'zone_transit'
+    | 'continuite'
+    | 'eap'
+    | 'epa'
+    | 'unknown';
+  /** Message FR à afficher à l'opérateur. */
+  reason: string;
+}
+
+export function diagnoseToggleLever(
+  state: PlayerData,
+  leverId: string,
+): LeverRefusal | null {
+  const lever = state.levers[leverId];
+  if (!lever) {
+    return { guard: 'unknown', reason: `Levier ${leverId} introuvable.` };
+  }
+
+  const aff = state.affectations;
+  const currentPos = lever.position;
+  const targetPos: 'plus' | 'minus' = currentPos === 'minus' ? 'plus' : 'minus';
+
+  // 2. Direction active (mêmes règles que toggleLever)
+  let activeDirection: NonNullable<typeof lever.directions>[number] | undefined;
+  if (lever.directions && lever.directions.length > 0) {
+    activeDirection = lever.directions.find((dir) => {
+      const conflict = dir.leverList.findIndex(
+        (id) => state.levers[id]?.position === 'plus' && id !== lever.id,
+      );
+      return conflict === -1;
+    });
+  }
+
+  // 3. Incompatibilités
+  const restrictForTarget = lever.incompatibilities[targetPos];
+  const moving = lever.incompatibilities.moving;
+  const violatedPlus = [...restrictForTarget.plus, ...moving.plus].find(
+    (id) => state.levers[id]?.position === 'plus',
+  );
+  if (violatedPlus) {
+    return {
+      guard: 'incompatibility',
+      reason: `Incompatibilité : levier ${violatedPlus} en plus.`,
+    };
+  }
+  const violatedMinus = [...restrictForTarget.minus, ...moving.minus].find(
+    (id) => state.levers[id]?.position === 'minus',
+  );
+  if (violatedMinus) {
+    return {
+      guard: 'incompatibility',
+      reason: `Incompatibilité : levier ${violatedMinus} en minus.`,
+    };
+  }
+  const violatedGroup = [...restrictForTarget.groups, ...moving.groups].find(
+    (grp) => {
+      const onePlusInMinus = grp.plus.find(
+        (id) => state.levers[id]?.position === 'minus',
+      );
+      if (onePlusInMinus) return false;
+      const oneMinusInPlus = grp.minus.find(
+        (id) => state.levers[id]?.position === 'plus',
+      );
+      return !oneMinusInPlus;
+    },
+  );
+  if (violatedGroup) {
+    const plus = violatedGroup.plus.join(', ') || '∅';
+    const minus = violatedGroup.minus.join(', ') || '∅';
+    return {
+      guard: 'incompatibility',
+      reason: `Incompatibilité de groupe : aucun levier de [${plus}] en minus ni de [${minus}] en plus.`,
+    };
+  }
+
+  // 4. Serrures
+  if (lever.keyholes) {
+    for (const k of Object.values(lever.keyholes)) {
+      if (!k.presence) {
+        return {
+          guard: 'keyhole',
+          reason: `Serrure ${k.keyId} non garnie.`,
+        };
+      }
+    }
+  }
+
+  // 5. Annulateur électrique : si actif, gardes 6-10 court-circuitées
+  if (!lever.annulateurElec || !lever.annulateurElec.enabled) {
+    // 6. Bascule vers minus + direction active
+    if (targetPos === 'minus' && activeDirection) {
+      const dir = activeDirection;
+      const badAgD = dir.aiguille?.droite?.find(
+        (id) => aff[id]?.position !== 'D',
+      );
+      if (badAgD) {
+        return {
+          guard: 'aiguille_droite',
+          reason: `Aiguille ${badAgD} pas en position droite (D).`,
+        };
+      }
+      const badAgG = dir.aiguille?.gauche?.find(
+        (id) => aff[id]?.position !== 'G',
+      );
+      if (badAgG) {
+        return {
+          guard: 'aiguille_gauche',
+          reason: `Aiguille ${badAgG} pas en position gauche (G).`,
+        };
+      }
+      const badTaquet = dir.taquetBas?.find((id) => aff[id]?.position !== 'B');
+      if (badTaquet) {
+        return {
+          guard: 'taquet_bas',
+          reason: `Taquet ${badTaquet} pas en position basse.`,
+        };
+      }
+      const sf = (dir as { signalFerme?: string[] }).signalFerme;
+      const badSf = sf?.find((id) => aff[id]?.position !== 'F');
+      if (badSf) {
+        return {
+          guard: 'signal_ferme',
+          reason: `Signal ${badSf} pas fermé.`,
+        };
+      }
+      const occZP = dir.zonesDeProtections?.find((id) => aff[id]?.circulation);
+      if (occZP) {
+        return {
+          guard: 'zone_protection',
+          reason: `Zone de protection ${occZP} occupée.`,
+        };
+      }
+      if (dir.pdProximite) {
+        for (const affId of lever.affectations) {
+          const a = aff[affId];
+          if (!a) continue;
+          const proxi = a.pedales?.Proxi;
+          if (
+            !proxi?.pressed ||
+            a.disturbances.indexOf('NON_LIBERATION_EP') !== -1
+          ) {
+            return {
+              guard: 'proximite',
+              reason: `Pédale proximité non pressée (ou avarie NON_LIBERATION_EP) sur ${affId}.`,
+            };
+          }
+        }
+      }
+    }
+
+    // 7. zonesIsolees.plus
+    if (lever.zonesIsolees?.plus) {
+      for (const zoneId of lever.zonesIsolees.plus) {
+        const z = aff[zoneId];
+        if (z?.circulation) {
+          const atr = state.transitAnnulateurs.find(
+            (at) => at.on && at.zones.indexOf(zoneId) !== -1,
+          );
+          if (!atr) {
+            return {
+              guard: 'zones_isolees',
+              reason: `Zone isolée ${zoneId} occupée et aucun ATR actif.`,
+            };
+          }
+        }
+      }
+    }
+
+    // 8. zonesTransit[currentPos]
+    const ztForCurrent = lever.zonesTransit?.[currentPos];
+    if (ztForCurrent && ztForCurrent.length > 0) {
+      for (let entry of ztForCurrent) {
+        if (entry[0] !== 'z') entry = `z ${entry}`;
+        const parts = entry.split(' ');
+        const zoneIdLookup = `${parts[0]} ${parts[1]}`;
+        const dir: 'pair' | 'impair' = parts[2] === 'I' ? 'impair' : 'pair';
+        const z = aff[zoneIdLookup];
+        if (!z) continue;
+        if (!z.circulation && z.transit?.[dir]?.haveTransit) {
+          return {
+            guard: 'zone_transit',
+            reason: `Transit verrouillé sur ${zoneIdLookup} (${dir}).`,
+          };
+        }
+      }
+    }
+
+    // 9. continuite (return to plus)
+    if (targetPos === 'plus') {
+      for (const affId of lever.affectations) {
+        const a = aff[affId];
+        if (a?.continuite) {
+          if (a.continuite.pair) {
+            const cp = aff[a.continuite.pair];
+            if (cp?.transit?.pair?.haveTransit) {
+              return {
+                guard: 'continuite',
+                reason: `Continuité pair : ${a.continuite.pair} en transit.`,
+              };
+            }
+          }
+          if (a.continuite.impair) {
+            const ci = aff[a.continuite.impair];
+            if (ci?.transit?.impair?.haveTransit) {
+              return {
+                guard: 'continuite',
+                reason: `Continuité impair : ${a.continuite.impair} en transit.`,
+              };
+            }
+          }
+        }
+      }
+    }
+
+    // 10. EAP/EPA actifs (return to plus)
+    if (targetPos === 'plus') {
+      for (const affId of lever.affectations) {
+        const a = aff[affId];
+        if (a?.type === 'controle') {
+          if (a.eap && (a.eap.eap || a.disturbances.indexOf('DERANGEMENT_EAP') !== -1)) {
+            return {
+              guard: 'eap',
+              reason: `EAP actif sur ${affId}${a.disturbances.indexOf('DERANGEMENT_EAP') !== -1 ? ' (avarie DERANGEMENT_EAP)' : ''}.`,
+            };
+          }
+          if (a.epa && (a.epa.epa || a.disturbances.indexOf('DERANGEMENT_EPA') !== -1)) {
+            return {
+              guard: 'epa',
+              reason: `EPA actif sur ${affId}${a.disturbances.indexOf('DERANGEMENT_EPA') !== -1 ? ' (avarie DERANGEMENT_EPA)' : ''}.`,
+            };
+          }
+        }
+      }
+    }
+  }
+
+  return null;
 }

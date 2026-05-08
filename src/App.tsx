@@ -4,7 +4,8 @@ import { SimControls } from './components/sim/SimControls';
 import { LeversPanel } from './components/sim/LeversPanel';
 // import { TrainsPanel } from './components/sim/TrainsPanel'; // masqué temporairement
 import { BlocsPanel } from './components/sim/BlocsPanel';
-import { AtrPanel } from './components/sim/AtrPanel';
+import { PhonePlayer } from './components/sim/PhonePlayer';
+import { AudioPlayers } from './components/sim/AudioPlayers';
 // KeysPanel n'existe plus comme panel autonome : ses sous-composants sont
 // désormais rendus à l'intérieur du LeversPanel (serrures sous chaque levier
 // + colonne auxiliaire à droite pour boîtes à clés / cadenas / verrous).
@@ -78,7 +79,10 @@ function App() {
         fontFamily: typography.ui.family,
         background: colors.surface.darkest,
         color: colors.text.primary,
-        minHeight: '100vh',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
       }}
     >
       <header
@@ -89,6 +93,7 @@ function App() {
           padding: `${spacing.sm}px ${spacing.md}px`,
           background: colors.surface.dark,
           borderBottom: `1px solid ${colors.border.subtle}`,
+          flexShrink: 0,
         }}
       >
         <h1
@@ -113,9 +118,18 @@ function App() {
       <TcoViewport key={station?.id ?? 'empty'} height={tcoHeight} />
       <ResizeHandle onResize={handleTcoResize} onResizeEnd={persistTcoHeight} />
       <SimControls />
-      <LeversPanel />
-      <BlocsPanel />
-      <AtrPanel />
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+        }}
+      >
+        <LeversPanel />
+        <BlocsPanel />
+      </div>
+      <PhonePlayer />
+      <AudioPlayers />
     </div>
   );
 }

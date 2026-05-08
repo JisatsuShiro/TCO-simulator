@@ -1,9 +1,9 @@
-// Barre de contrôle de la sim : ModeToggle (édition / simulation),
-// horloge, sélecteur de vitesse, compteurs.
+// Barre de contrôle de la sim : horloge, sélecteur de vitesse, compteur de
+// discordances. Le ModeToggle Édition/Simulation est caché : l'app reste
+// toujours en mode play (initPlayer auto sur load de gare dans App.tsx).
 
 import { useGessieStore } from '../../store/useGessieStore';
 import { useClockTick } from '../../sim/useClockTick';
-import { ModeToggle } from '../../design/primitives/ModeToggle';
 import { Clock } from '../../design/primitives/Clock';
 import { SpeedSelector } from '../../design/primitives/SpeedSelector';
 import { colors, spacing, typography } from '../../design/tokens';
@@ -15,16 +15,10 @@ export function SimControls() {
   const mode = useGessieStore((s) => s.player.mode);
   const speed = useGessieStore((s) => s.clock.speed);
   const currentTime = useGessieStore((s) => s.clock.currentTime);
-  const eventsCount = useGessieStore((s) => s.clock.events.length);
-  const affectationsCount = useGessieStore((s) =>
-    s.player.data ? Object.keys(s.player.data.affectations).length : 0
-  );
-  const leversCount = useGessieStore((s) =>
-    s.player.data ? Object.keys(s.player.data.levers).length : 0
+  const discordancesCount = useGessieStore(
+    (s) => s.player.data?.discordances_count ?? 0,
   );
 
-  const initPlayer = useGessieStore((s) => s.initPlayer);
-  const exitPlayer = useGessieStore((s) => s.exitPlayer);
   const setSpeed = useGessieStore((s) => s.setSpeed);
 
   const wrapperStyle: React.CSSProperties = {
@@ -39,30 +33,38 @@ export function SimControls() {
     borderTop: `1px solid ${colors.border.subtle}`,
   };
 
-  const handleModeChange = (next: 'edit' | 'play') => {
-    if (next === 'play' && mode === 'edit') initPlayer();
-    else if (next === 'edit' && mode === 'play') exitPlayer();
-  };
-
   const running = mode === 'play' && speed > 0;
 
   return (
     <div style={wrapperStyle}>
-      <ModeToggle mode={mode} onChange={handleModeChange} />
       <Clock timeMs={currentTime} running={running} />
       {mode === 'play' && (
         <SpeedSelector speed={speed} onChange={setSpeed} />
       )}
-      <span
-        style={{
-          color: colors.text.muted,
-          marginLeft: 'auto',
-          fontFamily: typography.mono.family,
-          fontSize: typography.size.xs,
-        }}
-      >
-        {affectationsCount} affectations · {leversCount} leviers · {eventsCount} events
-      </span>
+      {discordancesCount > 0 && (
+        <span
+          aria-label={`${discordancesCount} discordance${discordancesCount > 1 ? 's' : ''} active${discordancesCount > 1 ? 's' : ''}`}
+          title="Aiguilles ou taquets en discordance (contrôle absent)"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '2px 10px',
+            background: colors.signal.rouge,
+            color: colors.text.primary,
+            border: '1px solid #7A1414',
+            borderRadius: 999,
+            fontFamily: typography.mono.family,
+            fontSize: typography.size.xs,
+            fontWeight: typography.weight.bold,
+            letterSpacing: 0.4,
+            marginLeft: spacing.sm,
+          }}
+        >
+          <span aria-hidden="true">⚠</span>
+          DISC {discordancesCount}
+        </span>
+      )}
     </div>
   );
 }
