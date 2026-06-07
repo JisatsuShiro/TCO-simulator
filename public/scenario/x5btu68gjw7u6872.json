@@ -1,0 +1,40 @@
+{
+  "id": "x5btu68gjw7u6872",
+  "name": "EMO dérangement IS n°1.3",
+  "station": "saint_saturnin",
+  "description": "Maintien occupation Z 215",
+  "author_name": "AB",
+  "author_email": "",
+  "starting_time": "08:27:00",
+  "trains": [
+    {
+      "uid": "x5btu68gjw7u6l7w",
+      "name": "145840",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "1"
+    },
+    {
+      "uid": "x5btu68gjw7u7zt4",
+      "name": "341502",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "10"
+    }
+  ],
+  "avaries": [
+    {
+      "id": "x5btu68gjw7u8qkb",
+      "type": "Maintien occupation",
+      "item": "z 215",
+      "startingTime": "1",
+      "train": null,
+      "position": null,
+      "formattedType": "MAINTIEN_OCCUPATION"
+    }
+  ]
+}

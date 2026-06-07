@@ -1,0 +1,40 @@
+{
+  "id": "x5btu68gjw7unw0y",
+  "name": "EMO dérangement IS n°1.4",
+  "station": "saint_saturnin",
+  "description": "Non libération E Prox C220",
+  "author_name": "AB",
+  "author_email": "",
+  "starting_time": "08:27:00",
+  "trains": [
+    {
+      "uid": "x5btu68gjw7up4w5",
+      "name": "145840",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "1"
+    },
+    {
+      "uid": "x5btu68gjw7uplvi",
+      "name": "341502",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "10"
+    }
+  ],
+  "avaries": [
+    {
+      "id": "x5btu68gjw7uqb8a",
+      "type": "Non libération de EP",
+      "item": "C220",
+      "startingTime": "0",
+      "train": "",
+      "position": "",
+      "formattedType": "NON_LIBERATION_EP"
+    }
+  ]
+}

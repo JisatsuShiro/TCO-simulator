@@ -50,7 +50,7 @@ interface LeverProps {
   onClick: () => void;
 }
 
-const BOX_WIDTH = 40;
+const BOX_WIDTH = 32;
 const BOX_HEIGHT = 76;
 const SHAFT_WIDTH = 5;
 const SHAFT_HEIGHT = 26;
@@ -113,11 +113,25 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
   const baseAngle = position === 'plus' ? PLUS_ANGLE : MINUS_ANGLE;
   const ariaLabel = `Levier ${num} ${label}, position ${position === 'plus' ? 'haute' : 'basculée'}`;
 
+  // On utilise `<div role="button">` plutôt qu'un vrai `<button>` parce que
+  // le slot serrures (`keyholeSlot`) rend lui-même des `<button>` (KeyHole),
+  // et un `<button>` imbriqué dans un `<button>` est du HTML invalide. Le
+  // div mime un bouton via role + tabIndex + clavier (Espace/Entrée).
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
+    <div
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      onClick={disabled ? undefined : onClick}
+      onKeyDown={handleKeyDown}
+      aria-disabled={disabled || undefined}
       aria-label={ariaLabel}
       aria-pressed={position === 'minus'}
       title={label}
@@ -136,7 +150,7 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
         // horizontale, indépendamment de la longueur du label. Garantit un
         // gap visuel constant entre boîtiers métalliques quand on les met
         // côte à côte.
-        width: BOX_WIDTH + 18,
+        width: BOX_WIDTH + 6,
         flexShrink: 0,
       }}
     >
@@ -212,9 +226,15 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
 
         {/* Slot serrures intégrées : positionné dans la moitié basse de la
             plaque, sous le pivot — jamais traversé par le manche (plus = haut,
-            minus = droite). Le parent y rend une `LeverKeyholeStrip`. */}
+            minus = droite). Le parent y rend une `LeverKeyholeStrip`.
+            On stoppe la propagation des clics : les serrures sont des
+            `<button>` imbriqués dans le `<button>` du levier, donc un clic
+            sur une serrure remonterait sinon jusqu'à `onClick` du levier
+            et déclencherait `toggleLever` en plus de `takeKey`/`putKey`. */}
         {keyholeSlot && (
           <div
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             style={{
               position: 'absolute',
               left: 0,
@@ -246,7 +266,7 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
           fontFamily: typography.mono.family,
           textAlign: 'center',
           letterSpacing: '-0.02em',
-          maxWidth: BOX_WIDTH + 18,
+          maxWidth: BOX_WIDTH + 6,
           minHeight: 56,
         }}
       >
@@ -275,6 +295,6 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
 
       {/* `id` exposé via data-attribute pour les hooks de test ou d'inspection. */}
       <span hidden data-lever-id={id} />
-    </button>
+    </div>
   );
 }

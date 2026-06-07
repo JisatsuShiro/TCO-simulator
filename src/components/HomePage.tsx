@@ -1,0 +1,263 @@
+// Page d'accueil : présente les fonctionnalités sous forme de cards.
+// La sim ne démarre que sur clic d'une card active. Logo en header
+// reste cliquable pour revenir ici.
+
+import { useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import { colors, radii, shadows, spacing, typography } from '../design/tokens';
+
+interface HomePageProps {
+  /** Appelé quand l'utilisateur choisit la simulation libre. */
+  onEnterSimulation: () => void;
+  /** Appelé quand l'utilisateur ouvre la liste des scénarios pédagogiques. */
+  onEnterScenarios: () => void;
+}
+
+interface Feature {
+  id: string;
+  title: string;
+  description: string;
+  icon: ReactNode;
+  available: boolean;
+  onClick?: () => void;
+}
+
+export function HomePage({ onEnterSimulation, onEnterScenarios }: HomePageProps) {
+  const features: Feature[] = [
+    {
+      id: 'simulation',
+      title: 'Simulation libre',
+      description:
+        'Pilotez une gare. Manipulez les leviers, gérez les annulateurs, observez les enclenchements en temps réel.',
+      icon: <LeverIcon />,
+      available: true,
+      onClick: onEnterSimulation,
+    },
+    {
+      id: 'scenarios',
+      title: 'Scénarios pédagogiques',
+      description:
+        'Lancez un scénario : gare cible, trains pré-positionnés et avaries prédéfinies pour un exercice ciblé.',
+      icon: <BookIcon />,
+      available: true,
+      onClick: onEnterScenarios,
+    },
+    {
+      id: 'docs',
+      title: 'Documentation',
+      description:
+        "Comprendre les concepts du PRS : enclenchements, annulateurs de transit, EPA, dispositifs d'attention.",
+      icon: <InfoIcon />,
+      available: false,
+    },
+  ];
+
+  return (
+    <div
+      style={{
+        flex: 1,
+        minHeight: 0,
+        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: `${spacing.xxl}px ${spacing.lg}px`,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 980,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: spacing.xl,
+        }}
+      >
+        <header style={{ textAlign: 'center' }}>
+          <h2
+            style={{
+              margin: 0,
+              fontSize: typography.size.xl,
+              fontWeight: typography.weight.semibold,
+              color: colors.text.primary,
+              letterSpacing: 0.3,
+            }}
+          >
+            Bienvenue dans Voie Libre
+          </h2>
+          <p
+            style={{
+              margin: `${spacing.xs}px 0 0`,
+              fontSize: typography.size.base,
+              color: colors.text.secondary,
+              lineHeight: `${typography.lineHeight.base}px`,
+            }}
+          >
+            Choisissez une fonctionnalité pour commencer.
+          </p>
+        </header>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: spacing.md,
+          }}
+        >
+          {features.map((f) => (
+            <FeatureCard key={f.id} feature={f} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FeatureCard({ feature }: { feature: Feature }) {
+  const [hover, setHover] = useState(false);
+  const interactive = feature.available && feature.onClick != null;
+
+  const handleClick = () => {
+    if (interactive) feature.onClick!();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!interactive) return;
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      feature.onClick!();
+    }
+  };
+
+  const style: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: spacing.sm,
+    padding: spacing.lg,
+    background: interactive && hover ? colors.surface.medium : colors.surface.dark,
+    border: `1px solid ${interactive && hover ? colors.border.strong : colors.border.subtle}`,
+    borderRadius: radii.lg,
+    cursor: interactive ? 'pointer' : 'default',
+    opacity: interactive ? 1 : 0.55,
+    transition: 'background 160ms ease, border-color 160ms ease, transform 160ms ease',
+    transform: interactive && hover ? 'translateY(-2px)' : 'translateY(0)',
+    boxShadow: interactive && hover ? shadows.md : shadows.sm,
+    fontFamily: typography.ui.family,
+    textAlign: 'left',
+  };
+
+  return (
+    <div
+      role={interactive ? 'button' : undefined}
+      tabIndex={interactive ? 0 : -1}
+      aria-disabled={!interactive || undefined}
+      aria-label={feature.title}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={style}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: spacing.sm,
+        }}
+      >
+        <div
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: radii.md,
+            background: colors.surface.darkest,
+            border: `1px solid ${colors.border.subtle}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: colors.accent.primary,
+            flexShrink: 0,
+          }}
+        >
+          {feature.icon}
+        </div>
+        {!feature.available && (
+          <span
+            style={{
+              fontSize: typography.size.xs,
+              fontFamily: typography.mono.family,
+              fontWeight: typography.weight.medium,
+              padding: '2px 8px',
+              borderRadius: radii.pill,
+              background: 'rgba(245, 158, 11, 0.12)',
+              color: colors.accent.warning,
+              border: `1px solid rgba(245, 158, 11, 0.25)`,
+              textTransform: 'uppercase',
+              letterSpacing: 0.6,
+            }}
+          >
+            À venir
+          </span>
+        )}
+      </div>
+      <h3
+        style={{
+          margin: 0,
+          fontSize: typography.size.md,
+          fontWeight: typography.weight.semibold,
+          color: colors.text.primary,
+        }}
+      >
+        {feature.title}
+      </h3>
+      <p
+        style={{
+          margin: 0,
+          fontSize: typography.size.sm,
+          color: colors.text.secondary,
+          lineHeight: `${typography.lineHeight.sm}px`,
+        }}
+      >
+        {feature.description}
+      </p>
+    </div>
+  );
+}
+
+// ===== Icônes inline (SVG) =====================================================
+
+function LeverIcon() {
+  return (
+    <svg width={24} height={24} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x={4} y={4} width={16} height={16} rx={2} stroke="currentColor" strokeWidth={1.5} />
+      <circle cx={12} cy={12} r={1.5} fill="currentColor" />
+      <path d="M 12 12 L 12 6" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" />
+      <circle cx={12} cy={5} r={2} fill="currentColor" />
+    </svg>
+  );
+}
+
+function BookIcon() {
+  return (
+    <svg width={24} height={24} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M 4 5 L 4 19 L 12 17 L 20 19 L 20 5 L 12 7 Z"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinejoin="round"
+      />
+      <path d="M 12 7 L 12 17" stroke="currentColor" strokeWidth={1.5} />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg width={24} height={24} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx={12} cy={12} r={8.5} stroke="currentColor" strokeWidth={1.5} />
+      <circle cx={12} cy={8.5} r={1} fill="currentColor" />
+      <path d="M 12 11 L 12 16.5" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" />
+    </svg>
+  );
+}

@@ -20,7 +20,7 @@ import { useRef, useState } from 'react';
 import { useGessieStore } from '../../store/useGessieStore';
 import { colors, motion, shadows, typography } from '../../design/tokens';
 
-const PB_SIZE = 26;
+const PB_SIZE = 18;
 
 // ============================================================================
 // PushButton — primitive partagée pour FA, Subst, FC.

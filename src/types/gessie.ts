@@ -98,3 +98,42 @@ export interface ObjectStyleItem {
 export function buildItemType(category: string, toolId: string): string {
   return category + toolId.charAt(0).toUpperCase() + toolId.slice(1);
 }
+
+/** Train pré-positionné dans un scénario. */
+export interface ScenarioTrain {
+  uid: string;
+  name: string;
+  speed: number;
+  direction: string;
+  size: string;
+  startingPoint: string;
+  startingTime: string;
+}
+
+/** Avarie pré-positionnée dans un scénario. */
+export interface ScenarioAvarie {
+  id: string;
+  type: string | null;
+  item: string;
+  startingTime: string;
+  train?: string;
+  position?: string;
+  formattedType?: string;
+}
+
+/**
+ * Scénario pédagogique : décrit une gare cible, un instant de départ, des
+ * trains pré-positionnés et des avaries à déclencher. Format Gessie
+ * (cf. stations/{station}/scenarios/{id}.json).
+ */
+export interface Scenario {
+  id: string;
+  name: string;
+  station: string;
+  description?: string;
+  author_name?: string;
+  author_email?: string;
+  starting_time?: string;
+  trains?: ScenarioTrain[];
+  avaries?: ScenarioAvarie[];
+}

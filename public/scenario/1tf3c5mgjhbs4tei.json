@@ -1,0 +1,40 @@
+{
+  "id": "1tf3c5mgjhbs4tei",
+  "name": "Prépa EVA MO 2",
+  "station": "saint_saturnin",
+  "description": "Non libération EPa Cv 215",
+  "author_name": "",
+  "author_email": "",
+  "starting_time": "08:55:00",
+  "trains": [
+    {
+      "uid": "1tf3c5mgjhbs59dt",
+      "name": "145844",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "0"
+    },
+    {
+      "uid": "cq3o6v0jw6cwedo",
+      "name": "439739",
+      "speed": 1,
+      "direction": "impair",
+      "size": "Moyen",
+      "startingPoint": "Cv215",
+      "startingTime": "5"
+    }
+  ],
+  "avaries": [
+    {
+      "id": "54gjw7yubdr",
+      "type": "Non libération de Epa",
+      "item": "Cv215",
+      "startingTime": "0",
+      "train": "",
+      "position": "",
+      "formattedType": "NON_LIBERATION_EPA"
+    }
+  ]
+}

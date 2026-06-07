@@ -1,0 +1,49 @@
+{
+  "id": "5qojw7xxks9",
+  "name": "EMO dérangement IS n°2.4",
+  "station": "saint_saturnin",
+  "description": "raté ouverture C220",
+  "author_name": "AB",
+  "author_email": "",
+  "starting_time": "08:28:00",
+  "trains": [
+    {
+      "uid": "5qojw7xxwff",
+      "name": "145840",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "0"
+    },
+    {
+      "uid": "5qojw7xyd6z",
+      "name": "341502",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "9"
+    },
+    {
+      "uid": "5qojw7xyxjb",
+      "name": "145844",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "29"
+    }
+  ],
+  "avaries": [
+    {
+      "id": "5qojw7xzjz9",
+      "type": "Raté d'ouverture",
+      "item": "C220",
+      "startingTime": "0",
+      "train": "",
+      "position": "",
+      "formattedType": "RATE_OUVERTURE"
+    }
+  ]
+}

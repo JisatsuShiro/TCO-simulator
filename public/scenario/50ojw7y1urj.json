@@ -1,0 +1,31 @@
+{
+  "id": "50ojw7y1urj",
+  "name": "EMO dérangement IS n°2.2",
+  "station": "saint_saturnin",
+  "description": "Absence contrôle G AIg 11",
+  "author_name": "AB",
+  "author_email": "",
+  "starting_time": "06:57:00",
+  "trains": [
+    {
+      "uid": "50ojw7y2mla",
+      "name": "145832",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "1"
+    }
+  ],
+  "avaries": [
+    {
+      "id": "50ojw7y34ke",
+      "type": "Absence de contrôle à gauche",
+      "item": "Ag11",
+      "startingTime": "0",
+      "train": "",
+      "position": "",
+      "formattedType": "ABSENCE_CONTROLE_GAUCHE"
+    }
+  ]
+}

@@ -15,13 +15,15 @@ import { useState, useMemo, useEffect } from 'react';
 import { useGessieStore, type LeverRefusalEntry } from '../../store/useGessieStore';
 import { Lever } from '../../design/primitives/Lever';
 import { Panel } from '../../design/primitives/Panel';
+import { Clock } from '../../design/primitives/Clock';
+import { SpeedSelector } from '../../design/primitives/SpeedSelector';
+import { useClockTick } from '../../sim/useClockTick';
 import { colors, radii, spacing, typography } from '../../design/tokens';
 import type { Affectation, Lever as LeverType } from '../../sim/types';
 import { LeverKeyholeStrip, AuxiliaryKeysColumn } from './KeysPanel';
 import { DispositifsMenu, type DispositifsTarget } from './DispositifsMenu';
 import {
   FaPushButton,
-  AnnulSubstitutionPushButton,
   FcPushButton,
   EpaKeybox,
   AeKeybox,
@@ -113,6 +115,11 @@ function computeGroupAnnotations(
 }
 
 export function LeversPanel() {
+  // Pose le setInterval(1000) qui fait tourner l'horloge tant qu'on est en
+  // mode play. Historiquement dans `SimControls` (composant supprimé après
+  // l'intégration des contrôles dans le header de ce panel).
+  useClockTick();
+
   const data = useGessieStore((s) => s.player.data);
   const toggleLever = useGessieStore((s) => s.toggleLever);
   const toggleAnnulElec = useGessieStore((s) => s.toggleAnnulElec);
@@ -218,10 +225,20 @@ export function LeversPanel() {
   };
 
   // Rails actifs par groupe : un rail apparaît si au moins un canal du
-  // groupe l'utilise. Les Aiguilles sortent typiquement à NO_RAILS, ce qui
-  // supprime la colonne labels et le slot-top entier pour ce groupe.
+  // groupe l'utilise.
   const groupRailsControle = computeGroupRails(controleLevers, data.affectations);
   const groupRailsAiguille = computeGroupRails(aiguilleLevers, data.affectations);
+
+  // Union des rails de tous les groupes : sert à RÉSERVER la place du
+  // slot-top sur les canaux qui n'ont pas leurs propres rails (typiquement
+  // Aiguilles, qui n'a ni FA ni FC). Sans ça, les leviers d'aiguilles
+  // "remontent" verticalement par rapport aux leviers de signaux et
+  // l'alignement horizontal entre rangées est cassé.
+  const reservedRails: GroupRails = {
+    fa: groupRailsControle.fa || groupRailsAiguille.fa,
+    subst: groupRailsControle.subst || groupRailsAiguille.subst,
+    fc: groupRailsControle.fc || groupRailsAiguille.fc,
+  };
 
   // Annotations dédupliquées par groupe : si plusieurs leviers partagent un
   // signal (cas Cv212/EP — destination EP / destination LP), seul le premier
@@ -235,13 +252,30 @@ export function LeversPanel() {
   // disambiguer.
   const signalLeverCounts = computeSignalLeverCounts(levers);
 
+  // Le titre du panel compose deux blocs côte à côte : les onglets à gauche
+  // (Leviers / Refus) et les contrôles de sim à droite (horloge + sélecteur
+  // de vitesse + badge discordances). Un wrapper flex avec
+  // `justifyContent: 'space-between'` et `flex: 1` permet d'occuper toute
+  // la largeur du header du Panel.
   const tabs = (
-    <LeversTabs
-      activeView={view}
-      onChange={setView}
-      refusalsTotal={refusalsCount}
-      refusalsUnseen={refusalsUnseen}
-    />
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: spacing.md,
+        flex: 1,
+        minWidth: 0,
+      }}
+    >
+      <LeversTabs
+        activeView={view}
+        onChange={setView}
+        refusalsTotal={refusalsCount}
+        refusalsUnseen={refusalsUnseen}
+      />
+      <SimHeaderControls />
+    </div>
   );
 
   return (
@@ -280,7 +314,6 @@ export function LeversPanel() {
               <ChannelGroup
                 tag="signal"
                 tagLabel="Signaux"
-                rails={groupRailsControle}
               >
                 {controleLevers.map((l) => (
                   <LeverChannel
@@ -290,6 +323,7 @@ export function LeversPanel() {
                     signalLeverCounts={signalLeverCounts}
                     refusedLever={refusedLever}
                     groupRails={groupRailsControle}
+                    reservedRails={reservedRails}
                     onLeverClick={handleLeverClick}
                     onAnnulElecToggle={toggleAnnulElec}
                     onLeverContextMenu={handleLeverContextMenu}
@@ -301,7 +335,6 @@ export function LeversPanel() {
               <ChannelGroup
                 tag="aig"
                 tagLabel="Aiguilles"
-                rails={groupRailsAiguille}
               >
                 {aiguilleLevers.map((l) => (
                   <LeverChannel
@@ -311,6 +344,7 @@ export function LeversPanel() {
                     signalLeverCounts={signalLeverCounts}
                     refusedLever={refusedLever}
                     groupRails={groupRailsAiguille}
+                    reservedRails={reservedRails}
                     onLeverClick={handleLeverClick}
                     onAnnulElecToggle={toggleAnnulElec}
                     onLeverContextMenu={handleLeverContextMenu}
@@ -322,6 +356,7 @@ export function LeversPanel() {
               <ChannelGroup
                 tag="atr"
                 tagLabel="Annulateurs de transit"
+                direction="column"
               >
                 {Array.from({ length: atrCount }, (_, i) => (
                   <AtrPlate key={i} index={i} />
@@ -406,6 +441,66 @@ function LeversTabs({
         blink={refusalsUnseen > 0}
         onClick={() => onChange('refusals')}
       />
+    </div>
+  );
+}
+
+// ===== SimHeaderControls ====================================================
+//
+// Contrôles de simulation intégrés à droite du header du LeversPanel :
+//   - Horloge (Clock) avec pastille qui pulse quand la sim avance
+//   - Sélecteur de vitesse (×0 = pause, ×1, ×2, ×5, ×10)
+//   - Badge "DISC N" quand au moins une discordance est active
+//
+// Ces contrôles vivaient historiquement dans un composant `SimControls`
+// rendu en bandeau dédié sous le TCO. Le déplacement ici libère cette
+// ligne et concentre l'opérateur sur un seul header.
+
+function SimHeaderControls() {
+  const mode = useGessieStore((s) => s.player.mode);
+  const speed = useGessieStore((s) => s.clock.speed);
+  const currentTime = useGessieStore((s) => s.clock.currentTime);
+  const discordancesCount = useGessieStore(
+    (s) => s.player.data?.discordances_count ?? 0,
+  );
+  const setSpeed = useGessieStore((s) => s.setSpeed);
+
+  const running = mode === 'play' && speed > 0;
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: spacing.sm,
+        flexShrink: 0,
+      }}
+    >
+      <Clock timeMs={currentTime} running={running} />
+      {mode === 'play' && <SpeedSelector speed={speed} onChange={setSpeed} />}
+      {discordancesCount > 0 && (
+        <span
+          aria-label={`${discordancesCount} discordance${discordancesCount > 1 ? 's' : ''} active${discordancesCount > 1 ? 's' : ''}`}
+          title="Aiguilles ou taquets en discordance (contrôle absent)"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '2px 10px',
+            background: colors.signal.rouge,
+            color: colors.text.primary,
+            border: '1px solid #7A1414',
+            borderRadius: 999,
+            fontFamily: typography.mono.family,
+            fontSize: typography.size.xs,
+            fontWeight: typography.weight.bold,
+            letterSpacing: 0.4,
+          }}
+        >
+          <span aria-hidden="true">⚠</span>
+          DISC {discordancesCount}
+        </span>
+      )}
     </div>
   );
 }
@@ -642,13 +737,15 @@ function formatSimTime(ms: number): string {
   return `${hh}:${mm}:${ss}`;
 }
 
-// Largeur d'un canal (top slot + lever + bottom slot empilés).
-const CHANNEL_WIDTH = 78;
+// Largeur d'un canal (top slot + lever + bottom slot empilés). Cale au
+// plus juste sur le bouton levier (`BOX_WIDTH + 6 = 38 px`) — pas de
+// slack horizontal, c'est `alignItems: center` qui centre.
+const CHANNEL_WIDTH = 38;
 
 // Hauteur d'un rail dans le slot-top (cellule FA / Subst / FC). Les rails
 // sont empilés verticalement à des Y FIXES → tous les boutons d'un même
 // type s'alignent horizontalement à travers la rangée des canaux.
-const RAIL_HEIGHT = 32;
+const RAIL_HEIGHT = 22;
 
 // Hauteur fixe du slot-bottom (AE + EPA keybox). Garde les pieds des
 // canaux alignés.
@@ -658,7 +755,7 @@ const RAIL_HEIGHT = 32;
 const SLOT_BOTTOM_HEIGHT = 32;
 
 // Gap horizontal entre canaux.
-const CHANNEL_GAP = 4;
+const CHANNEL_GAP = 2;
 
 /**
  * Rails actifs dans un groupe de canaux. Un rail apparaît si AU MOINS un
@@ -737,19 +834,20 @@ function ChannelGroup({
   tag,
   tagLabel,
   meta,
-  rails,
+  direction = 'row',
   children,
 }: {
   tag: keyof typeof TAG_PALETTE;
   tagLabel: string;
   meta?: string;
-  /** Rails actifs dans ce groupe — détermine la colonne labels à gauche. */
-  rails?: GroupRails;
+  /** Sens d'empilement des enfants. `'row'` (défaut, pour les canaux
+      leviers qui s'étalent horizontalement) ou `'column'` (pour les
+      groupes verticaux type ATR). */
+  direction?: 'row' | 'column';
   children: React.ReactNode;
 }) {
   const palette = TAG_PALETTE[tag];
-  const hasRails =
-    !!rails && (rails.fa || rails.subst || rails.fc);
+  const isColumn = direction === 'column';
   return (
     <div
       style={{
@@ -814,71 +912,58 @@ function ChannelGroup({
           </span>
         )}
       </div>
-      {/* Corps : (colonne labels rails | grille de canaux) */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: spacing.xs }}>
-        {hasRails && rails && <RailLabelsColumn rails={rails} />}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: `${spacing.xs}px ${CHANNEL_GAP}px`,
-            alignItems: 'flex-start',
-            flex: 1,
-            minWidth: 0,
-          }}
-        >
-          {children}
-        </div>
+      {/* Corps : grille des canaux. Les labels FA/FC ont migré dans le
+          slot-top de chaque canal (au-dessus de chaque bouton) — plus de
+          colonne `RailLabelsColumn` à gauche. En mode `column`, on
+          empile verticalement (utilisé par le groupe ATR). */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: isColumn ? 'column' : 'row',
+          flexWrap: isColumn ? 'nowrap' : 'wrap',
+          gap: isColumn ? spacing.xs : `${spacing.xs}px ${CHANNEL_GAP}px`,
+          alignItems: isColumn ? 'center' : 'flex-start',
+          flex: 1,
+          minWidth: 0,
+        }}
+      >
+        {children}
       </div>
     </div>
   );
 }
 
-// ===== RailLabelsColumn : labels mono des rails à gauche du groupe ========
+// ===== SlotTopLabel / SlotTopCell ===========================================
 //
-// Hauteur de chaque label = RAIL_HEIGHT, alignée verticalement avec les
-// cellules-rail correspondantes dans les canaux.
+// Helpers du slot-top par canal : un micro-label "FA"/"FC" au-dessus de
+// chaque colonne et la cellule du bouton dessous. Largeur 50% (deux
+// colonnes côte à côte par canal) pour garantir l'alignement horizontal
+// FA-d'un-canal / FA-du-canal-d'à-côté, idem FC.
 
-function RailLabelsColumn({ rails }: { rails: GroupRails }) {
-  const labelStyle: React.CSSProperties = {
-    height: RAIL_HEIGHT,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    fontFamily: typography.mono.family,
-    fontSize: 9,
-    color: colors.text.muted,
-    letterSpacing: 0.4,
-    textTransform: 'uppercase',
-    whiteSpace: 'nowrap',
-  };
+function SlotTopLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div
+    <span
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        paddingTop: spacing.xxs,
-        paddingRight: spacing.xs,
-        flexShrink: 0,
+        flex: 1,
+        textAlign: 'center',
+        fontFamily: typography.mono.family,
+        fontSize: 8,
+        color: colors.text.muted,
+        letterSpacing: 0.4,
+        textTransform: 'uppercase',
+        lineHeight: 1.1,
       }}
     >
-      {rails.fa && <span style={labelStyle}>Annul FA</span>}
-      {rails.subst && <span style={labelStyle}>Subst</span>}
-      {rails.fc && <span style={labelStyle}>FC</span>}
-    </div>
+      {children}
+    </span>
   );
 }
 
-// Une cellule-rail d'un canal — hauteur fixe RAIL_HEIGHT, contenu centré.
-// Vide ou pleine, elle réserve sa hauteur pour garantir l'alignement
-// horizontal des boutons à travers tous les canaux du groupe.
-function RailCell({ children }: { children: React.ReactNode }) {
+function SlotTopCell({ children }: { children: React.ReactNode }) {
   return (
     <div
       style={{
-        height: RAIL_HEIGHT,
-        width: '100%',
+        flex: 1,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -912,6 +997,7 @@ function LeverChannel({
   signalLeverCounts,
   refusedLever,
   groupRails,
+  reservedRails,
   onLeverClick,
   onAnnulElecToggle,
   onLeverContextMenu,
@@ -924,16 +1010,24 @@ function LeverChannel({
   annotations: ChannelAnnotations;
   signalLeverCounts: Record<string, number>;
   refusedLever: string | null;
-  /** Rails actifs au niveau du groupe — détermine quelles cellules-rail
-      ce canal doit RÉSERVER (même si vide) pour que les boutons FA/Subst/FC
-      s'alignent horizontalement à travers la rangée des canaux. */
+  /** Rails actifs au niveau du groupe — détermine si ce canal RENDU
+      VISIBLEMENT ses boutons FA / FC. Si false, le slot-top reste mais
+      passe en `visibility: hidden` pour préserver la hauteur. */
   groupRails: GroupRails;
+  /** Rails RÉSERVÉS au niveau global (union des groupes). Détermine la
+      structure du slot-top (colonnes FA / FC) pour que les canaux d'un
+      groupe sans rails (typiquement Aiguilles) conservent la même hauteur
+      que ceux d'un groupe avec rails (Signaux). */
+  reservedRails: GroupRails;
   onLeverClick: (id: string, positionBefore: 'plus' | 'minus') => void;
   onAnnulElecToggle: (leverId: string) => void;
   onLeverContextMenu: (e: React.MouseEvent, leverId: string) => void;
 }) {
   const ann = annotations;
-  const hasAnyRail = groupRails.fa || groupRails.subst || groupRails.fc;
+  // Subst retiré temporairement de l'UI (cf. tag stories). Le pipeline de
+  // calcul `ann.substSignals` reste actif pour un retour facile.
+  const hasOwnRail = groupRails.fa || groupRails.fc;
+  const hasReservedRail = reservedRails.fa || reservedRails.fc;
 
   return (
     <div
@@ -948,41 +1042,62 @@ function LeverChannel({
         borderRadius: radii.sm,
       }}
     >
-      {/* Slot-top : 3 rails à hauteur fixe (FA / Subst / FC). Chaque rail
-          occupe RAIL_HEIGHT, qu'il soit rempli ou vide → tous les boutons
-          d'un même type sont alignés horizontalement à travers la rangée
-          des canaux. Les rails inactifs au niveau du GROUPE sont omis. */}
-      {hasAnyRail && (
+      {/* Slot-top : FA + FC côte à côte avec leurs micro-labels au-dessus.
+          La STRUCTURE (quelles colonnes existent) suit `reservedRails`
+          (union globale) pour que tous les canaux — y compris ceux d'un
+          groupe sans rails — gardent la même hauteur. La VISIBILITÉ suit
+          `groupRails` (rails propres au groupe) : un canal qui n'a aucun
+          rail à lui passe en `visibility: hidden`. */}
+      {hasReservedRail && (
         <div
           style={{
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 2,
+            gap: 1,
+            visibility: hasOwnRail ? 'visible' : 'hidden',
           }}
+          aria-hidden={!hasOwnRail}
         >
-          {groupRails.fa && (
-            <RailCell>
-              {ann.faSignals.map((sid) => (
-                <FaPushButton key={`fa-${sid}`} signalId={sid} compact />
-              ))}
-            </RailCell>
-          )}
-          {groupRails.subst && (
-            <RailCell>
-              {ann.substSignals.map((sid) => (
-                <AnnulSubstitutionPushButton key={`as-${sid}`} signalId={sid} compact />
-              ))}
-            </RailCell>
-          )}
-          {groupRails.fc && (
-            <RailCell>
-              {ann.fcSignals.map((sid) => (
-                <FcPushButton key={`fc-${sid}`} signalId={sid} compact />
-              ))}
-            </RailCell>
-          )}
+          {/* Ligne 1 : micro-labels "FA" / "FC" */}
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              gap: CHANNEL_GAP,
+              justifyContent: 'center',
+            }}
+          >
+            {reservedRails.fa && <SlotTopLabel>FA</SlotTopLabel>}
+            {reservedRails.fc && <SlotTopLabel>FC</SlotTopLabel>}
+          </div>
+          {/* Ligne 2 : boutons FA / FC sur la même ligne */}
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              gap: CHANNEL_GAP,
+              justifyContent: 'center',
+              height: RAIL_HEIGHT,
+              alignItems: 'center',
+            }}
+          >
+            {reservedRails.fa && (
+              <SlotTopCell>
+                {ann.faSignals.map((sid) => (
+                  <FaPushButton key={`fa-${sid}`} signalId={sid} compact />
+                ))}
+              </SlotTopCell>
+            )}
+            {reservedRails.fc && (
+              <SlotTopCell>
+                {ann.fcSignals.map((sid) => (
+                  <FcPushButton key={`fc-${sid}`} signalId={sid} compact />
+                ))}
+              </SlotTopCell>
+            )}
+          </div>
         </div>
       )}
 

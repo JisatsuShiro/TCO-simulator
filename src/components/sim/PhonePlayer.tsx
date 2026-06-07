@@ -91,16 +91,27 @@ export function PhonePlayer() {
     }
   }, [phoneIsRinging]);
 
+  // Le panneau reste visible tant qu'il y a au moins un train arrêté, même
+  // après "Raccrocher". Sinon l'opérateur perdrait l'accès aux actions
+  // Réessayer / Faire passer tant que le train n'a pas franchi le signal.
+  // Seuls la sonnerie audio, le pulse rouge et le bouton "Raccrocher" sont
+  // gated par `phoneIsRinging`.
+  const visible = phoneIsRinging || arrested.length > 0;
+
   return (
     <>
       {/* L'élément audio reste monté en permanence ; seul l'état joué/pause
           change. `loop` garde la sonnerie continue tant que l'opérateur n'a
           pas raccroché. */}
       <audio ref={audioRef} src={TELEPHONE_SRC} loop preload="auto" />
-      {phoneIsRinging && (
+      {visible && (
         <div
           role="region"
-          aria-label="Téléphone en sonnerie"
+          aria-label={
+            phoneIsRinging
+              ? 'Téléphone en sonnerie'
+              : 'Trains arrêtés devant signal fermé'
+          }
           style={{
             position: 'fixed',
             right: spacing.lg,
@@ -109,53 +120,65 @@ export function PhonePlayer() {
             flexDirection: 'column',
             gap: spacing.xs,
             background: colors.surface.dark,
-            border: `1px solid ${colors.accent.danger}`,
+            border: `1px solid ${phoneIsRinging ? colors.accent.danger : colors.border.default}`,
             borderRadius: radii.md,
-            boxShadow: `${shadows.md}, 0 0 16px rgba(220, 38, 38, 0.45)`,
+            boxShadow: phoneIsRinging
+              ? `${shadows.md}, 0 0 16px rgba(220, 38, 38, 0.45)`
+              : shadows.md,
             padding: spacing.sm,
             minWidth: 280,
             maxWidth: 360,
             fontFamily: typography.ui.family,
             zIndex: 1000,
-            animation: `gessieRingPulse 0.9s ${motion.easing.easeInOut} infinite`,
+            animation: phoneIsRinging
+              ? `gessieRingPulse 0.9s ${motion.easing.easeInOut} infinite`
+              : undefined,
           }}
         >
-          {/* Ligne 1 : raccrocher (action principale du widget) */}
-          <button
-            type="button"
-            onClick={stopPhone}
-            aria-label="Raccrocher le téléphone"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: spacing.sm,
-              padding: `${spacing.sm}px ${spacing.md}px`,
-              background: colors.accent.danger,
-              color: colors.text.primary,
-              fontSize: typography.size.sm,
-              fontWeight: typography.weight.semibold,
-              border: `1px solid #7A1414`,
-              borderRadius: radii.md,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            <span aria-hidden="true" style={{ fontSize: 16 }}>
-              ☎
-            </span>
-            Raccrocher
-          </button>
+          {/* Ligne 1 : raccrocher (action principale du widget) — seulement
+              quand le téléphone sonne. Une fois raccroché, le bouton disparaît
+              mais le panneau reste pour conserver les actions par train. */}
+          {phoneIsRinging && (
+            <button
+              type="button"
+              onClick={stopPhone}
+              aria-label="Raccrocher le téléphone"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: spacing.sm,
+                padding: `${spacing.sm}px ${spacing.md}px`,
+                background: colors.accent.danger,
+                color: colors.text.primary,
+                fontSize: typography.size.sm,
+                fontWeight: typography.weight.semibold,
+                border: `1px solid #7A1414`,
+                borderRadius: radii.md,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              <span aria-hidden="true" style={{ fontSize: 16 }}>
+                ☎
+              </span>
+              Raccrocher
+            </button>
+          )}
 
-          {/* Ligne 2+ : un bloc par train arrêté devant un contrôle fermé */}
+          {/* Ligne 2+ : un bloc par train arrêté devant un contrôle fermé.
+              Reste visible tant qu'aucune action (Réessayer succès / Faire
+              passer) n'a fait redémarrer le train. */}
           {arrested.length > 0 && (
             <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: spacing.xs,
-                paddingTop: spacing.xs,
-                borderTop: `1px solid ${colors.border.subtle}`,
+                paddingTop: phoneIsRinging ? spacing.xs : 0,
+                borderTop: phoneIsRinging
+                  ? `1px solid ${colors.border.subtle}`
+                  : 'none',
               }}
             >
               <div
