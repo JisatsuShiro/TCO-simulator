@@ -1,0 +1,58 @@
+{
+  "id": "50ojw7y67qz",
+  "name": "EMO dérangement IS n°2.3",
+  "station": "saint_saturnin",
+  "description": "Raté fermeture Cv 212 et C220",
+  "author_name": "AB",
+  "author_email": "",
+  "starting_time": "08:28:00",
+  "trains": [
+    {
+      "uid": "50ojw7y6vgg",
+      "name": "145840",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "0"
+    },
+    {
+      "uid": "50ojw7y7amq",
+      "name": "341502",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "3"
+    },
+    {
+      "uid": "50ojw7y7p5f",
+      "name": "145844",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "29"
+    }
+  ],
+  "avaries": [
+    {
+      "id": "50ojw7y85a8",
+      "type": "Raté de fermeture",
+      "item": "Cv212",
+      "startingTime": "0",
+      "train": "",
+      "position": "",
+      "formattedType": "RATE_FERMETURE"
+    },
+    {
+      "id": "50ojw7y8j0j",
+      "type": "Raté de fermeture",
+      "item": "C220",
+      "startingTime": "11",
+      "train": "",
+      "position": "",
+      "formattedType": "RATE_FERMETURE"
+    }
+  ]
+}

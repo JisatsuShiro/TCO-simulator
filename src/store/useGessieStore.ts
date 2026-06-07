@@ -302,6 +302,25 @@ function dispatchPlayerEvent(
       if (!signalId) return { state };
       return { state: closeWithFAAction(state, signalId) };
     }
+    case 'startTrain': {
+      // Spawn différé d'un train scénarisé. Le payload contient un Train
+      // partiel (direction/size/speed/startingPoint, name à assigner).
+      if (!event.train) return { state };
+      const existingNames = Array.from(
+        new Set(
+          clock.events
+            .concat(clock.pausedEvents)
+            .map((e) => e.train?.name)
+            .filter((n): n is string => typeof n === 'string'),
+        ),
+      );
+      const res = startTrainAction(state, {
+        train: event.train,
+        existingTrainNames: existingNames,
+        currentTime: clock.currentTime,
+      });
+      return { state: res.state, newEvents: res.events };
+    }
     default:
       return null;
   }

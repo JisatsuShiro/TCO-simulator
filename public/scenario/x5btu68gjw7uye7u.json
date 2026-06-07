@@ -1,0 +1,40 @@
+{
+  "id": "x5btu68gjw7uye7u",
+  "name": "EMO dérangement IS n°1.5",
+  "station": "saint_saturnin",
+  "description": "Non libération EPa CV 215",
+  "author_name": "AB",
+  "author_email": "",
+  "starting_time": "09:03:00",
+  "trains": [
+    {
+      "uid": "x5btu68gjw7uys9v",
+      "name": "439739",
+      "speed": 1,
+      "direction": "impair",
+      "size": "Moyen",
+      "startingPoint": "Cv215",
+      "startingTime": "0"
+    },
+    {
+      "uid": "x5btu68gjw7uzv5b",
+      "name": "434519",
+      "speed": 1,
+      "direction": "impair",
+      "size": "Moyen",
+      "startingPoint": "z 111",
+      "startingTime": "6"
+    }
+  ],
+  "avaries": [
+    {
+      "id": "x5btu68gjw7v0j1d",
+      "type": "Non libération de Epa",
+      "item": "Cv215",
+      "startingTime": "0",
+      "train": null,
+      "position": null,
+      "formattedType": "NON_LIBERATION_EPA"
+    }
+  ]
+}

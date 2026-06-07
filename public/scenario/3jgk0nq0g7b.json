@@ -1,0 +1,30 @@
+{
+  "id": "3jgk0nq0g7b",
+  "name": "EMO dérangement IS n°2.5",
+  "station": "saint_saturnin",
+  "description": "",
+  "author_name": "AB",
+  "author_email": "",
+  "starting_time": "08:38:00",
+  "trains": [
+    {
+      "uid": "3jgk0nq0ums",
+      "name": "341502",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "0"
+    },
+    {
+      "uid": "3jgk0nq1p8q",
+      "name": "145844",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "4"
+    }
+  ],
+  "avaries": []
+}

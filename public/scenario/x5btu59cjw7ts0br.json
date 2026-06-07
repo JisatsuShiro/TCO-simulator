@@ -1,0 +1,40 @@
+{
+  "id": "x5btu59cjw7ts0br",
+  "name": "EMO dérangement IS n°1.2",
+  "station": "saint_saturnin",
+  "description": "Absence Kle G et D Aig 13",
+  "author_name": "AB",
+  "author_email": "",
+  "starting_time": "06:57:00",
+  "trains": [
+    {
+      "uid": "x5btu59cjw7ts5wb",
+      "name": "145832",
+      "speed": 1,
+      "direction": "pair",
+      "size": "Moyen",
+      "startingPoint": "z 232",
+      "startingTime": "0"
+    },
+    {
+      "uid": "x5btu59cjw7tu0g0",
+      "name": "145837",
+      "speed": 1,
+      "direction": "impair",
+      "size": "Moyen",
+      "startingPoint": "z 111",
+      "startingTime": "5"
+    }
+  ],
+  "avaries": [
+    {
+      "id": "x5btu59cjw7tya8z",
+      "type": "Absence de contrôle complet",
+      "item": "Ag13",
+      "startingTime": "0",
+      "train": "",
+      "position": "",
+      "formattedType": "ABSENCE_CONTROLE_COMPLET"
+    }
+  ]
+}

@@ -169,10 +169,14 @@ function LeverKeyhole({
  * Colonne droite du LeversPanel : badge "clé en main" + boîtes à clés
  * (groups) + cadenas (locks) + verrous centraux (centralLocks).
  *
- * Retourne null si aucun de ces éléments n'existe dans la station — la
- * colonne disparaît proprement, le LeversPanel reprend toute sa largeur.
+ * Variante repliable inspirée du redesign Variant C : repliée par défaut
+ * (~44 px, pile d'icônes serrure + badge "clé en main" si applicable),
+ * dépliée via chevron (~180 px, sections complètes). Permet à la bande
+ * leviers d'occuper toute la largeur quand l'opérateur n'a pas besoin
+ * des clés. Retourne null si la station n'a aucun de ces éléments.
  */
 export function AuxiliaryKeysColumn() {
+  const [open, setOpen] = useState(false);
   const holdedKey = useGessieStore((s) => s.player.data?.holdedKey);
   const groupIds = useGroupIds();
   const lockIds = useLockIds();
@@ -211,61 +215,225 @@ export function AuxiliaryKeysColumn() {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: spacing.md,
-        padding: spacing.sm,
+        gap: open ? spacing.md : spacing.xs,
+        padding: open ? spacing.sm : `${spacing.sm}px 6px`,
         background: colors.surface.medium,
         border: `1px solid ${colors.border.subtle}`,
         borderRadius: radii.md,
-        minWidth: 180,
+        minWidth: open ? 180 : 44,
+        width: open ? undefined : 44,
         alignSelf: 'stretch',
+        overflow: 'hidden',
+        transition: 'min-width 200ms ease, width 200ms ease, padding 200ms ease',
+        flexShrink: 0,
       }}
     >
-      {/* Badge "clé en main" en tête de colonne. */}
+      {/* En-tête : libellé "en main" + chevron toggle (dépluié), ou juste
+          le chevron centré (replié). */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: spacing.xs,
+          justifyContent: open ? 'space-between' : 'center',
           fontSize: typography.size.xs,
           color: colors.text.secondary,
         }}
       >
-        <span style={{ textTransform: 'uppercase', letterSpacing: 0.6 }}>en main</span>
-        {holdedKey ? <KeyTag label={holdedKey} held /> : <span style={{ color: colors.text.muted }}>—</span>}
+        {open && (
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: spacing.xs,
+              textTransform: 'uppercase',
+              letterSpacing: 0.6,
+            }}
+          >
+            en main
+            {holdedKey ? (
+              <KeyTag label={holdedKey} held />
+            ) : (
+              <span style={{ color: colors.text.muted }}>—</span>
+            )}
+          </span>
+        )}
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-label={open ? 'Replier les clés' : 'Déplier clés et cadenas'}
+          aria-expanded={open}
+          title={open ? 'Replier' : 'Déplier clés & cadenas'}
+          style={{
+            width: 22,
+            height: 22,
+            borderRadius: radii.sm,
+            cursor: 'pointer',
+            padding: 0,
+            border: `1px solid ${colors.border.default}`,
+            background: colors.surface.darkest,
+            color: colors.text.secondary,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
+            <path
+              d={open ? 'M4.5 2 L8.5 6 L4.5 10' : 'M7.5 2 L3.5 6 L7.5 10'}
+              stroke="currentColor"
+              strokeWidth="1.4"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
       </div>
 
-      {groupIds.length > 0 && (
-        <div>
-          <div style={sectionTitleStyle}>Boîtes à clés</div>
-          <div style={sectionRowStyle}>
-            {groupIds.map((id) => (
-              <GroupBox key={id} groupId={id} groupContainerStyle={groupContainerStyle} />
-            ))}
-          </div>
-        </div>
-      )}
+      {open ? (
+        <>
+          {groupIds.length > 0 && (
+            <div>
+              <div style={sectionTitleStyle}>Boîtes à clés</div>
+              <div style={sectionRowStyle}>
+                {groupIds.map((id) => (
+                  <GroupBox key={id} groupId={id} groupContainerStyle={groupContainerStyle} />
+                ))}
+              </div>
+            </div>
+          )}
 
-      {lockIds.length > 0 && (
-        <div>
-          <div style={sectionTitleStyle}>Cadenas</div>
-          <div style={sectionRowStyle}>
-            {lockIds.map((id) => (
-              <LockBox key={id} keyId={id} />
-            ))}
-          </div>
-        </div>
-      )}
+          {lockIds.length > 0 && (
+            <div>
+              <div style={sectionTitleStyle}>Cadenas</div>
+              <div style={sectionRowStyle}>
+                {lockIds.map((id) => (
+                  <LockBox key={id} keyId={id} />
+                ))}
+              </div>
+            </div>
+          )}
 
-      {centralLockUids.length > 0 && (
-        <div>
-          <div style={sectionTitleStyle}>Verrous centraux</div>
-          <div style={sectionRowStyle}>
-            {centralLockUids.map((uid) => (
-              <CentralLockBox key={uid} uid={uid} />
-            ))}
-          </div>
+          {centralLockUids.length > 0 && (
+            <div>
+              <div style={sectionTitleStyle}>Verrous centraux</div>
+              <div style={sectionRowStyle}>
+                {centralLockUids.map((uid) => (
+                  <CentralLockBox key={uid} uid={uid} />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <CollapsedKeysStack
+          groupCount={groupIds.length}
+          lockCount={lockIds.length}
+          centralCount={centralLockUids.length}
+          holdedKey={holdedKey}
+        />
+      )}
+    </div>
+  );
+}
+
+/**
+ * Vue compacte du rail replié : un petit badge "clé en main" en haut si
+ * une clé est en main, puis une icône-serrure par famille présente
+ * (boîtes à clés / cadenas / verrous centraux). Simple repère visuel —
+ * c'est le chevron au-dessus qui permet de déplier.
+ */
+function CollapsedKeysStack({
+  groupCount,
+  lockCount,
+  centralCount,
+  holdedKey,
+}: {
+  groupCount: number;
+  lockCount: number;
+  centralCount: number;
+  holdedKey: string | undefined;
+}) {
+  const icons: { key: string; show: boolean }[] = [
+    { key: 'groups', show: groupCount > 0 },
+    { key: 'locks', show: lockCount > 0 },
+    { key: 'central', show: centralCount > 0 },
+  ];
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: spacing.xs,
+        marginTop: 2,
+      }}
+    >
+      {holdedKey && (
+        <div
+          title={`Clé en main : ${holdedKey}`}
+          aria-label={`Clé en main : ${holdedKey}`}
+          style={{
+            width: 30,
+            height: 18,
+            borderRadius: radii.sm,
+            background: colors.accent.warning,
+            color: colors.surface.darkest,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 9,
+            fontFamily: typography.mono.family,
+            fontWeight: typography.weight.bold,
+            letterSpacing: 0.2,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            padding: '0 3px',
+          }}
+        >
+          {holdedKey}
         </div>
       )}
+      {icons
+        .filter((i) => i.show)
+        .map((i) => (
+          <div
+            key={i.key}
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: radii.sm,
+              border: `1px solid ${colors.border.subtle}`,
+              background: colors.surface.darkest,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: colors.text.muted,
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true">
+              <circle
+                cx="7"
+                cy="5"
+                r="3"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+              <rect
+                x="6.1"
+                y="7.2"
+                width="1.8"
+                height="4.5"
+                rx="0.6"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+        ))}
     </div>
   );
 }
