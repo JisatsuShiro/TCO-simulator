@@ -32,6 +32,8 @@ import { GareSelect } from './design/primitives/GareSelect';
 import { Logo } from './design/primitives/Logo';
 import { ResizeHandle } from './design/primitives/ResizeHandle';
 import { colors, spacing, typography } from './design/tokens';
+import { useIsMobile } from './mobile/useIsMobile';
+import { MobileSim } from './mobile/MobileSim';
 import './App.css';
 
 const DEFAULT_STATION = 'saint_saturnin';
@@ -110,6 +112,8 @@ function App() {
   const startTrain = useGessieStore((s) => s.startTrain);
   const toggleDisturbance = useGessieStore((s) => s.toggleDisturbance);
   const addEvent = useGessieStore((s) => s.addEvent);
+
+  const isMobile = useIsMobile();
 
   const stationNames = useMemo(() => listStationNames().sort(), []);
   const [selected, setSelected] = useState<string>(() =>
@@ -241,6 +245,21 @@ function App() {
     toggleDisturbance,
     addEvent,
   ]);
+
+  // Vue mobile : sur petit viewport, la simulation est rendue par l'écran
+  // mobile dédié (maquette « gessieWeb Mobile V1 »), plein écran et sans le
+  // header bureau. Les vues 'home'/'scenarios' restent les pages existantes.
+  // Le bureau n'est pas touché : ce court-circuit n'agit que mobile + 'sim'.
+  if (isMobile && view === 'sim') {
+    return (
+      <MobileSim
+        onExit={() => {
+          setActiveScenario(null);
+          setView('home');
+        }}
+      />
+    );
+  }
 
   return (
     <div

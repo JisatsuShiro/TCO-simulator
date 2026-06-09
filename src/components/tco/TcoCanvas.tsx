@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGessieStore } from '../../store/useGessieStore';
 import { getRenderer } from './renderers';
 import type { ContextMenuTarget } from './TcoContextMenu';
@@ -20,7 +20,25 @@ interface Props {
   onAvariesMenu?: (target: ContextMenuTarget, x: number, y: number) => void;
   /** Clic-droit sur une voie : ouvre le menu de lancement de train. */
   onTrainMenu?: (suggestedStartingPoint: string | null, x: number, y: number) => void;
+  /**
+   * Rectangle monde (coordonnées SVG) à cadrer, avec animation du `viewBox`.
+   * `null` → revient à la vue d'ensemble.
+   *
+   * Quand la prop n'est PAS fournie (cas bureau), le comportement est
+   * strictement inchangé : `viewBox` statique = bounding box complet, aucune
+   * animation. Seule la vue mobile passe cette prop.
+   */
+  focus?: { minX: number; minY: number; width: number; height: number } | null;
+  /**
+   * Nonce de recentrage : à chaque incrément, le TCO ré-anime son `viewBox`
+   * vers la vue d'ensemble (utile après un pan manuel quand `focus` est déjà
+   * `null`). Sans effet côté bureau (prop non fournie).
+   */
+  recenter?: number;
 }
+
+const FOCUS_EASE = (k: number) => 1 - Math.pow(1 - k, 3);
+const FOCUS_DURATION = 420;
 
 /**
  * Conteneur SVG du TCO. Itère sur station.items et délègue à la primitive
@@ -30,7 +48,7 @@ interface Props {
  * box des items, et `preserveAspectRatio="xMidYMid meet"` (défaut) scale
  * vectoriellement pour faire tenir tout le contenu sans déformer.
  */
-export function TcoCanvas({ onAvariesMenu, onTrainMenu }: Props) {
+export function TcoCanvas({ onAvariesMenu, onTrainMenu, focus, recenter }: Props) {
   const station = useGessieStore((s) => s.station);
   const tools = useGessieStore((s) => s.tools);
 
@@ -64,11 +82,144 @@ export function TcoCanvas({ onAvariesMenu, onTrainMenu }: Props) {
     return { minX, minY, width: maxX - minX, height: maxY - minY };
   }, [station]);
 
+  // Boîte cible : le rectangle `focus` à cadrer, ou bbox complet si `focus` null.
+  const targetBox: BoundingBox = useMemo(() => focus ?? bbox, [focus, bbox]);
+
+  // Animation du viewBox vers `targetBox` (vue mobile uniquement). `animRef`
+  // garde la boîte courante (mise à jour hors render, dans la boucle rAF) pour
+  // enchaîner les animations sans à-coup.
+  const [animBox, setAnimBox] = useState<BoundingBox>(bbox);
+  const animRef = useRef<BoundingBox>(bbox);
+  const rafRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (focus === undefined) return; // bureau : aucune animation, viewBox statique
+    const start = animRef.current;
+    const t0 = performance.now();
+    const step = (now: number) => {
+      const k = Math.min(1, (now - t0) / FOCUS_DURATION);
+      const e = FOCUS_EASE(k);
+      const next: BoundingBox = {
+        minX: start.minX + (targetBox.minX - start.minX) * e,
+        minY: start.minY + (targetBox.minY - start.minY) * e,
+        width: start.width + (targetBox.width - start.width) * e,
+        height: start.height + (targetBox.height - start.height) * e,
+      };
+      animRef.current = next;
+      setAnimBox(next);
+      if (k < 1) rafRef.current = requestAnimationFrame(step);
+    };
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [targetBox, focus, recenter]);
+
+  // Gestes tactiles (vue mobile uniquement) : 1 doigt = pan, 2 doigts =
+  // pincer-pour-zoomer. On manipule directement `animBox` (le viewBox courant).
+  const interactive = focus !== undefined;
+  const svgRef = useRef<SVGSVGElement>(null);
+  const pointers = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const gestureRef = useRef<
+    | { mode: 'pan'; sx: number; sy: number; box: BoundingBox }
+    | { mode: 'pinch'; dist: number; midX: number; midY: number; worldX: number; worldY: number; box: BoundingBox }
+    | null
+  >(null);
+
+  const setBox = (b: BoundingBox) => {
+    animRef.current = b;
+    setAnimBox(b);
+  };
+  // Échelle « meet » (px par unité monde) du box dans le SVG courant.
+  const meetScale = (box: BoundingBox, r: DOMRect) => Math.min(r.width / box.width, r.height / box.height);
+  // Convertit un point écran en coordonnées monde pour un box donné.
+  const clientToWorld = (cx: number, cy: number, box: BoundingBox, r: DOMRect) => {
+    const s = meetScale(box, r);
+    const offX = (r.width - box.width * s) / 2;
+    const offY = (r.height - box.height * s) / 2;
+    return { x: box.minX + (cx - r.left - offX) / s, y: box.minY + (cy - r.top - offY) / s };
+  };
+
+  // (Re)démarre un geste selon le nombre de doigts posés.
+  const startGesture = () => {
+    const r = svgRef.current?.getBoundingClientRect();
+    if (!r) return;
+    cancelAnimationFrame(rafRef.current);
+    const pts = [...pointers.current.values()];
+    if (pts.length >= 2) {
+      const midX = (pts[0].x + pts[1].x) / 2;
+      const midY = (pts[0].y + pts[1].y) / 2;
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+      const box = animRef.current;
+      const w = clientToWorld(midX, midY, box, r);
+      gestureRef.current = { mode: 'pinch', dist, midX, midY, worldX: w.x, worldY: w.y, box };
+    } else if (pts.length === 1) {
+      gestureRef.current = { mode: 'pan', sx: pts[0].x, sy: pts[0].y, box: animRef.current };
+    } else {
+      gestureRef.current = null;
+    }
+  };
+
+  const onPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (!interactive || e.button === 2) return; // clic-droit réservé aux menus
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    e.currentTarget.setPointerCapture(e.pointerId);
+    startGesture();
+  };
+  const onPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (!pointers.current.has(e.pointerId)) return;
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const g = gestureRef.current;
+    const r = svgRef.current?.getBoundingClientRect();
+    if (!g || !r) return;
+    if (g.mode === 'pan') {
+      const s = meetScale(g.box, r);
+      if (!(s > 0)) return;
+      setBox({
+        minX: g.box.minX - (e.clientX - g.sx) / s,
+        minY: g.box.minY - (e.clientY - g.sy) / s,
+        width: g.box.width,
+        height: g.box.height,
+      });
+    } else {
+      const pts = [...pointers.current.values()];
+      if (pts.length < 2) return;
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+      const midX = (pts[0].x + pts[1].x) / 2;
+      const midY = (pts[0].y + pts[1].y) / 2;
+      // Écarter les doigts (dist ↑) → box plus petit → zoom avant.
+      const minW = Math.min(150, bbox.width);
+      const maxW = bbox.width;
+      const width = Math.max(minW, Math.min(maxW, (g.box.width * g.dist) / dist));
+      const height = width * (g.box.height / g.box.width);
+      const s2 = meetScale({ minX: 0, minY: 0, width, height }, r);
+      const offX2 = (r.width - width * s2) / 2;
+      const offY2 = (r.height - height * s2) / 2;
+      // Garde le point monde initial sous le point milieu courant.
+      setBox({
+        minX: g.worldX - (midX - r.left - offX2) / s2,
+        minY: g.worldY - (midY - r.top - offY2) / s2,
+        width,
+        height,
+      });
+    }
+  };
+  const onPointerEnd = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (!pointers.current.has(e.pointerId)) return;
+    pointers.current.delete(e.pointerId);
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      /* pointeur déjà relâché */
+    }
+    startGesture(); // recalibre avec les doigts restants (pinch → pan, etc.)
+  };
+
   if (!station) {
     return <div style={{ padding: 20, color: '#888' }}>Aucune station chargée.</div>;
   }
 
-  const viewBox = `${bbox.minX} ${bbox.minY} ${bbox.width} ${bbox.height}`;
+  const effectiveBox = focus === undefined ? bbox : animBox;
+  const viewBox = `${effectiveBox.minX} ${effectiveBox.minY} ${effectiveBox.width} ${effectiveBox.height}`;
 
   const handleContextMenu = (e: React.MouseEvent<SVGGElement>, item: StationItem) => {
     // Voie ou rail → menu de lancement de train, point de départ inféré
@@ -92,11 +243,16 @@ export function TcoCanvas({ onAvariesMenu, onTrainMenu }: Props) {
 
   return (
     <svg
+      ref={svgRef}
       width="100%"
       height="100%"
       viewBox={viewBox}
       preserveAspectRatio="xMidYMid meet"
-      style={{ background: '#1e272e', display: 'block' }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerEnd}
+      onPointerCancel={onPointerEnd}
+      style={{ background: '#1e272e', display: 'block', touchAction: interactive ? 'none' : undefined, cursor: interactive ? 'grab' : undefined }}
     >
       <g>
         {station.items.map((item) => {

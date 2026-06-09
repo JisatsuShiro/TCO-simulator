@@ -33,5 +33,9 @@ todo.md
 # Gessie reference bundle (referenced in code comments by byte offset, not built)
 renderer.js
 
+# Maquettes de design (bundles HTML autonomes ~1.7 Mo chacun) — matériel de
+# référence, pas du source. Le port vit dans src/mobile/.
+docs/design/
+
 # Claude Code local settings (per-user permissions)
 .claude/settings.local.json
