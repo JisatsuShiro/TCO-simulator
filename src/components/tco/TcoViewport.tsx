@@ -8,6 +8,12 @@ import { TcoAtrLight } from './TcoAtrLight';
 interface Props {
   /** Hauteur du viewport visible (la largeur prend 100% du parent). */
   height?: number | string;
+  /** Rectangle monde (coordonnées SVG) à cadrer, avec animation. `null` → vue
+   *  d'ensemble. Non fourni (bureau) → vue statique inchangée. Transmis tel
+   *  quel à `TcoCanvas`. */
+  focus?: { minX: number; minY: number; width: number; height: number } | null;
+  /** Nonce de recentrage (cf. TcoCanvas) — transmis tel quel. */
+  recenter?: number;
 }
 
 interface AvariesMenuState {
@@ -33,7 +39,7 @@ interface TrainMenuState {
  * Pour réactiver le pan/zoom plus tard : remettre TransformWrapper /
  * TransformComponent de react-zoom-pan-pinch ici (la lib reste installée).
  */
-export function TcoViewport({ height = '80vh' }: Props) {
+export function TcoViewport({ height = '80vh', focus, recenter }: Props) {
   const [avariesMenu, setAvariesMenu] = useState<AvariesMenuState | null>(null);
   const [trainMenu, setTrainMenu] = useState<TrainMenuState | null>(null);
 
@@ -49,6 +55,8 @@ export function TcoViewport({ height = '80vh' }: Props) {
       }}
     >
       <TcoCanvas
+        focus={focus}
+        recenter={recenter}
         onAvariesMenu={(target, x, y) => {
           setTrainMenu(null);
           setAvariesMenu({ target, x, y });
