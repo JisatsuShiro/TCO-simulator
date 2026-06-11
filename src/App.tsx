@@ -9,6 +9,9 @@ import { PhonePlayer } from './components/sim/PhonePlayer';
 import { AudioPlayers } from './components/sim/AudioPlayers';
 import { HomePage } from './components/HomePage';
 import { ScenariosPage } from './components/ScenariosPage';
+import { CantonnementPage } from './components/CantonnementPage';
+import { GARE_TO_STATION, type Gare } from './net/gares';
+import { useCantonnementClock } from './net/useCantonnementClock';
 // KeysPanel n'existe plus comme panel autonome : ses sous-composants sont
 // désormais rendus à l'intérieur du LeversPanel (serrures sous chaque levier
 // + colonne auxiliaire à droite pour boîtes à clés / cadenas / verrous).
@@ -61,7 +64,7 @@ function readTcoHeightFromStorage(): string | null {
   return null;
 }
 
-type View = 'home' | 'scenarios' | 'sim';
+type View = 'home' | 'scenarios' | 'cantonnement' | 'sim';
 
 /**
  * Parse "HH:MM:SS" (heure simulée d'un scénario Gessie) en epoch ms basé
@@ -115,6 +118,10 @@ function App() {
 
   const isMobile = useIsMobile();
 
+  // Synchronise l'horloge sur le serveur quand une partie de cantonnement est
+  // active et qu'on est en poste (desktop et mobile : App est la racine commune).
+  useCantonnementClock();
+
   const stationNames = useMemo(() => listStationNames().sort(), []);
   const [selected, setSelected] = useState<string>(() =>
     stationNames.includes(DEFAULT_STATION) ? DEFAULT_STATION : (stationNames[0] ?? '')
@@ -134,6 +141,18 @@ function App() {
     setActiveScenario(sc);
     setSelected(sc.station);
     setView('sim');
+  };
+
+  // Entrée en poste depuis le cantonnement multijoueur : charge la gare
+  // correspondante et bascule en sim. La session WebSocket reste ouverte
+  // (store singleton) — base pour le handoff des trains (phase 2).
+  const handleEnterPoste = (gare: Gare) => {
+    const stationName = GARE_TO_STATION[gare];
+    if (stationNames.includes(stationName)) {
+      setActiveScenario(null);
+      setSelected(stationName);
+      setView('sim');
+    }
   };
 
   // Hauteur du TCO en px. Persistée dans localStorage entre sessions.
@@ -351,9 +370,12 @@ function App() {
             setView('sim');
           }}
           onEnterScenarios={() => setView('scenarios')}
+          onEnterCantonnement={() => setView('cantonnement')}
         />
       ) : view === 'scenarios' ? (
         <ScenariosPage onSelectScenario={handleSelectScenario} />
+      ) : view === 'cantonnement' ? (
+        <CantonnementPage onBack={() => setView('home')} onEnterPoste={handleEnterPoste} />
       ) : (
         <>
           <TcoViewport key={station?.id ?? 'empty'} height={tcoHeight} />

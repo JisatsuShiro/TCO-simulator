@@ -1,0 +1,17 @@
+{
+  "name": "voie-libre-canton-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Serveur relais WebSocket pour le cantonnement multijoueur de Voie Libre.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

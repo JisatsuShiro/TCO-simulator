@@ -58,6 +58,9 @@ import {
   type ToggleDispositifPayload,
 } from '../sim/dispositifs';
 import type { Direction, PlayerData, SimEvent, Train } from '../sim/types';
+import type { Gare } from '../net/gares';
+import type { TrainPayload } from '../net/protocol';
+import { computeHandoff, type Handoff } from '../net/topology';
 
 /**
  * Entrée du journal des refus de toggleLever. Quand un opérateur tente de
@@ -98,6 +101,35 @@ interface GessieState {
   /** Repasse en mode edit : Player vidé, Clock arrêté. */
   exitPlayer: () => void;
   setSpeed: (speed: number) => void;
+
+  // === Synchronisation d'horloge (cantonnement multijoueur) ===
+  /**
+   * Quand `true`, l'horloge est pilotée par le serveur de cantonnement :
+   * `useClockTick` n'avance plus localement, et `setSpeed` est relayé au
+   * serveur au lieu d'agir directement. Voir `useCantonnementClock`.
+   */
+  clockSynced: boolean;
+  /** Émetteur de changement de vitesse vers le serveur (null si hors-ligne). */
+  clockSyncSender: ((speed: number) => void) | null;
+  /** (Dé)branche la synchro d'horloge serveur. `null` = sim solo normale. */
+  setClockSyncSender: (fn: ((speed: number) => void) | null) => void;
+  /**
+   * Applique l'horloge autoritative reçue du serveur : avance le temps
+   * simulé à `simTime` (dispatch des events échus) et fixe la vitesse — sans
+   * ré-émettre vers le serveur (évite la boucle). Détecte aussi les trains qui
+   * sortent vers une gare voisine et les transfère via `trainHandoffSender`.
+   */
+  applyRemoteClock: (simTime: number, speed: number) => void;
+
+  // === Passage des trains entre gares (cantonnement) ===
+  /** Gare tenue par cet opérateur (pour la topologie de sortie). */
+  cantonGare: Gare | null;
+  /** Émetteur de transfert d'un train vers une voisine (null si hors-ligne). */
+  trainHandoffSender: ((h: Handoff) => void) | null;
+  /** (Dé)branche le transfert des trains. `(null, null)` = sim solo. */
+  setTrainHandoff: (gare: Gare | null, sender: ((h: Handoff) => void) | null) => void;
+  /** Fait apparaître un train reçu d'une gare voisine (numéro conservé). */
+  spawnRemoteTrain: (train: TrainPayload) => void;
   /** Ajoute un event à la file Clock (assigne un uid si absent). */
   addEvent: (event: SimEvent) => void;
   /** Avance l'horloge à `time` et dispatche les events échus. */
@@ -423,6 +455,7 @@ function drainDueEvents(
   clock: ClockState,
   playerData: PlayerData | null,
   time: number,
+  onDispatch?: (ev: SimEvent) => void,
 ): { nextClock: ClockState; nextPlayerData: PlayerData | null } {
   let nextClock = clockReducers.UPDATE_CURRENT_TIME(clock, time);
   let nextPlayerData = playerData;
@@ -433,6 +466,7 @@ function drainDueEvents(
       if (out !== null) {
         nextPlayerData = out.state;
         nextClock = applyDispatchResult(nextClock, out);
+        onDispatch?.(ev);
       } else {
         console.log('[sim] event due (no handler):', ev.type, ev);
       }
@@ -452,6 +486,8 @@ export const useGessieStore = create<GessieState>((set, get) => ({
   player: initialPlayerState,
   leverRefusals: [],
   leverRefusalsUnseen: 0,
+  clockSynced: false,
+  clockSyncSender: null,
 
   loadStation: (station, toolList) =>
     set({
@@ -485,8 +521,80 @@ export const useGessieStore = create<GessieState>((set, get) => ({
       leverRefusalsUnseen: 0,
     }),
 
-  setSpeed: (speed) =>
-    set((s) => ({ clock: clockReducers.SET_SPEED(s.clock, speed) })),
+  setSpeed: (speed) => {
+    // En mode cantonnement, l'horloge est autoritative côté serveur : on
+    // relaie le changement (le serveur rediffuse et `applyRemoteClock`
+    // ajustera). On met aussi à jour la vitesse locale pour un retour visuel
+    // immédiat du sélecteur de vitesse (le tick local est désactivé).
+    const sender = get().clockSyncSender;
+    if (sender) sender(speed);
+    set((s) => ({ clock: clockReducers.SET_SPEED(s.clock, speed) }));
+  },
+
+  setClockSyncSender: (fn) =>
+    set((s) => {
+      if (s.clockSyncSender === fn && s.clockSynced === !!fn) return s;
+      return { clockSyncSender: fn, clockSynced: !!fn };
+    }),
+
+  applyRemoteClock: (simTime, speed) => {
+    // Collecte les sorties de zone pendant l'avancée (pour transférer les
+    // trains qui quittent la gare). On émet APRÈS le set (pas d'effet de bord
+    // dans l'updater).
+    const exits: SimEvent[] = [];
+    set((s) => {
+      const { nextClock, nextPlayerData } = drainDueEvents(
+        s.clock,
+        s.player.data,
+        simTime,
+        (ev) => {
+          if (ev.type === 'moveTrainOut' && ev.train && ev.target) exits.push(ev);
+        },
+      );
+      return {
+        clock: clockReducers.SET_SPEED(nextClock, speed),
+        player: nextPlayerData === s.player.data ? s.player : { ...s.player, data: nextPlayerData },
+      };
+    });
+    if (exits.length === 0) return;
+    const { cantonGare, trainHandoffSender } = get();
+    if (!cantonGare || !trainHandoffSender) return;
+    for (const ev of exits) {
+      if (!ev.train || !ev.target) continue;
+      const handoff = computeHandoff(cantonGare, ev.target, ev.train);
+      if (handoff) trainHandoffSender(handoff);
+    }
+  },
+
+  cantonGare: null,
+  trainHandoffSender: null,
+
+  setTrainHandoff: (gare, sender) =>
+    set((s) => {
+      if (s.cantonGare === gare && s.trainHandoffSender === sender) return s;
+      return { cantonGare: gare, trainHandoffSender: sender };
+    }),
+
+  spawnRemoteTrain: (train) =>
+    set((s) => {
+      if (!s.player.data) return s;
+      // Réutilise la machinerie moveTrainIn : on programme l'arrivée du train
+      // sur sa zone d'entrée à l'heure courante, en conservant son numéro.
+      const evt: SimEvent = {
+        uid: '',
+        time: s.clock.currentTime,
+        type: 'moveTrainIn',
+        train: {
+          name: train.name ?? '',
+          direction: train.direction,
+          size: train.size,
+          speed: train.speed,
+          startingPoint: train.startingPoint,
+        },
+        target: train.startingPoint,
+      };
+      return { clock: clockReducers.ADD_EVENT(s.clock, ensureUid(evt)) };
+    }),
 
   addEvent: (event) =>
     set((s) => ({ clock: clockReducers.ADD_EVENT(s.clock, ensureUid(event)) })),

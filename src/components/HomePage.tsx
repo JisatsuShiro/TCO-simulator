@@ -11,6 +11,8 @@ interface HomePageProps {
   onEnterSimulation: () => void;
   /** Appelé quand l'utilisateur ouvre la liste des scénarios pédagogiques. */
   onEnterScenarios: () => void;
+  /** Appelé quand l'utilisateur ouvre la page de cantonnement (code de session). */
+  onEnterCantonnement: () => void;
 }
 
 interface Feature {
@@ -22,7 +24,11 @@ interface Feature {
   onClick?: () => void;
 }
 
-export function HomePage({ onEnterSimulation, onEnterScenarios }: HomePageProps) {
+export function HomePage({
+  onEnterSimulation,
+  onEnterScenarios,
+  onEnterCantonnement,
+}: HomePageProps) {
   const features: Feature[] = [
     {
       id: 'simulation',
@@ -41,6 +47,15 @@ export function HomePage({ onEnterSimulation, onEnterScenarios }: HomePageProps)
       icon: <BookIcon />,
       available: true,
       onClick: onEnterScenarios,
+    },
+    {
+      id: 'cantonnement',
+      title: 'Cantonnement',
+      description:
+        'Gérez le cantonnement à deux : obtenez un code de session à partager avec l’opérateur de la gare voisine pour appairer vos postes.',
+      icon: <LinkIcon />,
+      available: true,
+      onClick: onEnterCantonnement,
     },
     {
       id: 'docs',
@@ -248,6 +263,33 @@ function BookIcon() {
         strokeLinejoin="round"
       />
       <path d="M 12 7 L 12 17" stroke="currentColor" strokeWidth={1.5} />
+    </svg>
+  );
+}
+
+function LinkIcon() {
+  return (
+    <svg width={24} height={24} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M 9.5 14.5 L 14.5 9.5"
+        stroke="currentColor"
+        strokeWidth={1.6}
+        strokeLinecap="round"
+      />
+      <path
+        d="M 11 7 L 12.5 5.5 A 3.5 3.5 0 0 1 17.5 10.5 L 16 12"
+        stroke="currentColor"
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M 13 17 L 11.5 18.5 A 3.5 3.5 0 0 1 6.5 13.5 L 8 12"
+        stroke="currentColor"
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
