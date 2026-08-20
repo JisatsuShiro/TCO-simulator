@@ -17,6 +17,10 @@ import { PrsTerrain } from './PrsTerrain';
 import type { TerrainState } from './PrsTerrain';
 import { PrsDispositifMenu } from './PrsDispositifMenu';
 import type { DispositifMenuState } from './PrsDispositifMenu';
+// Seul emprunt du module au reste de l'application : le logo est celui de Voie
+// Libre, et il n'a pas à exister en deux exemplaires. Le composant est un SVG
+// pur, sans dépendance — l'autonomie du module n'en souffre pas.
+import { Logo } from '../design/primitives/Logo';
 import { PrsAppels } from './PrsAppels';
 import { PrsFaultMenu } from './PrsFaultMenu';
 import type { FaultMenuState } from './PrsFaultMenu';
@@ -457,23 +461,7 @@ function TopBar({
           font: 'inherit',
         }}
       >
-        <span
-          style={{
-            width: 34,
-            height: 34,
-            borderRadius: '50%',
-            border: `1.5px solid ${prs.textMuted}`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          <svg width={20} height={20} viewBox="0 0 20 20" aria-hidden="true">
-            <circle cx={10} cy={10} r={8.4} fill="none" stroke={prs.textMuted} strokeWidth={1.1} />
-            <line x1={4.6} y1={14.6} x2={15} y2={5.4} stroke={prs.textMuted} strokeWidth={1.1} />
-          </svg>
-        </span>
+        <Logo size={34} />
         <span style={{ fontSize: 19, fontWeight: 600, letterSpacing: 0.2, whiteSpace: 'nowrap' }}>
           Voie Libre
         </span>
