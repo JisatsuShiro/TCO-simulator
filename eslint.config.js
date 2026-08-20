@@ -6,7 +6,9 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // `PRS/` est le simulateur d'origine, vendu tel quel comme référence : du JS
+  // de 2005 qu'ESLint ne sait pas analyser et qu'on ne corrigera pas.
+  globalIgnores(['dist', 'PRS']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

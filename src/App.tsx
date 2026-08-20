@@ -9,6 +9,7 @@ import { PhonePlayer } from './components/sim/PhonePlayer';
 import { AudioPlayers } from './components/sim/AudioPlayers';
 import { HomePage } from './components/HomePage';
 import { ScenariosPage } from './components/ScenariosPage';
+import { PrsPage } from './prs/PrsPage';
 // KeysPanel n'existe plus comme panel autonome : ses sous-composants sont
 // désormais rendus à l'intérieur du LeversPanel (serrures sous chaque levier
 // + colonne auxiliaire à droite pour boîtes à clés / cadenas / verrous).
@@ -61,7 +62,7 @@ function readTcoHeightFromStorage(): string | null {
   return null;
 }
 
-type View = 'home' | 'scenarios' | 'sim';
+type View = 'home' | 'scenarios' | 'sim' | 'prs';
 
 /**
  * Parse "HH:MM:SS" (heure simulée d'un scénario Gessie) en epoch ms basé
@@ -273,6 +274,9 @@ function App() {
         overflow: 'hidden',
       }}
     >
+      {/* La vue PRS porte son propre bandeau (logo + poste + horloge), calqué
+          sur la maquette : on masque celui de l'app pour ne pas le doubler. */}
+      {view !== 'prs' && (
       <header
         style={{
           display: 'flex',
@@ -344,6 +348,7 @@ function App() {
           </span>
         )}
       </header>
+      )}
       {view === 'home' ? (
         <HomePage
           onEnterSimulation={() => {
@@ -351,9 +356,15 @@ function App() {
             setView('sim');
           }}
           onEnterScenarios={() => setView('scenarios')}
+          onEnterPrs={() => {
+            setActiveScenario(null);
+            setView('prs');
+          }}
         />
       ) : view === 'scenarios' ? (
         <ScenariosPage onSelectScenario={handleSelectScenario} />
+      ) : view === 'prs' ? (
+        <PrsPage onExit={() => setView('home')} />
       ) : (
         <>
           <TcoViewport key={station?.id ?? 'empty'} height={tcoHeight} />
