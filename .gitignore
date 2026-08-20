@@ -25,8 +25,8 @@ dist-ssr
 
 # Outillage BMAD : l'installation locale et ce qu'elle produit. Régénérable,
 # et propre au poste de travail — ce n'est pas du source du projet.
-_bmad/
-_bmad-output/
+/_bmad/
+/_bmad-output/
 
 # Personal scratch files
 todo.md
@@ -37,12 +37,12 @@ renderer.js
 # Documentation de travail : relevés, spécifications reprises du simulateur
 # d'origine, et maquettes de design (bundles HTML autonomes ~1,7 Mo chacun).
 # Matériel de référence, pas du source — le port vit dans src/.
-docs/
+/docs/
 
 # Le simulateur SNCF d'origine, si l'on en dépose une copie pour s'y reporter.
 # Il n'a pas à être versionné : c'est une pièce consultée, pas du source, et le
 # port en cite déjà tout ce qui compte dans ses commentaires.
-PRS/
+/PRS/
 
 # Claude Code : réglages, compétences et agents installés localement.
-.claude/
+/.claude/
