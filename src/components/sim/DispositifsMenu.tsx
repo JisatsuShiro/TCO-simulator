@@ -1,11 +1,14 @@
 // Menu contextuel "Dispositifs d'attention" — apparaît au clic-droit sur un
-// levier ou un bloc et permet de poser/retirer les étiquettes mémo (DA, DSA,
-// DR) que l'opérateur utilise pour son propre suivi.
+// levier ou un bloc et permet d'AJOUTER ou de RETIRER les étiquettes mémo
+// (DA, DSA, DR) que l'opérateur utilise pour son propre suivi.
 //
-// Reproduit le menu Electron Gessie (renderer.js) :
-//   - sur lever : DA / DSA / DR (3 cases à cocher)
-//   - sur bloc  : DA / DR (2 cases à cocher)
-// Chaque clic dispatch `toggleDispositifAttention` avec leverId | blocId.
+//   - sur lever : DA / DSA / DR
+//   - sur bloc  : DA / DR
+//
+// Plusieurs exemplaires du même dispositif sont autorisés : « Ajouter X » est
+// toujours proposé et empile un exemplaire ; « Retirer X » n'apparaît que si
+// au moins un exemplaire est présent et en enlève un. Le compteur courant est
+// rappelé en face de chaque ligne.
 //
 // Positionné en `position: fixed` aux coordonnées clientX/Y de l'événement.
 // Se ferme au clic en dehors ou à Escape.
@@ -36,9 +39,9 @@ interface Props {
 
 export function DispositifsMenu({ x, y, target, onClose }: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  const toggleDispositif = useGessieStore((s) => s.toggleDispositifAttention);
+  const changeDispositif = useGessieStore((s) => s.changeDispositifAttention);
 
-  // Sélecteur scalaire CSV — évite les boucles getSnapshot.
+  // Sélecteur scalaire CSV (doublons préservés) — évite les boucles getSnapshot.
   const activeCsv = useGessieStore((s) => {
     const data = s.player.data;
     if (!data) return '';
@@ -50,7 +53,14 @@ export function DispositifsMenu({ x, y, target, onClose }: Props) {
   });
   const active = activeCsv === '' ? [] : activeCsv.split('\n');
 
+  // Compteur par type de dispositif.
+  const counts = active.reduce<Record<string, number>>((acc, d) => {
+    acc[d] = (acc[d] ?? 0) + 1;
+    return acc;
+  }, {});
+
   const applicable = target.kind === 'lever' ? LEVER_DISPOSITIFS : BLOC_DISPOSITIFS;
+  const hasAny = applicable.some((d) => (counts[d] ?? 0) > 0);
 
   useEffect(() => {
     const onMousedown = (e: MouseEvent) => {
@@ -67,13 +77,21 @@ export function DispositifsMenu({ x, y, target, onClose }: Props) {
     };
   }, [onClose]);
 
-  const left = Math.min(x, window.innerWidth - 240);
-  const top = Math.min(y, window.innerHeight - 180);
+  const left = Math.min(x, window.innerWidth - 260);
+  const top = Math.min(y, window.innerHeight - 260);
 
   const headerLabel =
-    target.kind === 'lever'
-      ? `Levier ${target.leverId}`
-      : `Bloc ${target.blocId}`;
+    target.kind === 'lever' ? `Levier ${target.leverId}` : `Bloc ${target.blocId}`;
+
+  // Émet l'action sans fermer le menu : l'opérateur peut empiler / retirer
+  // plusieurs exemplaires d'affilée. Fermeture manuelle (clic ext / Escape).
+  const dispatch = (dispositif: string, op: 'add' | 'remove') => {
+    if (target.kind === 'lever') {
+      changeDispositif({ leverId: target.leverId, dispositif, op });
+    } else {
+      changeDispositif({ blocId: target.blocId, dispositif, op });
+    }
+  };
 
   return (
     <div
@@ -86,7 +104,7 @@ export function DispositifsMenu({ x, y, target, onClose }: Props) {
         left,
         top,
         zIndex: 1000,
-        minWidth: 220,
+        minWidth: 240,
         background: colors.surface.dark,
         border: `1px solid ${colors.border.default}`,
         borderRadius: radii.md,
@@ -110,47 +128,65 @@ export function DispositifsMenu({ x, y, target, onClose }: Props) {
       >
         {headerLabel.toUpperCase()}
       </div>
-      {applicable.map((d) => {
-        const isActive = active.indexOf(d) !== -1;
-        return (
+
+      {applicable.map((d) => (
+        <MenuItem
+          key={`add-${d}`}
+          verb="Ajouter"
+          code={d}
+          label={DISPOSITIF_LABELS[d] ?? d}
+          count={counts[d] ?? 0}
+          tone="add"
+          onClick={() => dispatch(d, 'add')}
+        />
+      ))}
+
+      {hasAny && (
+        <div
+          style={{
+            borderTop: `1px solid ${colors.border.subtle}`,
+            margin: `${spacing.xxs}px 0`,
+          }}
+        />
+      )}
+
+      {applicable
+        .filter((d) => (counts[d] ?? 0) > 0)
+        .map((d) => (
           <MenuItem
-            key={d}
+            key={`remove-${d}`}
+            verb="Retirer"
             code={d}
             label={DISPOSITIF_LABELS[d] ?? d}
-            active={isActive}
-            onClick={() => {
-              if (target.kind === 'lever') {
-                toggleDispositif({ leverId: target.leverId, dispositif: d });
-              } else {
-                toggleDispositif({ blocId: target.blocId, dispositif: d });
-              }
-              // Pas d'`onClose()` — on laisse l'opérateur cocher plusieurs
-              // cases d'affilée, conforme au comportement d'un menu Electron
-              // à checkboxes (Gessie). Fermeture manuelle (clic ext / Escape).
-            }}
+            count={counts[d] ?? 0}
+            tone="remove"
+            onClick={() => dispatch(d, 'remove')}
           />
-        );
-      })}
+        ))}
     </div>
   );
 }
 
 function MenuItem({
+  verb,
   code,
   label,
-  active,
+  count,
+  tone,
   onClick,
 }: {
+  verb: string;
   code: string;
   label: string;
-  active: boolean;
+  count: number;
+  tone: 'add' | 'remove';
   onClick: () => void;
 }) {
+  const accent = tone === 'add' ? colors.accent.primary : colors.accent.warning;
   return (
     <button
       type="button"
-      role="menuitemcheckbox"
-      aria-checked={active}
+      role="menuitem"
       onClick={onClick}
       style={{
         display: 'flex',
@@ -160,11 +196,10 @@ function MenuItem({
         background: 'transparent',
         border: 'none',
         borderRadius: radii.sm,
-        color: active ? colors.accent.warning : colors.text.primary,
+        color: colors.text.primary,
         textAlign: 'left',
         fontSize: typography.size.sm,
         fontFamily: typography.ui.family,
-        fontWeight: active ? typography.weight.semibold : typography.weight.regular,
         cursor: 'pointer',
         transition: 'background 100ms ease',
       }}
@@ -183,18 +218,16 @@ function MenuItem({
           justifyContent: 'center',
           width: 14,
           height: 14,
-          borderRadius: 3,
-          background: active ? colors.accent.warning : 'transparent',
-          border: `1px solid ${active ? colors.accent.warning : colors.border.default}`,
-          flexShrink: 0,
-          color: colors.surface.darkest,
-          fontSize: 10,
+          color: accent,
           fontWeight: typography.weight.bold,
+          fontSize: 14,
           lineHeight: 1,
+          flexShrink: 0,
         }}
       >
-        {active ? '✓' : ''}
+        {tone === 'add' ? '+' : '−'}
       </span>
+      <span style={{ minWidth: 48 }}>{verb}</span>
       <span
         style={{
           fontFamily: typography.mono.family,
@@ -208,10 +241,29 @@ function MenuItem({
         style={{
           fontSize: typography.size.xs,
           color: colors.text.secondary,
+          flex: 1,
         }}
       >
         {label}
       </span>
+      {count > 0 && (
+        <span
+          title={`${count} posé${count > 1 ? 's' : ''}`}
+          style={{
+            fontFamily: typography.mono.family,
+            fontSize: 11,
+            fontWeight: typography.weight.bold,
+            color: colors.surface.darkest,
+            background: colors.accent.warning,
+            borderRadius: radii.sm,
+            padding: '1px 5px',
+            lineHeight: 1.3,
+            flexShrink: 0,
+          }}
+        >
+          ×{count}
+        </span>
+      )}
     </button>
   );
 }

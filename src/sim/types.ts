@@ -109,8 +109,9 @@ export interface Lever {
   };
   keyholes?: Record<string, KeyHole>;
   /**
-   * Étiquettes mémo posées par l'opérateur (DA / DSA / DR). Pure couche
-   * d'annotation, sans effet sur les enclenchements. Cf. `toggleDispositifAttention`.
+   * Étiquettes mémo posées par l'opérateur (DA / DSA / DR). Plusieurs
+   * exemplaires du même dispositif sont autorisés (doublons). Pure couche
+   * d'annotation, sans effet sur les enclenchements. Cf. `changeDispositifAttention`.
    */
   dispositifs: string[];
   /** Pour zonesIsolees / zonesTransit : indexé par "plus"/"minus". */

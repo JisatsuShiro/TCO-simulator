@@ -22,6 +22,7 @@ import { colors, radii, spacing, typography } from '../../design/tokens';
 import type { Affectation, Lever as LeverType } from '../../sim/types';
 import { LeverKeyholeStrip, AuxiliaryKeysColumn } from './KeysPanel';
 import { DispositifsMenu, type DispositifsTarget } from './DispositifsMenu';
+import { DispositifBadges } from './DispositifBadges';
 import {
   FaPushButton,
   FcPushButton,
@@ -1112,6 +1113,7 @@ function LeverChannel({
         onClick={() => onLeverClick(lever.id, lever.position)}
         keyholeSlot={<LeverKeyholeStrip leverId={lever.id} embedded />}
         knobColors={knobColorsFor(lever.dispositifs)}
+        badgesSlot={<DispositifBadges dispositifs={lever.dispositifs} />}
       />
 
       {/* Slot-bottom : AE (annulateur électrique du levier). Les keyboxes
