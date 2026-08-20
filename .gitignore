@@ -39,5 +39,10 @@ renderer.js
 # Matériel de référence, pas du source — le port vit dans src/.
 docs/
 
+# Le simulateur SNCF d'origine, si l'on en dépose une copie pour s'y reporter.
+# Il n'a pas à être versionné : c'est une pièce consultée, pas du source, et le
+# port en cite déjà tout ce qui compte dans ses commentaires.
+PRS/
+
 # Claude Code : réglages, compétences et agents installés localement.
 .claude/
