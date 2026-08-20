@@ -11,6 +11,7 @@ import { Button } from '../../design/primitives/Button';
 import { Pill } from '../../design/primitives/Pill';
 import { colors, radii, spacing, typography } from '../../design/tokens';
 import { DispositifsMenu, type DispositifsTarget } from './DispositifsMenu';
+import { DispositifBadges } from './DispositifBadges';
 
 export function BlocsPanel() {
   const blocsCount = useGessieStore((s) => s.player.data?.blocs.length ?? 0);
@@ -137,28 +138,7 @@ function BlocRow({
             sémaphore {semaphoreId}
           </span>
         )}
-        {dispositifs.length > 0 && (
-          <span style={{ display: 'inline-flex', gap: 4, marginLeft: 'auto' }}>
-            {dispositifs.map((d) => (
-              <span
-                key={d}
-                style={{
-                  fontFamily: typography.mono.family,
-                  fontSize: 10,
-                  fontWeight: typography.weight.bold,
-                  color: colors.surface.darkest,
-                  background: colors.accent.warning,
-                  padding: '2px 5px',
-                  borderRadius: radii.sm,
-                  letterSpacing: '-0.04em',
-                  lineHeight: 1,
-                }}
-              >
-                {d}
-              </span>
-            ))}
-          </span>
-        )}
+        <DispositifBadges dispositifs={dispositifs} />
       </div>
 
       <div style={stateRowStyle}>

@@ -47,6 +47,12 @@ interface LeverProps {
    * un levier au PRS pour signaler son attention (DA / DSA / DR).
    */
   knobColors?: string[];
+  /**
+   * Slot rendu entre le boîtier et l'étiquette — destiné aux badges des
+   * dispositifs d'attention (DispositifBadges). Rendu uniquement si présent,
+   * pour ne pas modifier l'empreinte verticale des leviers non annotés.
+   */
+  badgesSlot?: ReactNode;
   onClick: () => void;
 }
 
@@ -83,7 +89,7 @@ function knobBackground(knobColors: string[] | undefined): string {
   return `linear-gradient(180deg, ${stops})`;
 }
 
-export function Lever({ id, num, label, position, refused = false, disabled = false, keyholeSlot, knobColors, onClick }: LeverProps) {
+export function Lever({ id, num, label, position, refused = false, disabled = false, keyholeSlot, knobColors, badgesSlot, onClick }: LeverProps) {
   const shaftRef = useRef<HTMLDivElement>(null);
 
   // Animation de refus déclenchée par la transition false→true de `refused`.
@@ -251,6 +257,11 @@ export function Lever({ id, num, label, position, refused = false, disabled = fa
           </div>
         )}
       </div>
+
+      {/* Badges des dispositifs d'attention (DA/DSA/DR), entre le boîtier et
+          l'étiquette. Rendu seulement si présent → pas d'impact sur l'empreinte
+          des leviers non annotés. */}
+      {badgesSlot}
 
       {/* Étiquette deux lignes : numéro de levier puis affectations contrôlées.
           minHeight fixe pour que tous les leviers aient la même empreinte

@@ -4,7 +4,9 @@
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
     "module": "esnext",
-    "types": ["vite/client"],
+    /* "node" pour les essais Vitest, qui lisent le dépôt — vérifier la
+       présence des planches de scénario sous public/, par exemple. */
+    "types": ["vite/client", "node"],
     "skipLibCheck": true,
 
     /* Bundler mode */

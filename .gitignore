@@ -23,9 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# BMAD personal/user-scoped configs (per BMAD installer convention)
-_bmad/config.user.toml
-_bmad/custom/config.user.toml
+# Outillage BMAD : l'installation locale et ce qu'elle produit. Régénérable,
+# et propre au poste de travail — ce n'est pas du source du projet.
+_bmad/
+_bmad-output/
 
 # Personal scratch files
 todo.md
@@ -33,9 +34,15 @@ todo.md
 # Gessie reference bundle (referenced in code comments by byte offset, not built)
 renderer.js
 
-# Maquettes de design (bundles HTML autonomes ~1.7 Mo chacun) — matériel de
-# référence, pas du source. Le port vit dans src/mobile/.
-docs/design/
+# Documentation de travail : relevés, spécifications reprises du simulateur
+# d'origine, et maquettes de design (bundles HTML autonomes ~1,7 Mo chacun).
+# Matériel de référence, pas du source — le port vit dans src/.
+docs/
 
-# Claude Code local settings (per-user permissions)
-.claude/settings.local.json
+# Le simulateur SNCF d'origine, si l'on en dépose une copie pour s'y reporter.
+# Il n'a pas à être versionné : c'est une pièce consultée, pas du source, et le
+# port en cite déjà tout ce qui compte dans ses commentaires.
+PRS/
+
+# Claude Code : réglages, compétences et agents installés localement.
+.claude/

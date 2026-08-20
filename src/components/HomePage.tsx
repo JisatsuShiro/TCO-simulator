@@ -13,6 +13,8 @@ interface HomePageProps {
   onEnterScenarios: () => void;
   /** Appelé quand l'utilisateur ouvre la page de cantonnement (code de session). */
   onEnterCantonnement: () => void;
+  /** Appelé quand l'utilisateur ouvre le poste PRS de Springfield. */
+  onEnterPrs: () => void;
 }
 
 interface Feature {
@@ -28,6 +30,7 @@ export function HomePage({
   onEnterSimulation,
   onEnterScenarios,
   onEnterCantonnement,
+  onEnterPrs,
 }: HomePageProps) {
   const features: Feature[] = [
     {
@@ -38,6 +41,15 @@ export function HomePage({
       icon: <LeverIcon />,
       available: true,
       onClick: onEnterSimulation,
+    },
+    {
+      id: 'prs',
+      title: 'PRS de Springfield',
+      description:
+        "Le TCO du poste tout relais à transit souple : itinéraires, enclenchements d'approche, annulateurs de transit et dérangements.",
+      icon: <PrsIcon />,
+      available: true,
+      onClick: onEnterPrs,
     },
     {
       id: 'scenarios',
@@ -249,6 +261,18 @@ function LeverIcon() {
       <circle cx={12} cy={12} r={1.5} fill="currentColor" />
       <path d="M 12 12 L 12 6" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" />
       <circle cx={12} cy={5} r={2} fill="currentColor" />
+    </svg>
+  );
+}
+
+function PrsIcon() {
+  return (
+    <svg width={24} height={24} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      {/* Panneau de signalisation à 3 feux, évocateur d'un poste PRS. */}
+      <rect x={7} y={3} width={10} height={18} rx={2} stroke="currentColor" strokeWidth={1.5} />
+      <circle cx={12} cy={7} r={1.6} fill="currentColor" />
+      <circle cx={12} cy={12} r={1.6} stroke="currentColor" strokeWidth={1.3} />
+      <circle cx={12} cy={17} r={1.6} stroke="currentColor" strokeWidth={1.3} />
     </svg>
   );
 }

@@ -10,6 +10,7 @@ import { AudioPlayers } from './components/sim/AudioPlayers';
 import { HomePage } from './components/HomePage';
 import { ScenariosPage } from './components/ScenariosPage';
 import { CantonnementPage } from './components/CantonnementPage';
+import { PrsPage } from './prs/PrsPage';
 import { GARE_TO_STATION, type Gare } from './net/gares';
 import { useCantonnementClock } from './net/useCantonnementClock';
 // KeysPanel n'existe plus comme panel autonome : ses sous-composants sont
@@ -64,7 +65,7 @@ function readTcoHeightFromStorage(): string | null {
   return null;
 }
 
-type View = 'home' | 'scenarios' | 'cantonnement' | 'sim';
+type View = 'home' | 'scenarios' | 'cantonnement' | 'sim' | 'prs';
 
 /**
  * Parse "HH:MM:SS" (heure simulée d'un scénario Gessie) en epoch ms basé
@@ -292,6 +293,9 @@ function App() {
         overflow: 'hidden',
       }}
     >
+      {/* La vue PRS porte son propre bandeau (logo + poste + horloge), calqué
+          sur la maquette : on masque celui de l'app pour ne pas le doubler. */}
+      {view !== 'prs' && (
       <header
         style={{
           display: 'flex',
@@ -363,6 +367,7 @@ function App() {
           </span>
         )}
       </header>
+      )}
       {view === 'home' ? (
         <HomePage
           onEnterSimulation={() => {
@@ -371,11 +376,17 @@ function App() {
           }}
           onEnterScenarios={() => setView('scenarios')}
           onEnterCantonnement={() => setView('cantonnement')}
+          onEnterPrs={() => {
+            setActiveScenario(null);
+            setView('prs');
+          }}
         />
       ) : view === 'scenarios' ? (
         <ScenariosPage onSelectScenario={handleSelectScenario} />
       ) : view === 'cantonnement' ? (
         <CantonnementPage onBack={() => setView('home')} onEnterPoste={handleEnterPoste} />
+      ) : view === 'prs' ? (
+        <PrsPage onExit={() => setView('home')} />
       ) : (
         <>
           <TcoViewport key={station?.id ?? 'empty'} height={tcoHeight} />

@@ -54,8 +54,8 @@ import {
   toggleLock as toggleLockAction,
 } from '../sim/keys';
 import {
-  toggleDispositifAttention as toggleDispositifAttentionAction,
-  type ToggleDispositifPayload,
+  changeDispositifAttention as changeDispositifAttentionAction,
+  type ChangeDispositifPayload,
 } from '../sim/dispositifs';
 import type { Direction, PlayerData, SimEvent, Train } from '../sim/types';
 import type { Gare } from '../net/gares';
@@ -206,11 +206,12 @@ interface GessieState {
   removeATRAutorisation: (atrId: string) => void;
 
   /**
-   * Bascule un dispositif d'attention (DA / DSA / DR) sur un levier ou un
-   * bloc. Pure annotation opérateur, n'affecte pas les enclenchements.
-   * Reproduit `toggleDispositifAttention` (renderer.js).
+   * Ajoute (`op: 'add'`) ou retire (`op: 'remove'`) un exemplaire d'un
+   * dispositif d'attention (DA / DSA / DR) sur un levier ou un bloc. Plusieurs
+   * exemplaires du même dispositif sont autorisés. Pure annotation opérateur,
+   * n'affecte pas les enclenchements.
    */
-  toggleDispositifAttention: (payload: ToggleDispositifPayload) => void;
+  changeDispositifAttention: (payload: ChangeDispositifPayload) => void;
 
   // === Clés (étape 6 — partie C) ===
   takeKey: (payload: { lock?: boolean; groupId?: string; leverId?: string; keyId: string }) => void;
@@ -707,10 +708,10 @@ export const useGessieStore = create<GessieState>((set, get) => ({
   forceTrainStart: (trainId) =>
     set((s) => applyTrainStartResult(s, forceTrainStartAction, trainId)),
 
-  toggleDispositifAttention: (payload) =>
+  changeDispositifAttention: (payload) =>
     set((s) => {
       if (!s.player.data) return s;
-      const next = toggleDispositifAttentionAction(s.player.data, payload);
+      const next = changeDispositifAttentionAction(s.player.data, payload);
       if (next === s.player.data) return s;
       return { player: { ...s.player, data: next } };
     }),
