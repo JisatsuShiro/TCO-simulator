@@ -26,6 +26,16 @@ interface Feature {
   onClick?: () => void;
 }
 
+/**
+ * Le cantonnement est retiré de l'accueil le temps qu'il soit prêt.
+ *
+ * La carte n'est pas grisée mais **absente** : « À venir » annonce une
+ * fonctionnalité, et celle-ci ne doit rien annoncer pour le moment. Le reste —
+ * la prop `onEnterCantonnement`, la vue `'cantonnement'` et `CantonnementPage`
+ * — reste branché : remettre ce drapeau à `true` la rétablit.
+ */
+const AFFICHER_CANTONNEMENT: boolean = false;
+
 export function HomePage({
   onEnterSimulation,
   onEnterScenarios,
@@ -77,7 +87,7 @@ export function HomePage({
       icon: <InfoIcon />,
       available: false,
     },
-  ];
+  ].filter((f) => f.id !== 'cantonnement' || AFFICHER_CANTONNEMENT);
 
   return (
     <div
