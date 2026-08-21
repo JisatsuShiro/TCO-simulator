@@ -252,7 +252,7 @@ export function TcoCanvas({ onAvariesMenu, onTrainMenu, focus, recenter }: Props
       onPointerMove={onPointerMove}
       onPointerUp={onPointerEnd}
       onPointerCancel={onPointerEnd}
-      style={{ background: '#1e272e', display: 'block', touchAction: interactive ? 'none' : undefined, cursor: interactive ? 'grab' : undefined }}
+      style={{ background: 'var(--tco-panel)', display: 'block', touchAction: interactive ? 'none' : undefined, cursor: interactive ? 'grab' : undefined }}
     >
       <g>
         {station.items.map((item) => {

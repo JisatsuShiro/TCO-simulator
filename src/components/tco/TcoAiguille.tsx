@@ -256,7 +256,7 @@ export function TcoAiguille({ item, tool }: Props) {
       <path
         d={d}
         fill="transparent"
-        stroke="#ecf0f1"
+        stroke="var(--tco-trait)"
         strokeWidth={2}
         strokeMiterlimit={10}
         pointerEvents="none"
@@ -267,7 +267,7 @@ export function TcoAiguille({ item, tool }: Props) {
           x={labelX}
           y={labelY}
           fontSize={20}
-          fill="#ecf0f1"
+          fill="var(--tco-trait)"
           fontFamily="monospace"
           textAnchor="middle"
         >

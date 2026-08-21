@@ -5,6 +5,29 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Voie Libre</title>
+    <!--
+      Le thème est posé avant le premier rendu, sinon la page s'affiche en
+      clair puis bascule — un éclair blanc au chargement pour qui travaille en
+      sombre. Le script est en ligne et sans dépendance pour cette raison : il
+      doit s'exécuter avant que le navigateur ne peigne quoi que ce soit.
+
+      Il résout toujours « système » en une valeur explicite, ce qui permet à
+      `design/theme.css` de n'avoir que deux blocs au lieu de trois.
+    -->
+    <script>
+      (function () {
+        var choix = null;
+        try {
+          choix = localStorage.getItem('voie-libre.theme');
+        } catch (e) {
+          /* mode privé, stockage refusé : on suivra le système */
+        }
+        if (choix !== 'light' && choix !== 'dark') {
+          choix = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.dataset.theme = choix;
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

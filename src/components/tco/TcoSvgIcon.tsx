@@ -18,7 +18,7 @@ interface Props {
  * stroke="inherit" (aiguille, tjd, tjs, to). On set les deux sur <use>
  * pour couvrir les deux cas.
  */
-export function TcoSvgIcon({ item, tool, size = 20, color = '#ecf0f1' }: Props) {
+export function TcoSvgIcon({ item, tool, size = 20, color = 'var(--tco-trait)' }: Props) {
   if (!item.variationId || item.xPos == null || item.yPos == null) return null;
   const variation = tool.variations[item.variationId];
   if (!variation) return null;

@@ -12,6 +12,11 @@ import '@fontsource/inter/latin-700.css'
 import '@fontsource/ibm-plex-mono/latin-400.css'
 import '@fontsource/ibm-plex-mono/latin-500.css'
 import './index.css'
+// Après `index.css` à dessein : cette feuille-là vient du gabarit Vite et pose
+// encore ses propres `--bg`/`--text` sous `prefers-color-scheme`. Charger la
+// nôtre en dernier lui laisse le dernier mot, sans quoi un thème clair choisi
+// sur un poste réglé en sombre hériterait d'un fond de page contradictoire.
+import './design/theme.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

@@ -115,7 +115,7 @@ export function TcoRail({ item }: Props) {
       <path
         d={pathTop}
         fill="none"
-        stroke="#ecf0f1"
+        stroke="var(--tco-trait)"
         strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="miter"
@@ -125,7 +125,7 @@ export function TcoRail({ item }: Props) {
       <path
         d={pathBot}
         fill="none"
-        stroke="#ecf0f1"
+        stroke="var(--tco-trait)"
         strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="miter"

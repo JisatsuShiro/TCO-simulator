@@ -12,7 +12,7 @@ const SIZE_MAP: Record<string, number> = {
 };
 
 const COLOR_MAP: Record<string, string> = {
-  black: '#ecf0f1',  // sur fond foncé, "noir" devient blanc lisible
+  black: 'var(--tco-trait)',  // sur fond foncé, "noir" devient blanc lisible
   blue: '#3498db',
   red: '#e74c3c',
 };
@@ -31,7 +31,7 @@ export function TcoLabel({ item }: Props) {
   if (!text) return null;
 
   const size = SIZE_MAP[String(item.size ?? '')] ?? 11;
-  const color = COLOR_MAP[String(item.color ?? '')] ?? '#ecf0f1';
+  const color = COLOR_MAP[String(item.color ?? '')] ?? 'var(--tco-trait)';
   const border = Boolean(item.border);
 
   // Largeur approximative : ~0.6 * fontSize par caractère monospace

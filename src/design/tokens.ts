@@ -2,50 +2,57 @@
 // et tous les composants UI. Voir `_bmad-output/planning-artifacts/ux-design-specification.md`
 // (sections "Fondation visuelle" et "Stratégie de composants").
 //
-// Convention : valeurs littérales avec `as const` pour bénéficier d'un typage
-// strict et d'inférences précises côté consommateurs.
+// Les **couleurs** ne sont plus des littéraux mais des renvois vers les
+// variables CSS de `./theme.css`, où la palette existe en deux exemplaires,
+// clair et sombre. Tout est peint en styles *inline* dans ce projet : un objet
+// JavaScript ne changerait pas de valeur à la bascule, une variable CSS si.
+// Les consommateurs n'ont rien à changer — `colors.surface.dark` reste une
+// chaîne valide en CSS.
+//
+// Le reste — espacements, typographie, rayons, mouvement — ne dépend pas du
+// thème et garde ses valeurs littérales.
 
 export const colors = {
   surface: {
-    darkest: '#0F1419',
-    dark: '#161B22',
-    medium: '#1E2530',
-    light: '#2A3343',
+    darkest: 'var(--vl-surface-darkest)',
+    dark: 'var(--vl-surface-dark)',
+    medium: 'var(--vl-surface-medium)',
+    light: 'var(--vl-surface-light)',
   },
   text: {
-    primary: '#E6E8EC',
-    secondary: '#9CA3AF',
-    muted: '#6B7280',
+    primary: 'var(--vl-text-primary)',
+    secondary: 'var(--vl-text-secondary)',
+    muted: 'var(--vl-text-muted)',
   },
   border: {
-    subtle: '#2A3343',
-    default: '#3A4458',
-    strong: '#4F5B73',
+    subtle: 'var(--vl-border-subtle)',
+    default: 'var(--vl-border-default)',
+    strong: 'var(--vl-border-strong)',
   },
   metal: {
-    base: '#4B5460',
-    highlight: '#6E7787',
-    shadow: '#2A3038',
-    deep: '#3F4854',
-    knob: '#B4BCC9',
-    knobShine: '#E1E5EC',
+    base: 'var(--vl-metal-base)',
+    highlight: 'var(--vl-metal-highlight)',
+    shadow: 'var(--vl-metal-shadow)',
+    deep: 'var(--vl-metal-deep)',
+    knob: 'var(--vl-metal-knob)',
+    knobShine: 'var(--vl-metal-knob-shine)',
   },
   signal: {
-    rouge: '#E11D26',
-    jaune: '#EAB308',
-    vert: '#22C55E',
-    blanc: '#F3F4F6',
-    violet: '#8B5CF6',
-    zoneOccupee: '#DC2626',
-    zoneVerrouillee: '#EAB308',
-    zoneAnnulee: '#6B7280',
+    rouge: 'var(--vl-signal-rouge)',
+    jaune: 'var(--vl-signal-jaune)',
+    vert: 'var(--vl-signal-vert)',
+    blanc: 'var(--vl-signal-blanc)',
+    violet: 'var(--vl-signal-violet)',
+    zoneOccupee: 'var(--vl-signal-zone-occupee)',
+    zoneVerrouillee: 'var(--vl-signal-zone-verrouillee)',
+    zoneAnnulee: 'var(--vl-signal-zone-annulee)',
   },
   accent: {
-    primary: '#5B9BFF',
-    success: '#22C55E',
-    warning: '#F59E0B',
-    danger: '#DC2626',
-    signalPN: '#5B9BFF',
+    primary: 'var(--vl-accent-primary)',
+    success: 'var(--vl-accent-success)',
+    warning: 'var(--vl-accent-warning)',
+    danger: 'var(--vl-accent-danger)',
+    signalPN: 'var(--vl-accent-primary)',
   },
 } as const;
 
@@ -102,10 +109,10 @@ export const radii = {
 } as const;
 
 export const shadows = {
-  sm: '0 1px 2px rgba(0,0,0,0.2)',
-  md: '0 4px 12px rgba(0,0,0,0.3)',
-  metallicOuter: '0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)',
-  metallicKnob: '0 2px 4px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.4)',
+  sm: 'var(--vl-shadow-sm)',
+  md: 'var(--vl-shadow-md)',
+  metallicOuter: 'var(--vl-shadow-metallic-outer)',
+  metallicKnob: 'var(--vl-shadow-metallic-knob)',
 } as const;
 
 export const motion = {

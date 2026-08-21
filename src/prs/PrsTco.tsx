@@ -13,7 +13,7 @@ import type { FaultTarget } from './engine';
 import { ZONE_FILL, ZONE_STATE_LABEL, prs, prsFont } from './theme';
 
 /** Gris d'extinction commun à tous les voyants au repos. */
-const OFF = '#3a4657';
+const OFF = 'var(--prs-off)';
 
 export interface PrsTcoProps {
   state: PrsState;
@@ -35,7 +35,7 @@ export function PrsTco({ state, onSelectAig, selectedAig, onContextFault }: PrsT
   return (
     <div
       style={{
-        background: prs.panel,
+        background: prs.tco,
         border: `1px solid ${prs.border}`,
         borderRadius: prs.radius.lg,
         padding: '10px 14px 4px',
@@ -527,7 +527,7 @@ function Signal({
         r={7}
         fill={closed ? prs.red : prs.inset}
         // Cerclé de gris, le feu se lit comme non répété : ni ouvert, ni fermé.
-        stroke={decorative ? OFF : def.violet ? '#c9b6f0' : '#f6e9e4'}
+        stroke={decorative ? OFF : def.violet ? 'var(--prs-lamp-ring-violet)' : 'var(--prs-lamp-ring)'}
         strokeWidth={1.4}
       >
         <title>
@@ -710,7 +710,7 @@ function DecorLayer() {
       <text x={60} y={158} fill={prs.text} fontSize={17} fontWeight={600} fontFamily={prsFont.ui}>V1</text>
       <text x={60} y={308} fill={prs.text} fontSize={17} fontWeight={600} fontFamily={prsFont.ui}>V2</text>
 
-      <rect x={620} y={20} width={58} height={22} rx={4} fill="#1e2836" stroke={prs.borderStrong} />
+      <rect x={620} y={20} width={58} height={22} rx={4} fill="var(--prs-badge)" stroke={prs.borderStrong} />
       <text x={649} y={35} fill={prs.textDim} fontSize={12} textAnchor="middle" fontFamily={prsFont.mono}>
         PRS
       </text>
@@ -721,7 +721,7 @@ function DecorLayer() {
         SPRINGFIELD
       </text>
 
-      <rect x={1170} y={80} width={70} height={26} rx={5} fill="#1e2836" stroke={prs.borderStrong} />
+      <rect x={1170} y={80} width={70} height={26} rx={5} fill="var(--prs-badge)" stroke={prs.borderStrong} />
       <text x={1205} y={98} fill={prs.amber} fontSize={14} fontWeight={600} textAnchor="middle" fontFamily={prsFont.ui}>
         BV
       </text>

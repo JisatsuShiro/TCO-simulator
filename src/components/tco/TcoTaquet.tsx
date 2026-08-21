@@ -54,7 +54,7 @@ export function TcoTaquet({ item, tool }: Props) {
       <g
         transform={`translate(${item.xPos}, ${item.yPos}) rotate(${angle}) scale(${scale}) translate(-256, -256)`}
       >
-        <path d={TAQUET_PATH} fill="#ecf0f1" stroke="none" />
+        <path d={TAQUET_PATH} fill="var(--tco-trait)" stroke="none" />
       </g>
       {item.name && (
         <text

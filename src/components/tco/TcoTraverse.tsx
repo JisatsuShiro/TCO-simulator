@@ -167,12 +167,12 @@ export function TcoTraverse({ item, tool }: Props) {
       <path
         d={d}
         fill="transparent"
-        stroke="#ecf0f1"
+        stroke="var(--tco-trait)"
         strokeWidth={2}
         strokeMiterlimit={10}
       />
       {type === 'tjd' && nameUp && (
-        <text x={25} y={-55} fontSize={11} fill="#ecf0f1" fontFamily="monospace">
+        <text x={25} y={-55} fontSize={11} fill="var(--tco-trait)" fontFamily="monospace">
           {nameUp}
         </text>
       )}
@@ -181,7 +181,7 @@ export function TcoTraverse({ item, tool }: Props) {
           x={35 + (shape === 'nw-se' ? -20 : 20)}
           y={55}
           fontSize={11}
-          fill="#ecf0f1"
+          fill="var(--tco-trait)"
           fontFamily="monospace"
         >
           {nameDown}
@@ -247,7 +247,7 @@ function TjdCircle({ cx, cy, active }: { cx: number; cy: number; active: boolean
       cx={cx}
       cy={cy}
       r={5}
-      stroke="#ecf0f1"
+      stroke="var(--tco-trait)"
       strokeWidth={1}
       fill={active ? '#FFCC00' : 'transparent'}
     />

@@ -49,9 +49,9 @@ export function TcoViewport({ height = '80vh', focus, recenter }: Props) {
         position: 'relative',
         width: '100%',
         height,
-        background: '#1e272e',
+        background: 'var(--tco-panel)',
         overflow: 'hidden',
-        border: '1px solid #34495e',
+        border: '1px solid var(--tco-border)',
       }}
     >
       <TcoCanvas

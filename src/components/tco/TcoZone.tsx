@@ -75,7 +75,7 @@ export function TcoZone({ item }: Props) {
         <path
           d="M-10,-8 h20 m0,16 h-20z"
           fill="transparent"
-          stroke="#ecf0f1"
+          stroke="var(--tco-trait)"
           strokeWidth={2}
           strokeMiterlimit={10}
         />
@@ -86,7 +86,7 @@ export function TcoZone({ item }: Props) {
           width={24}
           height={10}
           fill={color}
-          stroke="#ecf0f1"
+          stroke="var(--tco-trait)"
           strokeWidth={2}
         />
         {/* Le nom de la zone au-dessus (Gessie: 12, agrandi pour lisibilité) */}
@@ -95,7 +95,7 @@ export function TcoZone({ item }: Props) {
             y={-16}
             x={0}
             fontSize={20}
-            fill="#ecf0f1"
+            fill="var(--tco-trait)"
             fontFamily="system-ui"
             textAnchor="middle"
           >

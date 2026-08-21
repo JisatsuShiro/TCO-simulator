@@ -7,66 +7,74 @@
 
 export const prs = {
   // — Surfaces
-  bg: '#0d141d',
-  header: '#131c27',
-  panel: '#151e29',
+  bg: 'var(--prs-bg)',
+  header: 'var(--prs-header)',
+  panel: 'var(--prs-panel)',
+  /**
+   * Le panneau du TCO, distinct des autres.
+   *
+   * En sombre les deux se confondent ; en clair le TCO retrouve son ivoire,
+   * un peu plus chaud que les panneaux qui l'entourent — le poste d'origine
+   * portait des voies sombres sur ivoire, c'est le portage qui avait inversé.
+   */
+  tco: 'var(--prs-tco)',
   /** Fond des champs, chips et encarts. */
-  inset: '#1b2532',
+  inset: 'var(--prs-inset)',
   /** Fond des boutons neutres. */
-  button: '#232d3b',
-  buttonHover: '#2c3846',
+  button: 'var(--prs-button)',
+  buttonHover: 'var(--prs-button-hover)',
   /** Fond d'un coupon d'annulateur. */
-  ticket: '#2a3341',
+  ticket: 'var(--prs-ticket)',
   /** Intérieur des cartouches sombres (mini-schéma). */
-  well: '#101822',
+  well: 'var(--prs-well)',
   /**
    * Secteur d'aiguille sur le TCO. Sur le poste d'origine c'est une forme
    * **claire** posée sur le fond, qui porte les deux lampes de position ; il
    * doit donc trancher sur le panneau, pas s'y fondre.
    */
-  switchFill: '#38455a',
+  switchFill: 'var(--prs-switch-fill)',
   /**
    * Lampes de position d'aiguille. Comme sur le poste réel, les deux sont
    * vertes : c'est la lampe **allumée** qui désigne la position tenue, pas sa
    * couleur. Éteintes, elles restent vertes et sombres — une lampe au repos,
    * pas un voyant absent.
    */
-  switchLampOn: '#4fd18b',
-  switchLampOff: '#1c4230',
-  switchLampBezel: '#0b1119',
+  switchLampOn: 'var(--prs-switch-lamp-on)',
+  switchLampOff: 'var(--prs-switch-lamp-off)',
+  switchLampBezel: 'var(--prs-switch-lamp-bezel)',
 
   // — Traits du TCO
-  line: '#cfd8e3',
-  endpointStroke: '#8fa3ba',
+  line: 'var(--prs-line)',
+  endpointStroke: 'var(--prs-endpoint-stroke)',
 
   // — Texte
-  text: '#e6ebf2',
-  textDim: '#cfd8e3',
-  textMuted: '#9fb2c8',
-  textFaint: '#6f8299',
+  text: 'var(--prs-text)',
+  textDim: 'var(--prs-text-dim)',
+  textMuted: 'var(--prs-text-muted)',
+  textFaint: 'var(--prs-text-faint)',
   /** Libellés d'aiguille et de voyant sur le TCO. */
-  label: '#aebdcf',
-  labelSoft: '#dfe7f0',
+  label: 'var(--prs-label)',
+  labelSoft: 'var(--prs-label-soft)',
 
   // — Accents
-  amber: '#f0b45a',
-  amberSoft: '#f6d9a5',
-  amberBg: '#2f3f53',
-  green: '#4fd18b',
-  red: '#e8503f',
-  redSoft: '#f07a68',
-  blue: '#8fb8e8',
-  blueBg: '#20344f',
-  blueText: '#bcd6f2',
+  amber: 'var(--prs-amber)',
+  amberSoft: 'var(--prs-amber-soft)',
+  amberBg: 'var(--prs-amber-bg)',
+  green: 'var(--prs-green)',
+  red: 'var(--prs-red)',
+  redSoft: 'var(--prs-red-soft)',
+  blue: 'var(--prs-blue)',
+  blueBg: 'var(--prs-blue-bg)',
+  blueText: 'var(--prs-blue-text)',
 
   // — Bordures
-  border: 'rgba(255,255,255,.08)',
-  borderSoft: 'rgba(255,255,255,.06)',
-  borderMid: 'rgba(255,255,255,.10)',
-  borderStrong: 'rgba(255,255,255,.14)',
-  borderBlue: 'rgba(143,184,232,.40)',
-  borderAmber: 'rgba(240,180,90,.50)',
-  borderRed: 'rgba(232,80,63,.35)',
+  border: 'var(--prs-border)',
+  borderSoft: 'var(--prs-border-soft)',
+  borderMid: 'var(--prs-border-mid)',
+  borderStrong: 'var(--prs-border-strong)',
+  borderBlue: 'var(--prs-border-blue)',
+  borderAmber: 'var(--prs-border-amber)',
+  borderRed: 'var(--prs-border-red)',
 
   radius: { sm: 5, md: 6, lg: 10, pill: 999 },
 } as const;
@@ -93,9 +101,9 @@ export const prsFont = {
  * voie sombre sur panneau ivoire.
  */
 export const ZONE_FILL = {
-  0: '#e8edf4',
-  1: '#2fe053',
-  2: '#e8503f',
+  0: 'var(--prs-zone-libre)',
+  1: 'var(--prs-zone-tracee)',
+  2: 'var(--prs-zone-occupee)',
 } as const;
 
 /**
@@ -116,30 +124,30 @@ export const ZONE_FILL = {
 export const ROUTE_LAMP = {
   da: {
     rest: {
-      bg: '#20344f',
-      border: 'rgba(143,184,232,.45)',
-      fg: '#bcd6f2',
+      bg: 'var(--prs-lamp-da-rest-bg)',
+      border: 'var(--prs-lamp-da-rest-border)',
+      fg: 'var(--prs-lamp-da-rest-fg)',
       glow: 'none',
     },
     lit: {
-      bg: '#eaf1fa',
-      border: '#ffffff',
-      fg: '#101b27',
-      glow: 'inset 0 0 0 1px rgba(255,255,255,.55)',
+      bg: 'var(--prs-lamp-da-lit-bg)',
+      border: 'var(--prs-lamp-da-lit-border)',
+      fg: 'var(--prs-lamp-da-lit-fg)',
+      glow: 'var(--prs-lamp-da-lit-glow)',
     },
   },
   tp: {
     rest: {
-      bg: '#232d3b',
-      border: 'rgba(255,255,255,.10)',
-      fg: '#dfe7f0',
+      bg: 'var(--prs-lamp-tp-rest-bg)',
+      border: 'var(--prs-lamp-tp-rest-border)',
+      fg: 'var(--prs-lamp-tp-rest-fg)',
       glow: 'none',
     },
     lit: {
-      bg: 'rgba(224,140,30,.16)',
-      border: 'rgba(224,140,30,.55)',
-      fg: '#f8cf94',
-      glow: 'inset 0 0 0 1px rgba(224,140,30,.22)',
+      bg: 'var(--prs-lamp-tp-lit-bg)',
+      border: 'var(--prs-lamp-tp-lit-border)',
+      fg: 'var(--prs-lamp-tp-lit-fg)',
+      glow: 'var(--prs-lamp-tp-lit-glow)',
     },
   },
 } as const;

@@ -278,9 +278,9 @@ function LevierAuSol({
     >
       <svg width={248} height={78} viewBox="0 0 150 82" aria-hidden="true">
         {/* Le ballast et la traverse porte-levier. */}
-        <rect x={0} y={62} width={150} height={20} fill="#1b232f" />
-        <rect x={58} y={54} width={34} height={9} rx={2} fill="#3a4657" />
-        <circle cx={75} cy={56} r={4.5} fill="#5c6b80" />
+        <rect x={0} y={62} width={150} height={20} fill="var(--prs-sol)" />
+        <rect x={58} y={54} width={34} height={9} rx={2} fill="var(--prs-traverse)" />
+        <circle cx={75} cy={56} r={4.5} fill="var(--prs-pivot)" />
         <g
           transform={`rotate(${gauche ? -38 : 38}, 75, 56)`}
           style={{ transition: 'transform 260ms ease' }}

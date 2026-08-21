@@ -19,7 +19,7 @@ import { Panel } from './ui';
 import { prs, prsFont } from './theme';
 
 /** Vert des tracés, repris du fond d'origine. */
-const TRAIT = '#28a83c';
+const TRAIT = 'var(--prs-saat-trait)';
 
 /**
  * Agrandissement du cartouche.
@@ -90,8 +90,8 @@ export function PrsSaat({ state, onChange, onPick, onAnnoncer, nu }: PrsSaatProp
       top: CASES[c.id].y * ECHELLE,
       width: 44 * ECHELLE,
       height: 18 * ECHELLE,
-      background: 'rgba(4,7,11,.85)',
-      border: `1px solid ${num ? prs.amber : 'rgba(40,168,60,.45)'}`,
+      background: 'var(--prs-saat-case)',
+      border: `1px solid ${num ? prs.amber : 'var(--prs-saat-case-border)'}`,
       borderRadius: 2,
       color: num ? prs.amber : prs.textDim,
       font: `600 ${Math.round(11 * ECHELLE)}px ${prsFont.mono}`,
@@ -116,7 +116,7 @@ export function PrsSaat({ state, onChange, onPick, onAnnoncer, nu }: PrsSaatProp
           style={{
             ...style,
             cursor: num ? 'pointer' : 'default',
-            borderColor: num ? prs.amber : 'rgba(40,168,60,.25)',
+            borderColor: num ? prs.amber : 'var(--prs-saat-case-border-soft)',
           }}
         >
           {num}
@@ -184,7 +184,7 @@ function Cartouche({ children }: { children: ReactNode }) {
         position: 'relative',
         width: LARGEUR,
         height: HAUTEUR,
-        background: '#04070b',
+        background: 'var(--prs-saat-bg)',
         border: `1px solid ${prs.borderMid}`,
         borderRadius: prs.radius.sm,
       }}

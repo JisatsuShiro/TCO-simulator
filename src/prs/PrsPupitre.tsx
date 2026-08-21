@@ -254,6 +254,11 @@ function TransitPlate({
           height: 'auto',
           imageRendering: 'pixelated',
           opacity: annul ? 0.5 : 1,
+          // Le GIF d'origine est un trait blanc sur fond noir. En thème clair
+          // il ferait un timbre noir sur le panneau ivoire : on l'inverse, ce
+          // qui lui rend justement l'aspect d'une plaque gravée. La variable
+          // vaut `none` en sombre.
+          filter: 'var(--prs-plaque-filtre)',
         }}
       />
     </button>

@@ -342,7 +342,7 @@ export function TcoControle({ item }: Props) {
             x={nameX}
             y={nameY}
             fontSize={20}
-            fill="#ecf0f1"
+            fill="var(--tco-trait)"
             fontFamily="system-ui"
           >
             {name}
@@ -380,13 +380,13 @@ function ControleAddOns({
     <>
       {position === 'up' ? (
         <>
-          <circle cx={-30} cy={-45} r={11} fill="none" stroke="#ecf0f1" strokeWidth={1.5} />
-          <text x={-30} y={-45} fontSize={13} fontWeight="bold" textAnchor="middle" dominantBaseline="central" fill="#ecf0f1" fontFamily="system-ui">FA</text>
+          <circle cx={-30} cy={-45} r={11} fill="none" stroke="var(--tco-trait)" strokeWidth={1.5} />
+          <text x={-30} y={-45} fontSize={13} fontWeight="bold" textAnchor="middle" dominantBaseline="central" fill="var(--tco-trait)" fontFamily="system-ui">FA</text>
         </>
       ) : (
         <>
-          <circle cx={-8 + 2 * W} cy={17 + 2 * H} r={11} fill="none" stroke="#ecf0f1" strokeWidth={1.5} />
-          <text x={-8 + 2 * W} y={17 + 2 * H} fontSize={13} fontWeight="bold" textAnchor="middle" dominantBaseline="central" fill="#ecf0f1" fontFamily="system-ui">FA</text>
+          <circle cx={-8 + 2 * W} cy={17 + 2 * H} r={11} fill="none" stroke="var(--tco-trait)" strokeWidth={1.5} />
+          <text x={-8 + 2 * W} y={17 + 2 * H} fontSize={13} fontWeight="bold" textAnchor="middle" dominantBaseline="central" fill="var(--tco-trait)" fontFamily="system-ui">FA</text>
         </>
       )}
     </>
@@ -399,26 +399,26 @@ function ControleAddOns({
         cy={15}
         r={4}
         fill={v.proxiPressed ? '#FFEE44' : 'transparent'}
-        stroke="#ecf0f1"
+        stroke="var(--tco-trait)"
         strokeWidth={1.5}
       />
-      <text x={-45} y={35} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">EP</text>
+      <text x={-45} y={35} fontSize={14} fontWeight="bold" fill="var(--tco-trait)" fontFamily="system-ui">EP</text>
     </>
   );
 
   const EAP = v.hasEap && v.double ? (
     position === 'up' ? (
       <>
-        <text y={-20} x={-65} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">ZAp</text>
+        <text y={-20} x={-65} fontSize={14} fontWeight="bold" fill="var(--tco-trait)" fontFamily="system-ui">ZAp</text>
         <DoubleCircles cxOuter={-48} cyOuter={-14} cxInner={-58} cyInner={-14} active={v.eapZap} />
-        <text y={-20} x={-30} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">EAp</text>
+        <text y={-20} x={-30} fontSize={14} fontWeight="bold" fill="var(--tco-trait)" fontFamily="system-ui">EAp</text>
         <DoubleCircles cxOuter={-15} cyOuter={-14} cxInner={-25} cyInner={-14} active={v.eapEap} />
       </>
     ) : (
       <>
-        <text y={28} x={5} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">EAp</text>
+        <text y={28} x={5} fontSize={14} fontWeight="bold" fill="var(--tco-trait)" fontFamily="system-ui">EAp</text>
         <DoubleCircles cxOuter={22} cyOuter={14} cxInner={12} cyInner={14} active={v.eapEap} />
-        <text y={28} x={40} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">ZAp</text>
+        <text y={28} x={40} fontSize={14} fontWeight="bold" fill="var(--tco-trait)" fontFamily="system-ui">ZAp</text>
         <DoubleCircles cxOuter={56} cyOuter={14} cxInner={46} cyInner={14} active={v.eapZap} />
       </>
     )
@@ -427,7 +427,7 @@ function ControleAddOns({
   const EPA = v.hasEpa && !v.hasEap ? (
     v.double ? (
       <>
-        <text y={position === 'up' ? -20 : 28} x={position === 'up' ? -30 : 5} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">EPa</text>
+        <text y={position === 'up' ? -20 : 28} x={position === 'up' ? -30 : 5} fontSize={14} fontWeight="bold" fill="var(--tco-trait)" fontFamily="system-ui">EPa</text>
         <DoubleCircles
           cxOuter={position === 'up' ? -15 : 22}
           cyOuter={position === 'up' ? -14 : 14}
@@ -447,7 +447,7 @@ function ControleAddOns({
           stroke="#000000"
           strokeWidth={1}
         />
-        <text x={-30} y={-20} fontSize={14} fontWeight="bold" fill="#ecf0f1" fontFamily="system-ui">Epa</text>
+        <text x={-30} y={-20} fontSize={14} fontWeight="bold" fill="var(--tco-trait)" fontFamily="system-ui">Epa</text>
       </>
     )
   ) : null;

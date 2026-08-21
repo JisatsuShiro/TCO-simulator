@@ -89,7 +89,7 @@ export function TcoVoie({ item }: Props) {
       <path
         d={d}
         fill="transparent"
-        stroke="#ecf0f1"
+        stroke="var(--tco-trait)"
         strokeWidth={2}
         strokeMiterlimit={10}
         pointerEvents="none"
@@ -99,7 +99,7 @@ export function TcoVoie({ item }: Props) {
           x={110}
           y={-15}
           fontSize={20}
-          fill="#ecf0f1"
+          fill="var(--tco-trait)"
           fontFamily="system-ui"
           textAnchor="middle"
         >

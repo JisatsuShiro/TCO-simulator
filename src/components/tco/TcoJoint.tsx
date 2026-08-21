@@ -40,7 +40,7 @@ export function TcoJoint({ item, tool }: Props) {
       <path
         d={d}
         fill="transparent"
-        stroke="#ecf0f1"
+        stroke="var(--tco-trait)"
         strokeWidth={2}
         strokeMiterlimit={10}
       />

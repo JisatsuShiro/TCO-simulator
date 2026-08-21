@@ -11,6 +11,7 @@ import { HomePage } from './components/HomePage';
 import { ScenariosPage } from './components/ScenariosPage';
 import { CantonnementPage } from './components/CantonnementPage';
 import { PrsPage } from './prs/PrsPage';
+import { ThemeToggle } from './design/primitives/ThemeToggle';
 import { GARE_TO_STATION, type Gare } from './net/gares';
 import { useCantonnementClock } from './net/useCantonnementClock';
 // KeysPanel n'existe plus comme panel autonome : ses sous-composants sont
@@ -366,6 +367,15 @@ function App() {
             {station.items.length} items
           </span>
         )}
+        {/* `marginLeft: auto` seulement s'il n'y a rien d'autre à droite :
+            le compteur d'items le prend déjà quand il est là. */}
+        <div style={{ marginLeft: view === 'sim' && station ? undefined : 'auto' }}>
+          <ThemeToggle
+            color={colors.text.secondary}
+            borderColor={colors.border.default}
+            size={28}
+          />
+        </div>
       </header>
       )}
       {view === 'home' ? (

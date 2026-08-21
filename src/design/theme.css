@@ -1,0 +1,356 @@
+/* Les deux thèmes de Voie Libre, en variables CSS.
+ *
+ * Pourquoi ici et pas dans les modules de charte : tout est peint en styles
+ * *inline* (`style={{ background: prs.panel }}`), et un objet JavaScript ne
+ * change pas de valeur quand on bascule un thème. Une variable CSS, si : le
+ * navigateur recalcule seul, sans re-rendre l'application. Les modules
+ * `design/tokens.ts`, `prs/theme.ts` et `mobile/theme.ts` ne portent donc plus
+ * de couleurs mais des renvois `var(--…)`, et les composants n'ont rien à
+ * savoir de tout cela.
+ *
+ * Deux blocs suffisent — clair sur `:root`, sombre sous `[data-theme='dark']`
+ * — parce que l'attribut est **toujours** posé : le petit script de
+ * `index.html` résout « système » en une valeur explicite avant le premier
+ * rendu. Sans lui il faudrait une troisième copie de la palette sous
+ * `@media (prefers-color-scheme: dark)`, et trois copies d'une même liste
+ * finissent toujours par diverger.
+ *
+ * Les valeurs sombres sont celles d'avant, au chiffre près : le thème sombre
+ * ne doit pas bouger d'un pixel.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* ===== Application : accueil, simulateur libre ========================= */
+
+  --vl-surface-darkest: #eceef2;
+  --vl-surface-dark: #ffffff;
+  --vl-surface-medium: #e6eaf0;
+  --vl-surface-light: #d9dfe8;
+
+  --vl-text-primary: #131820;
+  --vl-text-secondary: #515b68;
+  --vl-text-muted: #78828f;
+
+  --vl-border-subtle: #dde2ea;
+  --vl-border-default: #c2cad6;
+  --vl-border-strong: #9aa5b4;
+
+  /* Le métal reste du métal : sur fond clair il se fonce plutôt que de
+     s'éclaircir, sans quoi les leviers perdraient leur poids. */
+  --vl-metal-base: #8d97a5;
+  --vl-metal-highlight: #b5bfcc;
+  --vl-metal-shadow: #5d6774;
+  --vl-metal-deep: #737e8c;
+  --vl-metal-knob: #6d7889;
+  --vl-metal-knob-shine: #aab4c2;
+
+  /* Couleurs de sens : elles ne s'inversent pas, elles se retendent. Un rouge
+     d'occupation reste rouge — seule sa luminosité change pour tenir sur un
+     fond clair. */
+  --vl-signal-rouge: #c81018;
+  --vl-signal-jaune: #a16207;
+  --vl-signal-vert: #15803d;
+  --vl-signal-blanc: #4b5563;
+  --vl-signal-violet: #6d28d9;
+  --vl-signal-zone-occupee: #b91c1c;
+  --vl-signal-zone-verrouillee: #a16207;
+  --vl-signal-zone-annulee: #78828f;
+
+  --vl-accent-primary: #2563eb;
+  --vl-accent-success: #15803d;
+  --vl-accent-warning: #b45309;
+  --vl-accent-danger: #b91c1c;
+
+  --vl-shadow-sm: 0 1px 2px rgba(15, 20, 25, 0.08);
+  --vl-shadow-md: 0 4px 12px rgba(15, 20, 25, 0.12);
+  --vl-shadow-metallic-outer: 0 2px 8px rgba(15, 20, 25, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --vl-shadow-metallic-knob: 0 2px 4px rgba(15, 20, 25, 0.28),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+
+  /* Le médaillon du logo : ambre dans les deux thèmes, mais son fond suit. */
+  --vl-logo-fond: #f7f8fa;
+  --vl-logo-cercle: #d3d9e0;
+  --vl-logo-rail: #4a545f;
+  --vl-logo-ambre: oklch(0.62 0.15 70);
+
+  /* ===== Poste PRS ======================================================= */
+
+  /* Le poste d'origine était un panneau **ivoire** portant des voies sombres ;
+     c'est le portage qui avait inversé, faute de mode clair. Le voici rendu. */
+  --prs-bg: #dedbd2;
+  --prs-header: #edeae1;
+  --prs-panel: #f4f1e8;
+  --prs-tco: #efebdf;
+  --prs-inset: #e5e1d5;
+  --prs-button: #e1dccd;
+  --prs-button-hover: #d6d0be;
+  --prs-ticket: #dbd5c3;
+  --prs-well: #e8e4d7;
+
+  --prs-switch-fill: #9aa2ac;
+  --prs-switch-lamp-on: #1f9d57;
+  --prs-switch-lamp-off: #9db8a6;
+  --prs-switch-lamp-bezel: #b1aa98;
+
+  --prs-line: #2a3038;
+  --prs-endpoint-stroke: #5a6470;
+
+  --prs-text: #1b2027;
+  --prs-text-dim: #333b45;
+  --prs-text-muted: #5a6470;
+  --prs-text-faint: #7d8792;
+  --prs-label: #4a5462;
+  --prs-label-soft: #2a3038;
+
+  --prs-amber: #a2660f;
+  --prs-amber-soft: #7a4e0b;
+  --prs-amber-bg: #f2e3c6;
+  --prs-green: #15803d;
+  --prs-red: #c0392b;
+  --prs-red-soft: #9d2f23;
+  --prs-blue: #2563eb;
+  --prs-blue-bg: #dbe8fb;
+  --prs-blue-text: #1e3a8a;
+
+  --prs-border: rgba(20, 24, 30, 0.12);
+  --prs-border-soft: rgba(20, 24, 30, 0.08);
+  --prs-border-mid: rgba(20, 24, 30, 0.16);
+  --prs-border-strong: rgba(20, 24, 30, 0.24);
+  --prs-border-blue: rgba(37, 99, 235, 0.45);
+  --prs-border-amber: rgba(162, 102, 15, 0.5);
+  --prs-border-red: rgba(192, 57, 43, 0.4);
+
+  /* États de zone. Le portage a sa propre convention — neutre au repos, vert
+     au tracé, rouge à l'occupation — et elle vaut dans les deux thèmes : c'est
+     la voie libre qui change de camp, pas les deux autres. */
+  --prs-zone-libre: #47525e;
+  --prs-zone-tracee: #16a34a;
+  --prs-zone-occupee: #d13a2c;
+
+  /* Boutons d'itinéraire. En clair la logique s'inverse : un bouton allumé ne
+     peut pas être blanc sur un panneau ivoire, il devient franc et saturé. */
+  --prs-lamp-da-rest-bg: #dbe8fb;
+  --prs-lamp-da-rest-border: rgba(37, 99, 235, 0.45);
+  --prs-lamp-da-rest-fg: #1e3a8a;
+  --prs-lamp-da-lit-bg: #1d4ed8;
+  --prs-lamp-da-lit-border: #1e40af;
+  --prs-lamp-da-lit-fg: #f8fbff;
+  --prs-lamp-da-lit-glow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  --prs-lamp-tp-rest-bg: #e1dccd;
+  --prs-lamp-tp-rest-border: rgba(20, 24, 30, 0.16);
+  --prs-lamp-tp-rest-fg: #333b45;
+  --prs-lamp-tp-lit-bg: rgba(224, 140, 30, 0.3);
+  --prs-lamp-tp-lit-border: rgba(180, 110, 20, 0.65);
+  --prs-lamp-tp-lit-fg: #78430a;
+  --prs-lamp-tp-lit-glow: inset 0 0 0 1px rgba(180, 110, 20, 0.28);
+
+  /* Cartouches gravés du TCO (PRS, BV) et pastille éteinte. */
+  --prs-badge: #ddd6c4;
+  --prs-off: #a8b0bd;
+
+  /* Feux du TCO : le cerclage d'un signal doit se voir sur le panneau. */
+  --prs-lamp-ring: #4b5563;
+  --prs-lamp-ring-violet: #6d28d9;
+
+  /* Le graphique de circulation : un cartouche à part, tracé en vert. */
+  --prs-saat-bg: #f7f5ec;
+  --prs-saat-trait: #1f7a33;
+  --prs-saat-case: rgba(255, 255, 255, 0.75);
+  --prs-saat-case-border: rgba(31, 122, 51, 0.5);
+  --prs-saat-case-border-soft: rgba(31, 122, 51, 0.3);
+
+  /* Le mini-schéma du terrain : ballast, traverse, pivot. */
+  --prs-sol: #cfc9b7;
+  --prs-traverse: #a9a291;
+  --prs-pivot: #7d8792;
+  --prs-plaque-filtre: invert(1);
+
+  /* ===== TCO du simulateur libre ========================================= */
+
+  /* Même parti que pour le poste : le panneau est ivoire, les voies sombres.
+     Les couleurs de sens — rouge d'occupation, jaune de verrouillage, feux —
+     restent celles du domaine et ne bougent pas. */
+  --tco-panel: #efebdf;
+  --tco-border: #c6c0ae;
+  --tco-trait: #2a3038;
+
+  /* ===== Vue mobile ====================================================== */
+
+  --m-bg: #eef0f3;
+  --m-panel: #ffffff;
+  --m-panel2: #f4f6f9;
+  --m-panel3: #e8ecf1;
+  --m-border: #d5dbe3;
+  --m-border-soft: #d5dbe333;
+  --m-text: #161c22;
+  --m-muted: #5c6772;
+  --m-faint: #7d8894;
+  --m-dim: #a7b0ba;
+  --m-accent: oklch(0.5 0.15 250);
+  --m-accent-dim: oklch(0.78 0.06 250);
+  --m-amber: oklch(0.55 0.14 80);
+  --m-brand: oklch(0.52 0.17 35);
+  --m-green: oklch(0.5 0.15 145);
+  --m-red: oklch(0.5 0.2 25);
+  --m-yellow: oklch(0.58 0.15 85);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --vl-surface-darkest: #0f1419;
+  --vl-surface-dark: #161b22;
+  --vl-surface-medium: #1e2530;
+  --vl-surface-light: #2a3343;
+
+  --vl-text-primary: #e6e8ec;
+  --vl-text-secondary: #9ca3af;
+  --vl-text-muted: #6b7280;
+
+  --vl-border-subtle: #2a3343;
+  --vl-border-default: #3a4458;
+  --vl-border-strong: #4f5b73;
+
+  --vl-metal-base: #4b5460;
+  --vl-metal-highlight: #6e7787;
+  --vl-metal-shadow: #2a3038;
+  --vl-metal-deep: #3f4854;
+  --vl-metal-knob: #b4bcc9;
+  --vl-metal-knob-shine: #e1e5ec;
+
+  --vl-signal-rouge: #e11d26;
+  --vl-signal-jaune: #eab308;
+  --vl-signal-vert: #22c55e;
+  --vl-signal-blanc: #f3f4f6;
+  --vl-signal-violet: #8b5cf6;
+  --vl-signal-zone-occupee: #dc2626;
+  --vl-signal-zone-verrouillee: #eab308;
+  --vl-signal-zone-annulee: #6b7280;
+
+  --vl-accent-primary: #5b9bff;
+  --vl-accent-success: #22c55e;
+  --vl-accent-warning: #f59e0b;
+  --vl-accent-danger: #dc2626;
+
+  --vl-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --vl-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --vl-shadow-metallic-outer: 0 2px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --vl-shadow-metallic-knob: 0 2px 4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+
+  --vl-logo-fond: #11161b;
+  --vl-logo-cercle: #232c34;
+  --vl-logo-rail: #cdd6dc;
+  --vl-logo-ambre: oklch(0.78 0.16 80);
+
+  --prs-bg: #0d141d;
+  --prs-header: #131c27;
+  --prs-panel: #151e29;
+  --prs-tco: #151e29;
+  --prs-inset: #1b2532;
+  --prs-button: #232d3b;
+  --prs-button-hover: #2c3846;
+  --prs-ticket: #2a3341;
+  --prs-well: #101822;
+
+  --prs-switch-fill: #38455a;
+  --prs-switch-lamp-on: #4fd18b;
+  --prs-switch-lamp-off: #1c4230;
+  --prs-switch-lamp-bezel: #0b1119;
+
+  --prs-line: #cfd8e3;
+  --prs-endpoint-stroke: #8fa3ba;
+
+  --prs-text: #e6ebf2;
+  --prs-text-dim: #cfd8e3;
+  --prs-text-muted: #9fb2c8;
+  --prs-text-faint: #6f8299;
+  --prs-label: #aebdcf;
+  --prs-label-soft: #dfe7f0;
+
+  --prs-amber: #f0b45a;
+  --prs-amber-soft: #f6d9a5;
+  --prs-amber-bg: #2f3f53;
+  --prs-green: #4fd18b;
+  --prs-red: #e8503f;
+  --prs-red-soft: #f07a68;
+  --prs-blue: #8fb8e8;
+  --prs-blue-bg: #20344f;
+  --prs-blue-text: #bcd6f2;
+
+  --prs-border: rgba(255, 255, 255, 0.08);
+  --prs-border-soft: rgba(255, 255, 255, 0.06);
+  --prs-border-mid: rgba(255, 255, 255, 0.1);
+  --prs-border-strong: rgba(255, 255, 255, 0.14);
+  --prs-border-blue: rgba(143, 184, 232, 0.4);
+  --prs-border-amber: rgba(240, 180, 90, 0.5);
+  --prs-border-red: rgba(232, 80, 63, 0.35);
+
+  --prs-zone-libre: #e8edf4;
+  --prs-zone-tracee: #2fe053;
+  --prs-zone-occupee: #e8503f;
+
+  --prs-lamp-da-rest-bg: #20344f;
+  --prs-lamp-da-rest-border: rgba(143, 184, 232, 0.45);
+  --prs-lamp-da-rest-fg: #bcd6f2;
+  --prs-lamp-da-lit-bg: #eaf1fa;
+  --prs-lamp-da-lit-border: #ffffff;
+  --prs-lamp-da-lit-fg: #101b27;
+  --prs-lamp-da-lit-glow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+  --prs-lamp-tp-rest-bg: #232d3b;
+  --prs-lamp-tp-rest-border: rgba(255, 255, 255, 0.1);
+  --prs-lamp-tp-rest-fg: #dfe7f0;
+  --prs-lamp-tp-lit-bg: rgba(224, 140, 30, 0.16);
+  --prs-lamp-tp-lit-border: rgba(224, 140, 30, 0.55);
+  --prs-lamp-tp-lit-fg: #f8cf94;
+  --prs-lamp-tp-lit-glow: inset 0 0 0 1px rgba(224, 140, 30, 0.22);
+
+  --prs-badge: #1e2836;
+  --prs-off: #3a4657;
+
+  --prs-lamp-ring: #f6e9e4;
+  --prs-lamp-ring-violet: #c9b6f0;
+
+  --prs-saat-bg: #04070b;
+  --prs-saat-trait: #28a83c;
+  --prs-saat-case: rgba(4, 7, 11, 0.85);
+  --prs-saat-case-border: rgba(40, 168, 60, 0.45);
+  --prs-saat-case-border-soft: rgba(40, 168, 60, 0.25);
+
+  --prs-sol: #1b232f;
+  --prs-traverse: #3a4657;
+  --prs-pivot: #5c6b80;
+  --prs-plaque-filtre: none;
+
+  --tco-panel: #1e272e;
+  --tco-border: #34495e;
+  --tco-trait: #ecf0f1;
+
+  --m-bg: #06090c;
+  --m-panel: #0d141a;
+  --m-panel2: #121b22;
+  --m-panel3: #18232b;
+  --m-border: #1f2b34;
+  --m-border-soft: #16202733;
+  --m-text: #e2e9ee;
+  --m-muted: #8c99a4;
+  --m-faint: #5b6770;
+  --m-dim: #3a444d;
+  --m-accent: oklch(0.72 0.13 250);
+  --m-accent-dim: oklch(0.4 0.08 250);
+  --m-amber: oklch(0.8 0.16 80);
+  --m-brand: oklch(0.7 0.16 35);
+  --m-green: oklch(0.72 0.16 145);
+  --m-red: oklch(0.64 0.21 25);
+  --m-yellow: oklch(0.82 0.17 85);
+}
+
+/* Le fond de page suit le thème : sans cela la page emprunte celui de l'hôte
+   le temps du premier rendu, et clignote. */
+body {
+  background: var(--vl-surface-darkest);
+}

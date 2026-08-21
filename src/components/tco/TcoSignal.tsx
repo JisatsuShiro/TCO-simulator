@@ -52,7 +52,7 @@ export function TcoSignal({ item }: Props) {
         cy={0}
         r={6}
         fill={isActive ? '#FFCC00' : 'transparent'}
-        stroke="#ecf0f1"
+        stroke="var(--tco-trait)"
         strokeWidth={1.5}
       />
       {name && (
@@ -61,7 +61,7 @@ export function TcoSignal({ item }: Props) {
           y={4}
           fontSize={14}
           fontWeight="bold"
-          fill="#ecf0f1"
+          fill="var(--tco-trait)"
           fontFamily="system-ui"
         >
           {name}

@@ -21,6 +21,7 @@ import type { DispositifMenuState } from './PrsDispositifMenu';
 // Libre, et il n'a pas à exister en deux exemplaires. Le composant est un SVG
 // pur, sans dépendance — l'autonomie du module n'en souffre pas.
 import { Logo } from '../design/primitives/Logo';
+import { ThemeToggle } from '../design/primitives/ThemeToggle';
 import { PrsAppels } from './PrsAppels';
 import { PrsFaultMenu } from './PrsFaultMenu';
 import type { FaultMenuState } from './PrsFaultMenu';
@@ -623,6 +624,7 @@ function TopBar({
         >
           {sound ? '🔊' : '🔇'}
         </button>
+        <ThemeToggle color={prs.textFaint} borderColor={prs.borderMid} size={34} />
       </div>
     </header>
   );
