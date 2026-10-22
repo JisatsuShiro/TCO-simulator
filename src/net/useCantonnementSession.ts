@@ -80,7 +80,7 @@ function makeClientId(): string {
 }
 const CLIENT_ID = makeClientId();
 
-function resolveUrl(): string {
+export function resolveUrl(): string {
   const fromEnv = import.meta.env.VITE_CANTON_WS_URL as string | undefined;
   if (fromEnv) return fromEnv;
   const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';

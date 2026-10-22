@@ -17,6 +17,7 @@
 // de formation éphémères.
 
 import { WebSocketServer } from 'ws';
+import { gererCapi, retirerCapi } from './capi.js';
 
 const PORT = Number(process.env.PORT) || 8081;
 const HOST = process.env.HOST || '127.0.0.1';
@@ -232,6 +233,11 @@ function handleMessage(ws, raw) {
     send(ws, { t: 'error', code: 'bad-json', message: 'Message illisible.' });
     return;
   }
+  // Ligne CAPI partagée : voir capi.js.
+  if (typeof msg.t === 'string' && msg.t.startsWith('capi-')) {
+    gererCapi(ws, msg);
+    return;
+  }
   switch (msg.t) {
     case 'join':
       handleJoin(ws, msg);
@@ -261,8 +267,14 @@ wss.on('connection', (ws) => {
     ws.isAlive = true;
   });
   ws.on('message', (raw) => handleMessage(ws, raw));
-  ws.on('close', () => removeClient(ws));
-  ws.on('error', () => removeClient(ws));
+  ws.on('close', () => {
+    removeClient(ws);
+    retirerCapi(ws);
+  });
+  ws.on('error', () => {
+    removeClient(ws);
+    retirerCapi(ws);
+  });
 });
 
 // Heartbeat : détecte et coupe les sockets mortes (onglet fermé brutalement,

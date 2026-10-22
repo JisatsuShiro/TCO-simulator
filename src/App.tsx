@@ -11,6 +11,7 @@ import { HomePage } from './components/HomePage';
 import { ScenariosPage } from './components/ScenariosPage';
 import { CantonnementPage } from './components/CantonnementPage';
 import { PrsPage } from './prs/PrsPage';
+import { CapiPage } from './capi/CapiPage';
 import { ThemeToggle } from './design/primitives/ThemeToggle';
 import { GARE_TO_STATION, type Gare } from './net/gares';
 import { useCantonnementClock } from './net/useCantonnementClock';
@@ -66,7 +67,7 @@ function readTcoHeightFromStorage(): string | null {
   return null;
 }
 
-type View = 'home' | 'scenarios' | 'cantonnement' | 'sim' | 'prs';
+type View = 'home' | 'scenarios' | 'cantonnement' | 'sim' | 'prs' | 'capi';
 
 /**
  * Parse "HH:MM:SS" (heure simulée d'un scénario Gessie) en epoch ms basé
@@ -386,6 +387,7 @@ function App() {
           }}
           onEnterScenarios={() => setView('scenarios')}
           onEnterCantonnement={() => setView('cantonnement')}
+          onEnterCapi={() => setView('capi')}
           onEnterPrs={() => {
             setActiveScenario(null);
             setView('prs');
@@ -395,6 +397,8 @@ function App() {
         <ScenariosPage onSelectScenario={handleSelectScenario} />
       ) : view === 'cantonnement' ? (
         <CantonnementPage onBack={() => setView('home')} onEnterPoste={handleEnterPoste} />
+      ) : view === 'capi' ? (
+        <CapiPage />
       ) : view === 'prs' ? (
         <PrsPage onExit={() => setView('home')} />
       ) : (

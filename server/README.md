@@ -7,6 +7,25 @@ navigateurs, qui ne peuvent pas communiquer directement.
 Indépendant du front : sa seule dépendance est `ws`. Il n'est **pas** inclus dans le
 bundle de l'application.
 
+## Ligne CAPI partagée
+
+Le même relais porte la ligne CAPI (Rennes – Châteaubriant), partagée entre tous
+les opérateurs connectés. Le serveur détient l'état de la ligne, joue les
+dialogues et rediffuse l'état ; l'horloge est la sienne. Les messages sont
+préfixés `capi-` (voir l'en-tête de `capi.js`).
+
+- Le moteur est celui de `src/capi` : `npm run build` le compile dans `engine/`
+  (ignoré par git), et `npm start` le fait avant de démarrer. À refaire après tout
+  changement de `src/capi/{ligne,alarmes,dialogues}.ts`.
+- Identifiants uniques, vérifiés par le serveur : `CAPI_USER` et `CAPI_PASSWORD`
+  (défaut `rennesp2` / `rennesp2` : à changer en production).
+- Une gare ne peut être tenue que par un opérateur. Un poste temporaire (Vern,
+  Janzé, Retiers) n'existe dans CAPI que s'il est tenu ; il entre en service à
+  l'arrivée de son opérateur (dialogue ES joué par le serveur) sauf si le canton
+  qu'il scinderait est occupé, auquel cas il reste en cessation de service. Rennes et Châteaubriant sont toujours
+  en service.
+- La ligne disparaît quand le dernier opérateur la quitte.
+
 ## Lancer en local (développement)
 
 ```bash
@@ -38,7 +57,7 @@ Le serveur écoute en local et n'est **pas** exposé directement. Apache le publ
 
    ```bash
    cd server
-   npm install --omit=dev
+   npm install        # typescript sert à compiler le moteur CAPI (voir plus bas)
    # pm2 :
    pm2 start index.js --name canton
    pm2 save

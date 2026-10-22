@@ -15,6 +15,8 @@ interface HomePageProps {
   onEnterCantonnement: () => void;
   /** Appelé quand l'utilisateur ouvre le poste PRS de Springfield. */
   onEnterPrs: () => void;
+  /** Appelé quand l'utilisateur ouvre l'écran CAPI. */
+  onEnterCapi: () => void;
 }
 
 interface Feature {
@@ -41,6 +43,7 @@ export function HomePage({
   onEnterScenarios,
   onEnterCantonnement,
   onEnterPrs,
+  onEnterCapi,
 }: HomePageProps) {
   const features: Feature[] = [
     {
@@ -60,6 +63,14 @@ export function HomePage({
       icon: <PrsIcon />,
       available: true,
       onClick: onEnterPrs,
+    },
+    {
+      id: 'capi',
+      title: 'CAPI',
+      description: 'Écran CAPI : gares encadrant la date et l’heure, zones de travail et menus d’opérations.',
+      icon: <CapiIcon />,
+      available: true,
+      onClick: onEnterCapi,
     },
     {
       id: 'scenarios',
@@ -283,6 +294,15 @@ function PrsIcon() {
       <circle cx={12} cy={7} r={1.6} fill="currentColor" />
       <circle cx={12} cy={12} r={1.6} stroke="currentColor" strokeWidth={1.3} />
       <circle cx={12} cy={17} r={1.6} stroke="currentColor" strokeWidth={1.3} />
+    </svg>
+  );
+}
+
+function CapiIcon() {
+  return (
+    <svg width={24} height={24} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x={4} y={4} width={16} height={16} rx={2} stroke="currentColor" strokeWidth={1.5} />
+      <path d="M 8 9 L 16 9 M 8 12 L 16 12 M 8 15 L 13 15" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" />
     </svg>
   );
 }

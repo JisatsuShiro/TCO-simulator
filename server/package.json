@@ -6,6 +6,8 @@
   "description": "Serveur relais WebSocket pour le cantonnement multijoueur de Voie Libre.",
   "main": "index.js",
   "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prestart": "npm run build",
     "start": "node index.js"
   },
   "engines": {
@@ -13,5 +15,8 @@
   },
   "dependencies": {
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.2"
   }
 }

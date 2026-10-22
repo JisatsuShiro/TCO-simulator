@@ -46,3 +46,4 @@ renderer.js
 
 # Claude Code : réglages, compétences et agents installés localement.
 /.claude/
+/server/engine/

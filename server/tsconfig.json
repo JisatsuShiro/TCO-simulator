@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "rewriteRelativeImportExtensions": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "types": [],
+    "rootDir": "../src/capi",
+    "outDir": "./engine"
+  },
+  "files": ["../src/capi/ligne.ts", "../src/capi/alarmes.ts", "../src/capi/dialogues.ts"]
+}
